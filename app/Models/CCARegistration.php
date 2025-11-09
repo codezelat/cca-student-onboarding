@@ -109,22 +109,22 @@ class CCARegistration extends Model
             'whatsapp_number.required' => 'WhatsApp number is required so we can contact you quickly.',
             
             // File upload validation messages
-            'academic_qualification_documents.*.required' => 'Please upload at least one qualification document (certificates, transcripts, etc.).',
-            'academic_qualification_documents.*.mimes' => 'Qualification documents must be in PDF, DOC, DOCX, JPG, JPEG, PNG, HEIC, or WEBP format.',
+            'academic_qualification_documents.*.required' => 'Please upload at least one qualification document.',
+            'academic_qualification_documents.*.mimes' => 'Qualification documents must be PDF, DOC, DOCX, JPG, JPEG, PNG, HEIC, or WEBP format.',
             'academic_qualification_documents.*.max' => 'Each document must be 10MB or smaller. Please compress large files.',
             
-            'nic_documents.*.mimes' => 'ID documents must be in PDF, JPG, JPEG, PNG, HEIC, or WEBP format.',
+            'nic_documents.*.mimes' => 'ID documents must be PDF, JPG, JPEG, PNG, HEIC, or WEBP format.',
             'nic_documents.*.max' => 'Each ID document must be 10MB or smaller.',
             
-            'passport_documents.*.mimes' => 'Passport documents must be in PDF, JPG, JPEG, PNG, HEIC, or WEBP format.',
+            'passport_documents.*.mimes' => 'Passport documents must be PDF, JPG, JPEG, PNG, HEIC, or WEBP format.',
             'passport_documents.*.max' => 'Each passport document must be 10MB or smaller.',
             
             'passport_photo.required' => 'Please upload a passport-size photo (2x2 inch) for your student ID card.',
-            'passport_photo.mimes' => 'Photo must be in JPG, JPEG, PNG, HEIC, or WEBP format. iPhone photos are accepted.',
+            'passport_photo.mimes' => 'Photo must be JPG, JPEG, PNG, HEIC, or WEBP format.',
             'passport_photo.max' => 'Photo must be 10MB or smaller.',
             
             'payment_slip.required' => 'Please upload your payment confirmation slip or bank receipt.',
-            'payment_slip.mimes' => 'Payment slip must be in PDF, JPG, JPEG, PNG, HEIC, or WEBP format. Screenshots are accepted.',
+            'payment_slip.mimes' => 'Payment slip must be PDF, JPG, JPEG, PNG, HEIC, or WEBP format.',
             'payment_slip.max' => 'Payment slip must be 10MB or smaller.',
             
             'terms_accepted.accepted' => 'Please read and accept the terms to complete your registration.',

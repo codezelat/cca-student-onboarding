@@ -69,7 +69,13 @@
                         </div>
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800">Program Information</h2>
-                            <p class="text-sm text-gray-600">Select your program and enter your program ID</p>
+                            <p class="text-sm text-gray-600">Enter your program ID provided by our team</p>
+                        </div>
+                        <!-- Multiple Programs Tip -->
+                        <div class="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                            <p class="text-xs text-blue-800">
+                                <strong>💡 Tip:</strong> Registering for multiple programs? Submit a separate registration form for each program.
+                            </p>
                         </div>
                     </div>
 
@@ -139,7 +145,7 @@
                         </div>
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800">Personal Information</h2>
-                            <p class="text-sm text-gray-600">Your basic personal details</p>
+                            <p class="text-sm text-gray-600">Enter your details exactly as they appear on your official documents</p>
                         </div>
                     </div>
 
@@ -153,9 +159,10 @@
                                    id="full_name" 
                                    name="full_name" 
                                    value="{{ old('full_name') }}"
-                                   placeholder="John Michael Doe"
+                                   placeholder="Enter your full name as per official documents"
                                    class="input-glass" 
                                    required>
+                            <p class="mt-1 text-xs text-gray-600">Use your name exactly as it appears on your ID or passport</p>
                             @error('full_name')
                                 <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                             @enderror
@@ -170,7 +177,7 @@
                                    id="name_with_initials" 
                                    name="name_with_initials" 
                                    value="{{ old('name_with_initials') }}"
-                                   placeholder="J.M. Doe"
+                                   placeholder="Enter name with initials"
                                    class="input-glass" 
                                    required>
                             @error('name_with_initials')
@@ -218,10 +225,13 @@
                             <input type="text" 
                                    id="nic_number" 
                                    name="nic_number" 
+                                   x-model="formData.nic_number"
                                    value="{{ old('nic_number') }}"
-                                   placeholder="200012345678 or 991234567V"
+                                   placeholder="Enter your NIC number"
                                    class="input-glass">
-                            <p class="mt-1 text-xs text-gray-600">International students can use Passport number instead</p>
+                            <p class="mt-1 text-xs text-gray-600">
+                                <strong>International students:</strong> Leave this blank and use your passport number instead
+                            </p>
                             @error('nic_number')
                                 <div class="mt-3 p-4 rounded-xl bg-red-50 border-l-4 border-red-500">
                                     <div class="flex items-start gap-3">
@@ -243,9 +253,11 @@
                                    id="passport_number" 
                                    name="passport_number" 
                                    value="{{ old('passport_number') }}"
-                                   placeholder="N1234567"
+                                   placeholder="Enter your passport number"
                                    class="input-glass">
-                            <p class="mt-1 text-xs text-gray-600">Provide either NIC or Passport number for identification</p>
+                            <p class="mt-1 text-xs text-gray-600">
+                                <strong>Note:</strong> You must provide either NIC or Passport number for identification
+                            </p>
                             @error('passport_number')
                                 <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                             @enderror
@@ -260,7 +272,7 @@
                                    id="nationality" 
                                    name="nationality" 
                                    value="{{ old('nationality') }}"
-                                   placeholder="Sri Lankan"
+                                   placeholder="Enter your nationality"
                                    class="input-glass" 
                                    required>
                             @error('nationality')
@@ -323,7 +335,21 @@
                         </div>
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800">Contact Information</h2>
-                            <p class="text-sm text-gray-600">How we can reach you</p>
+                            <p class="text-sm text-gray-600">Provide accurate contact details - we'll use these for all official communications</p>
+                        </div>
+                    </div>
+
+                    <!-- Important Tip -->
+                    <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                        <div class="flex items-start gap-3">
+                            <span class="text-2xl">📱</span>
+                            <div>
+                                <p class="text-sm font-semibold text-blue-900 mb-1">Communication Channels</p>
+                                <p class="text-sm text-blue-800">
+                                    <strong>WhatsApp:</strong> Our primary channel for quick updates, class notifications, and urgent announcements.<br>
+                                    <strong>Email:</strong> Used for official documents, certificates, and formal correspondence. Make sure you have regular access to both.
+                                </p>
+                            </div>
                         </div>
                     </div>
 
@@ -339,6 +365,9 @@
                                       placeholder="Enter your full permanent address"
                                       class="input-glass" 
                                       required>{{ old('permanent_address') }}</textarea>
+                            <p class="mt-1 text-xs text-gray-600">
+                                This address will be used for all official correspondence, courier deliveries, and on your certificates. Make sure it's complete and accurate.
+                            </p>
                             @error('permanent_address')
                                 <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                             @enderror
@@ -439,9 +468,10 @@
                                        id="email_address" 
                                        name="email_address" 
                                        value="{{ old('email_address') }}"
-                                       placeholder="john.doe@example.com"
+                                       placeholder="Enter your email address"
                                        class="input-glass" 
                                        required>
+                                <p class="mt-1 text-xs text-gray-600">We'll send important updates to this email</p>
                                 @error('email_address')
                                     <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                                 @enderror
@@ -456,9 +486,10 @@
                                        id="whatsapp_number" 
                                        name="whatsapp_number" 
                                        value="{{ old('whatsapp_number') }}"
-                                       placeholder="+94771234567"
+                                       placeholder="Enter your WhatsApp number with country code"
                                        class="input-glass" 
                                        required>
+                                <p class="mt-1 text-xs text-gray-600">Include country code (e.g., +94 for Sri Lanka)</p>
                                 @error('whatsapp_number')
                                     <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                                 @enderror
@@ -473,7 +504,7 @@
                                        id="home_contact_number" 
                                        name="home_contact_number" 
                                        value="{{ old('home_contact_number') }}"
-                                       placeholder="+94112345678"
+                                       placeholder="Enter home/landline number (optional)"
                                        class="input-glass">
                                 @error('home_contact_number')
                                     <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
@@ -527,7 +558,21 @@
                         </div>
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800">Qualification Information</h2>
-                            <p class="text-sm text-gray-600">Your educational background</p>
+                            <p class="text-sm text-gray-600">Tell us about your educational background or work experience</p>
+                        </div>
+                    </div>
+
+                    <!-- Important Tip -->
+                    <div class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                        <div class="flex items-start gap-3">
+                            <span class="text-2xl">🎓</span>
+                            <div>
+                                <p class="text-sm font-semibold text-amber-900 mb-1">Choosing Between Academic & Work Experience</p>
+                                <p class="text-sm text-amber-800">
+                                    <strong>Select "Currently Pursuing" or "Completed":</strong> If you're a student or have graduated from school/university, choose your educational qualification.<br>
+                                    <strong>Select "Work Experience":</strong> If you're a working professional or have significant job experience, even without formal higher education. You'll provide your current/most recent company details instead of institution information.
+                                </p>
+                            </div>
                         </div>
                     </div>
 
@@ -685,7 +730,22 @@
                         </div>
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800">Required Documents</h2>
-                            <p class="text-sm text-gray-600">Upload necessary documents (max 10MB per file)</p>
+                            <p class="text-sm text-gray-600">Upload clear copies of your documents - phone photos are perfectly acceptable</p>
+                        </div>
+                    </div>
+
+                    <!-- Important Tip -->
+                    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+                        <div class="flex items-start gap-3">
+                            <span class="text-2xl">📸</span>
+                            <div>
+                                <p class="text-sm font-semibold text-green-900 mb-1">About Document Photos</p>
+                                <p class="text-sm text-green-800">
+                                    <strong>No scanner required:</strong> You can simply take clear photos with your smartphone. Make sure the text is readable, there's good lighting, and all four corners of the document are visible.<br>
+                                    <strong>File size limit:</strong> Each file must be under 10MB. Large phone photos are usually fine, but if your file is too big, try reducing the image quality or resolution slightly.<br>
+                                    <strong>Accepted formats:</strong> We accept all common formats including iPhone HEIC photos, Android photos, PDFs, and Word documents. See the specific formats listed below each upload field.
+                                </p>
+                            </div>
                         </div>
                     </div>
 
@@ -716,7 +776,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                                             </svg>
                                             <p class="mt-3 text-sm font-semibold text-gray-700">Click to upload Document #1</p>
-                                            <p class="mt-1 text-xs text-gray-500">PDF, Word, Images • Photos accepted • Max 10MB</p>
+                                            <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX, JPG, JPEG, PNG, HEIC, WEBP • Max 10MB</p>
                                         </div>
                                         <div x-show="formData.academic_1" class="flex items-center gap-3">
                                             <svg class="w-8 h-8 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -742,7 +802,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                             </svg>
                                             <p class="mt-2 text-sm font-medium text-gray-600">Add Document #2 (Optional)</p>
-                                            <p class="mt-1 text-xs text-gray-500">PDF, Word, Images • Photos accepted • Max 10MB</p>
+                                            <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX, JPG, JPEG, PNG, HEIC, WEBP • Max 10MB</p>
                                         </div>
                                         <div x-show="formData.academic_2" class="flex items-center gap-3">
                                             <svg class="w-8 h-8 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -769,31 +829,32 @@
                         </div>
 
                         <!-- NIC Documents -->
-                        <div class="group">
+                        <div class="group" x-show="formData.nic_number && formData.nic_number.trim() !== ''" x-transition>
                             <label class="block text-sm font-semibold text-gray-800 mb-4">
                                 <span class="flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
                                     </svg>
-                                    National ID Copy <span class="text-gray-500 text-xs font-normal">(For Sri Lankan students)</span>
+                                    National ID Copy <span class="text-red-500">*</span>
                                 </span>
-                                <span class="text-xs font-normal text-gray-600 mt-1 block">Upload both sides of your NIC • International students can skip this</span>
+                                <span class="text-xs font-normal text-gray-600 mt-1 block">Upload both sides of your NIC (Front & Back)</span>
                             </label>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="relative">
-                                    <div class="upload-area-optional group/upload" onclick="document.getElementById('nic_doc_1').click()">
+                                    <div class="upload-area group/upload" onclick="document.getElementById('nic_doc_1').click()">
                                         <input type="file" 
                                                id="nic_doc_1"
                                                name="nic_documents[]" 
                                                accept=".pdf,.jpg,.jpeg,.png,.heic,.webp"
                                                @change="handleFileSelect($event, 'nic_1')"
-                                               class="hidden">
+                                               class="hidden"
+                                               :required="formData.nic_number && formData.nic_number.trim() !== ''">
                                         <div class="text-center" x-show="!formData.nic_1">
-                                            <svg class="w-10 h-10 mx-auto text-gray-400 group-hover/upload:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-10 h-10 mx-auto text-primary-400 group-hover/upload:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                             </svg>
                                             <p class="mt-2 text-xs font-semibold text-gray-700">NIC Front</p>
-                                            <p class="mt-1 text-xs text-gray-500">Photo or scan</p>
+                                            <p class="mt-1 text-xs text-gray-500">JPG, JPEG, PNG, PDF, HEIC, WEBP</p>
                                         </div>
                                         <div x-show="formData.nic_1" class="text-center">
                                             <svg class="w-8 h-8 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -816,7 +877,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                             </svg>
                                             <p class="mt-2 text-xs font-medium text-gray-600">NIC Back</p>
-                                            <p class="mt-1 text-xs text-gray-500">Photo or scan</p>
+                                            <p class="mt-1 text-xs text-gray-500">JPG, JPEG, PNG, PDF, HEIC, WEBP</p>
                                         </div>
                                         <div x-show="formData.nic_2" class="text-center">
                                             <svg class="w-8 h-8 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -864,7 +925,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                             </svg>
                                             <p class="mt-2 text-xs font-medium text-gray-600">Information Page</p>
-                                            <p class="mt-1 text-xs text-gray-500">Photo or scan</p>
+                                            <p class="mt-1 text-xs text-gray-500">JPG, JPEG, PNG, PDF, HEIC, WEBP</p>
                                         </div>
                                         <div x-show="formData.passport_1" class="text-center">
                                             <svg class="w-8 h-8 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -887,7 +948,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                             </svg>
                                             <p class="mt-2 text-xs font-medium text-gray-600">Back Page</p>
-                                            <p class="mt-1 text-xs text-gray-500">Photo or scan</p>
+                                            <p class="mt-1 text-xs text-gray-500">JPG, JPEG, PNG, PDF, HEIC, WEBP</p>
                                         </div>
                                         <div x-show="formData.passport_2" class="text-center">
                                             <svg class="w-8 h-8 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -934,7 +995,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
                                     <p class="mt-3 text-sm font-semibold text-gray-700">Upload Your Photo</p>
-                                    <p class="mt-1 text-xs text-gray-500">iPhone photos accepted • Max 10MB</p>
+                                    <p class="mt-1 text-xs text-gray-500">JPG, JPEG, PNG, HEIC, WEBP • Max 10MB</p>
                                 </div>
                                 <div x-show="formData.photo" class="flex items-center gap-3">
                                     <svg class="w-8 h-8 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -982,7 +1043,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                                     </svg>
                                     <p class="mt-3 text-sm font-semibold text-gray-700">Upload Payment Slip</p>
-                                    <p class="mt-1 text-xs text-gray-500">Bank slip or screenshot • All formats accepted • Max 10MB</p>
+                                    <p class="mt-1 text-xs text-gray-500">PDF, JPG, JPEG, PNG, HEIC, WEBP • Max 10MB</p>
                                 </div>
                                 <div x-show="formData.payment" class="flex items-center gap-3">
                                     <svg class="w-8 h-8 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1078,12 +1139,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 <div class="text-sm text-blue-900">
-                                    <p class="font-semibold mb-1">📋 Important Information</p>
-                                    <ul class="space-y-1 text-blue-800">
-                                        <li>• <strong>Multiple Programs:</strong> If you're joining multiple programs, submit one registration form for each program</li>
-                                        <li>• <strong>Need Help?</strong> Contact our support team if you have any questions or issues</li>
-                                        <li>• <strong>Document Tips:</strong> Clear photos taken with your phone are perfectly acceptable for all documents</li>
-                                    </ul>
+                                    <p class="font-semibold mb-1">Need Help?</p>
+                                    <p class="text-blue-800">If you have any questions or issues while filling out this form, please contact our support team for assistance.</p>
                                 </div>
                             </div>
                         </div>
@@ -1098,6 +1155,7 @@
             return {
                 formData: {
                     program_id: '{{ old('program_id') }}',
+                    nic_number: '{{ old('nic_number') }}',
                     country_of_residence: '{{ old('country_of_residence') }}',
                     country: '{{ old('country') }}',
                     province: '{{ old('province') }}',
@@ -1202,33 +1260,7 @@
         }
     </style>
 </body>
-</html>
-                            return false;
-                        }
-                    }
-                    return true;
-                },
-
-                handleSubmit(event) {
-                    // Form will submit normally, this is just for any additional client-side logic
-                    return true;
-                },
-
-                init() {
-                    // Initialize program info if program_id is pre-filled
-                    if (this.formData.program_id) {
-                        this.validateProgramId();
-                    }
-                    // Initialize districts if province is pre-filled
-                    if (this.formData.province) {
-                        this.handleProvinceChange();
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
+</html>    <style>
         .file-input {
             @apply w-full px-4 py-3 bg-white/50 border border-white/60 rounded-xl 
                    focus:ring-2 focus:ring-primary-500 focus:border-transparent 
