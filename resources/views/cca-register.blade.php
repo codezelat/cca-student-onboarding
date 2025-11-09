@@ -4,7 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Student Registration - {{ config('app.name', 'CCA') }}</title>
+    <title>Registration Form - Codezela Career Accelerator</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/icon.png') }}">
+    
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -21,21 +26,18 @@
         <div class="max-w-5xl mx-auto">
             <!-- Header Section -->
             <div class="text-center mb-8">
-                <a href="{{ url('/') }}" class="inline-flex items-center space-x-3 mb-6 group">
-                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                        <span class="text-white font-bold text-2xl">C</span>
-                    </div>
-                    <span class="text-3xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                        {{ config('app.name', 'CCA') }}
-                    </span>
+                <a href="{{ url('/') }}" class="inline-block mb-6 group">
+                    <img src="{{ asset('images/logo-wide.png') }}" 
+                         alt="Codezela Career Accelerator" 
+                         class="h-16 md:h-20 mx-auto transition-transform duration-300 group-hover:scale-105">
                 </a>
                 
-                <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent mb-3">
-                    Student Registration
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent mb-3">
+                    Codezela Career Accelerator
                 </h1>
-                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-                    Begin your journey with us. Complete the form below to register for your chosen program.
-                </p>
+                <h2 class="text-2xl md:text-3xl font-semibold text-gray-700 mb-4">
+                    Registration Form
+                </h2>
             </div>
 
             <!-- Success Message -->
@@ -563,12 +565,12 @@
                     </div>
 
                     <!-- Important Tip -->
-                    <div class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                    <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
                         <div class="flex items-start gap-3">
                             <span class="text-2xl">🎓</span>
                             <div>
-                                <p class="text-sm font-semibold text-amber-900 mb-1">Choosing Between Academic & Work Experience</p>
-                                <p class="text-sm text-amber-800">
+                                <p class="text-sm font-semibold text-blue-900 mb-1">Choosing Between Academic & Work Experience</p>
+                                <p class="text-sm text-blue-800">
                                     <strong>Select "Currently Pursuing" or "Completed":</strong> If you're a student or have graduated from school/university, choose your educational qualification.<br>
                                     <strong>Select "Work Experience":</strong> If you're a working professional or have significant job experience, even without formal higher education. You'll provide your current/most recent company details instead of institution information.
                                 </p>
@@ -735,12 +737,12 @@
                     </div>
 
                     <!-- Important Tip -->
-                    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+                    <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
                         <div class="flex items-start gap-3">
                             <span class="text-2xl">📸</span>
                             <div>
-                                <p class="text-sm font-semibold text-green-900 mb-1">About Document Photos</p>
-                                <p class="text-sm text-green-800">
+                                <p class="text-sm font-semibold text-blue-900 mb-1">About Document Photos</p>
+                                <p class="text-sm text-blue-800">
                                     <strong>File size limit:</strong> Each file must be under 10MB. Quality photos are usually fine, but if your file is too big, try compressing the file or reducing the resolution slightly.<br>
                                 </p>
                             </div>
