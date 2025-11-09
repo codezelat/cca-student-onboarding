@@ -1241,10 +1241,15 @@
     </script>
 
     <style>
-        /* Card Glass Effect */
+        /* Premium Card Glass Effect with Depth */
         .card-glass {
             @apply p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl lg:rounded-3xl 
-                   bg-white/70 backdrop-blur-xl border border-white/90 shadow-xl;
+                   bg-white/75 backdrop-blur-2xl border border-white/90 
+                   shadow-xl hover:shadow-2xl
+                   transition-all duration-500 ease-out
+                   hover:bg-white/80 hover:border-white/95
+                   hover:-translate-y-0.5;
+            background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.7) 100%);
         }
 
         /* Glass Effect */
@@ -1252,44 +1257,73 @@
             @apply backdrop-blur-xl;
         }
 
-        /* Input Glass Effect - Mobile Optimized */
+        /* Premium Input Glass Effect */
         .input-glass {
-            @apply w-full px-3 py-2.5 sm:px-4 sm:py-3 text-sm sm:text-base
-                   bg-white/60 backdrop-blur-md border border-white/80 rounded-lg sm:rounded-xl 
-                   focus:ring-2 focus:ring-primary-500 focus:border-transparent 
+            @apply w-full px-3 py-2.5 sm:px-4 sm:py-3.5 lg:px-5 lg:py-4 text-sm sm:text-base lg:text-lg
+                   bg-white/70 backdrop-blur-md rounded-lg sm:rounded-xl lg:rounded-2xl
+                   focus:ring-4 focus:ring-primary-500/30 focus:border-primary-400 
                    transition-all duration-300 placeholder:text-gray-500
-                   hover:bg-white/70 hover:border-primary-200
-                   shadow-sm hover:shadow-md;
+                   hover:bg-white/80 hover:shadow-md
+                   shadow-sm
+                   font-medium text-gray-800;
+            border: 2px solid rgba(139, 92, 246, 0.25);
+            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.65));
         }
 
-        /* Mobile-Optimized Upload Areas */
+        .input-glass:hover {
+            border-color: rgba(139, 92, 246, 0.4);
+            box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.1), 0 2px 4px -1px rgba(139, 92, 246, 0.06);
+        }
+
+        .input-glass:focus {
+            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.75));
+            border-color: rgba(139, 92, 246, 0.6);
+        }
+
+        /* Premium Upload Areas with Enhanced Glassmorphism */
         .upload-area {
-            @apply relative p-4 sm:p-6 rounded-xl sm:rounded-2xl 
-                   bg-gradient-to-br from-white/60 to-white/40 
-                   backdrop-blur-md border-2 border-primary-200 border-dashed
-                   hover:border-primary-400 hover:bg-white/70 hover:shadow-lg
+            @apply relative p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl lg:rounded-3xl
+                   backdrop-blur-xl border-2 
                    active:scale-[0.98]
                    transition-all duration-300 cursor-pointer 
-                   min-h-[120px] sm:min-h-[140px]
+                   min-h-[120px] sm:min-h-[140px] lg:min-h-[160px]
                    flex items-center justify-center
-                   touch-manipulation;
+                   touch-manipulation
+                   shadow-lg hover:shadow-2xl;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.5) 100%);
+            border-color: rgba(139, 92, 246, 0.3);
+            border-style: dashed;
+        }
+
+        .upload-area:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.65) 100%);
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateY(-2px);
         }
 
         .upload-area-optional {
-            @apply relative p-4 sm:p-6 rounded-xl sm:rounded-2xl 
-                   bg-white/40 backdrop-blur-md 
-                   border-2 border-gray-200 border-dashed
-                   hover:border-primary-300 hover:bg-white/60 hover:shadow-md
+            @apply relative p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl lg:rounded-3xl
+                   backdrop-blur-md border-2
                    active:scale-[0.98]
                    transition-all duration-300 cursor-pointer 
-                   min-h-[120px] sm:min-h-[140px]
+                   min-h-[120px] sm:min-h-[140px] lg:min-h-[160px]
                    flex items-center justify-center
-                   touch-manipulation;
+                   touch-manipulation
+                   shadow-md hover:shadow-xl;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.35) 100%);
+            border-color: rgba(156, 163, 175, 0.3);
+            border-style: dashed;
         }
 
-        /* Animation */
+        .upload-area-optional:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.55) 100%);
+            border-color: rgba(139, 92, 246, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Enhanced Floating Animation */
         @keyframes blob {
-            0% {
+            0%, 100% {
                 transform: translate(0px, 0px) scale(1);
             }
             33% {
@@ -1298,13 +1332,10 @@
             66% {
                 transform: translate(-20px, 20px) scale(0.9);
             }
-            100% {
-                transform: translate(0px, 0px) scale(1);
-            }
         }
 
         .animate-blob {
-            animation: blob 7s infinite;
+            animation: blob 7s infinite cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .animation-delay-2000 {
@@ -1313,6 +1344,52 @@
 
         .animation-delay-4000 {
             animation-delay: 4s;
+        }
+
+        /* Enhanced Gradient Glow Effect for Headers */
+        .gradient-glow {
+            position: relative;
+            background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Premium Button Styles */
+        button[type="submit"], .btn-primary {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #7c3aed 100%);
+            background-size: 200% 200%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        button[type="submit"]:hover, .btn-primary:hover {
+            background-position: 100% 0;
+            box-shadow: 0 20px 40px -15px rgba(139, 92, 246, 0.6);
+        }
+
+        button[type="submit"]::before, .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        button[type="submit"]:hover::before, .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        /* Enhanced Tip/Info Boxes */
+        .tip-box {
+            @apply p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl
+                   backdrop-blur-xl border-2
+                   shadow-lg hover:shadow-xl transition-all duration-300;
+            background: linear-gradient(135deg, rgba(219, 234, 254, 0.9) 0%, rgba(191, 219, 254, 0.8) 100%);
         }
 
         /* Prevent zoom on input focus (iOS) */
@@ -1326,7 +1403,7 @@
             }
         }
 
-        /* Better touch targets */
+        /* Better touch targets on mobile */
         @media (max-width: 640px) {
             button, a, input[type="checkbox"], input[type="radio"], select {
                 min-height: 44px;
@@ -1338,18 +1415,52 @@
             }
         }
 
+        /* Desktop: Enhanced touch targets and visibility */
+        @media (min-width: 1024px) {
+            .input-glass, select {
+                min-height: 56px;
+            }
+
+            button, .btn-primary {
+                min-height: 60px;
+            }
+
+            /* Enhanced hover states for desktop */
+            .card-glass:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.25);
+            }
+
+            /* Better select styling */
+            select {
+                background-size: 2em 2em;
+                padding-right: 3rem;
+            }
+        }
+
         /* File input styling */
         .file-input {
-            @apply w-full px-3 py-2.5 sm:px-4 sm:py-3 
-                   bg-white/50 border border-white/60 rounded-lg sm:rounded-xl 
-                   focus:ring-2 focus:ring-primary-500 focus:border-transparent 
-                   transition-all 
-                   file:mr-3 sm:file:mr-4 file:py-1.5 file:px-3 sm:file:py-2 sm:file:px-4 
-                   file:rounded-md sm:file:rounded-lg 
-                   file:border-0 file:text-xs sm:file:text-sm file:font-semibold 
+            @apply w-full px-3 py-2.5 sm:px-4 sm:py-3 lg:px-5 lg:py-4
+                   bg-white/60 backdrop-blur-md rounded-lg sm:rounded-xl lg:rounded-2xl
+                   focus:ring-4 focus:ring-primary-500/30 focus:border-transparent 
+                   transition-all duration-300
+                   file:mr-3 sm:file:mr-4 file:py-1.5 file:px-3 sm:file:py-2 sm:file:px-4 lg:file:py-2.5 lg:file:px-5
+                   file:rounded-md sm:file:rounded-lg lg:file:rounded-xl
+                   file:border-0 file:text-xs sm:file:text-sm lg:file:text-base file:font-semibold 
                    file:bg-primary-50 file:text-primary-700 
-                   hover:file:bg-primary-100 cursor-pointer
+                   hover:file:bg-primary-100 file:transition-colors
+                   cursor-pointer shadow-sm hover:shadow-md
                    touch-manipulation;
+            border: 2px solid rgba(139, 92, 246, 0.25);
+            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.55));
+        }
+
+        .file-input:hover {
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+
+        .file-input:focus {
+            border-color: rgba(139, 92, 246, 0.6);
         }
 
         /* Smooth scrolling */
@@ -1357,14 +1468,111 @@
             scroll-behavior: smooth;
         }
 
-        /* Hide scrollbar but keep functionality */
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        /* Custom Scrollbar - Premium Look */
+        ::-webkit-scrollbar {
+            width: 12px;
         }
 
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, rgba(139, 92, 246, 0.8), rgba(168, 85, 247, 0.8));
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: background 0.3s;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, rgba(139, 92, 246, 1), rgba(168, 85, 247, 1));
+        }
+
+        /* Better select dropdown styling */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%238b5cf6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+            background-position: right 1rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 3rem;
+            border: 2px solid rgba(139, 92, 246, 0.25) !important;
+        }
+
+        select:hover {
+            border-color: rgba(139, 92, 246, 0.4) !important;
+        }
+
+        select:focus {
+            border-color: rgba(139, 92, 246, 0.6) !important;
+        }
+
+        @media (max-width: 640px) {
+            select {
+                background-position: right 0.5rem center;
+                padding-right: 2.5rem;
+            }
+        }
+
+        /* Textarea borders */
+        textarea.input-glass {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Improve checkbox/radio button appearance */
+        input[type="checkbox"], input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            transition: all 0.2s;
+        }
+
+        @media (min-width: 1024px) {
+            input[type="checkbox"], input[type="radio"] {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        input[type="checkbox"]:checked, input[type="radio"]:checked {
+            background-color: #8b5cf6;
+            border-color: #8b5cf6;
+        }
+
+        /* Enhanced Error Messages */
+        .error-message {
+            @apply p-3 sm:p-4 rounded-lg sm:rounded-xl 
+                   bg-red-50/90 backdrop-blur-md border-l-4 border-red-500
+                   shadow-lg;
+        }
+
+        /* Success Message Enhancement */
+        .success-message {
+            @apply p-4 sm:p-6 rounded-xl sm:rounded-2xl
+                   backdrop-blur-xl border-2 border-green-200
+                   shadow-xl;
+            background: linear-gradient(135deg, rgba(236, 253, 245, 0.95) 0%, rgba(209, 250, 229, 0.9) 100%);
+        }
+
+        /* Label Enhancement for Better Readability */
+        label {
+            @apply font-semibold text-gray-800 tracking-tight;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Placeholder Enhancement */
+        ::placeholder {
+            @apply text-gray-500 font-normal;
+            opacity: 0.7;
+        }
+
+        /* Focus visible for accessibility */
+        *:focus-visible {
+            outline: 3px solid rgba(139, 92, 246, 0.5);
+            outline-offset: 2px;
         }
 
         /* Alpine.js cloak */
@@ -1372,24 +1580,30 @@
             display: none !important;
         }
 
-        /* Better select dropdown on mobile */
-        @media (max-width: 640px) {
-            select {
-                appearance: none;
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-                background-position: right 0.5rem center;
-                background-repeat: no-repeat;
-                background-size: 1.5em 1.5em;
-                padding-right: 2.5rem;
+        /* Enhance program info display box */
+        .program-info-box {
+            @apply p-4 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl
+                   backdrop-blur-xl border-2 border-primary-200
+                   shadow-lg hover:shadow-xl transition-all duration-300;
+            background: linear-gradient(135deg, rgba(237, 233, 254, 0.9) 0%, rgba(221, 214, 254, 0.85) 100%);
+        }
+
+        /* Shimmer effect for loading states */
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
             }
         }
 
-        /* Improve checkbox/radio button touch targets on mobile */
-        @media (max-width: 640px) {
-            input[type="checkbox"], input[type="radio"] {
-                width: 20px;
-                height: 20px;
-            }
+        /* Enhanced document upload preview */
+        .upload-preview {
+            @apply flex items-center gap-3 p-3 rounded-xl
+                   bg-gradient-to-r from-green-50/90 to-emerald-50/90
+                   backdrop-blur-md border border-green-200
+                   shadow-md;
         }
     </style>
 </body>
