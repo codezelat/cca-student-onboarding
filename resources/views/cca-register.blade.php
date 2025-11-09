@@ -23,32 +23,32 @@
         <div class="absolute -bottom-32 left-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
     </div>
 
-    <div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen py-6 sm:py-12 px-3 sm:px-6 lg:px-8">
         <div class="max-w-5xl mx-auto">
             <!-- Header Section -->
-            <div class="text-center mb-8">
-                <a href="{{ url('/') }}" class="inline-block mb-6 group">
+            <div class="text-center mb-6 sm:mb-8">
+                <a href="{{ url('/') }}" class="inline-block mb-4 sm:mb-6 group">
                     <img src="{{ asset('images/logo-wide.png') }}" 
                          alt="Codezela Career Accelerator" 
-                         class="h-16 md:h-20 mx-auto transition-transform duration-300 group-hover:scale-105">
+                         class="h-12 sm:h-16 md:h-20 mx-auto transition-transform duration-300 group-hover:scale-105">
                 </a>
                 
-                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent mb-3">
+                <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent mb-2 sm:mb-3 px-2">
                     Codezela Career Accelerator
                 </h1>
-                <h2 class="text-2xl md:text-3xl font-semibold text-gray-700 mb-4">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-700 mb-3 sm:mb-4 px-2">
                     Registration Form
                 </h2>
             </div>
 
             <!-- Success Message -->
             @if (session('success'))
-                <div class="mb-6 p-6 rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 glass">
-                    <div class="flex items-start gap-3">
-                        <svg class="w-6 h-6 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="mb-4 sm:mb-6 p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 glass">
+                    <div class="flex items-start gap-2 sm:gap-3">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <p class="text-green-800 font-medium">{{ session('success') }}</p>
+                        <p class="text-sm sm:text-base text-green-800 font-medium">{{ session('success') }}</p>
                     </div>
                 </div>
             @endif
@@ -59,27 +59,28 @@
                   enctype="multipart/form-data"
                   x-data="registrationForm()"
                   @submit="handleSubmit"
-                  class="space-y-8">
+                  class="space-y-6 sm:space-y-8">
                 @csrf
 
                 <!-- Section 1: Program Selection -->
                 <div class="card-glass">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center shadow-lg">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center shadow-lg flex-shrink-0">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                             </svg>
                         </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-800">Program Information</h2>
-                            <p class="text-sm text-gray-600">Enter your program ID provided by our team</p>
+                        <div class="flex-1">
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-800">Program Information</h2>
+                            <p class="text-xs sm:text-sm text-gray-600 mt-0.5">Enter your program ID provided by our team</p>
                         </div>
-                        <!-- Multiple Programs Tip -->
-                        <div class="p-3 rounded-lg bg-blue-50 border border-blue-200">
-                            <p class="text-xs text-blue-800">
-                                <strong>💡 Tip:</strong> Registering for multiple programs? Submit a separate registration form for each program.
-                            </p>
-                        </div>
+                    </div>
+
+                    <!-- Multiple Programs Tip -->
+                    <div class="mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg sm:rounded-xl bg-blue-50 border border-blue-200">
+                        <p class="text-xs sm:text-sm text-blue-800 leading-relaxed">
+                            <strong class="inline-flex items-center gap-1">💡 Tip:</strong> Registering for multiple programs? Submit a separate registration form for each program.
+                        </p>
                     </div>
 
                     <div class="grid grid-cols-1 gap-6">
@@ -1240,39 +1241,155 @@
     </script>
 
     <style>
+        /* Card Glass Effect */
+        .card-glass {
+            @apply p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl lg:rounded-3xl 
+                   bg-white/70 backdrop-blur-xl border border-white/90 shadow-xl;
+        }
+
+        /* Glass Effect */
+        .glass {
+            @apply backdrop-blur-xl;
+        }
+
+        /* Input Glass Effect - Mobile Optimized */
+        .input-glass {
+            @apply w-full px-3 py-2.5 sm:px-4 sm:py-3 text-sm sm:text-base
+                   bg-white/60 backdrop-blur-md border border-white/80 rounded-lg sm:rounded-xl 
+                   focus:ring-2 focus:ring-primary-500 focus:border-transparent 
+                   transition-all duration-300 placeholder:text-gray-500
+                   hover:bg-white/70 hover:border-primary-200
+                   shadow-sm hover:shadow-md;
+        }
+
+        /* Mobile-Optimized Upload Areas */
         .upload-area {
-            @apply relative p-6 rounded-2xl bg-gradient-to-br from-white/60 to-white/40 
+            @apply relative p-4 sm:p-6 rounded-xl sm:rounded-2xl 
+                   bg-gradient-to-br from-white/60 to-white/40 
                    backdrop-blur-md border-2 border-primary-200 border-dashed
                    hover:border-primary-400 hover:bg-white/70 hover:shadow-lg
-                   transition-all duration-300 cursor-pointer min-h-[140px]
-                   flex items-center justify-center;
+                   active:scale-[0.98]
+                   transition-all duration-300 cursor-pointer 
+                   min-h-[120px] sm:min-h-[140px]
+                   flex items-center justify-center
+                   touch-manipulation;
         }
 
         .upload-area-optional {
-            @apply relative p-6 rounded-2xl bg-white/40 backdrop-blur-md 
+            @apply relative p-4 sm:p-6 rounded-xl sm:rounded-2xl 
+                   bg-white/40 backdrop-blur-md 
                    border-2 border-gray-200 border-dashed
                    hover:border-primary-300 hover:bg-white/60 hover:shadow-md
-                   transition-all duration-300 cursor-pointer min-h-[140px]
-                   flex items-center justify-center;
+                   active:scale-[0.98]
+                   transition-all duration-300 cursor-pointer 
+                   min-h-[120px] sm:min-h-[140px]
+                   flex items-center justify-center
+                   touch-manipulation;
         }
 
-        [x-cloak] {
-            display: none !important;
+        /* Animation */
+        @keyframes blob {
+            0% {
+                transform: translate(0px, 0px) scale(1);
+            }
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
         }
-    </style>
-</body>
-</html>    <style>
+
+        .animate-blob {
+            animation: blob 7s infinite;
+        }
+
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+
+        .animation-delay-4000 {
+            animation-delay: 4s;
+        }
+
+        /* Prevent zoom on input focus (iOS) */
+        @media screen and (max-width: 640px) {
+            select, textarea, input[type="text"], input[type="password"],
+            input[type="datetime"], input[type="datetime-local"],
+            input[type="date"], input[type="month"], input[type="time"],
+            input[type="week"], input[type="number"], input[type="email"],
+            input[type="url"], input[type="search"], input[type="tel"] {
+                font-size: 16px !important;
+            }
+        }
+
+        /* Better touch targets */
+        @media (max-width: 640px) {
+            button, a, input[type="checkbox"], input[type="radio"], select {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            label {
+                -webkit-tap-highlight-color: transparent;
+            }
+        }
+
+        /* File input styling */
         .file-input {
-            @apply w-full px-4 py-3 bg-white/50 border border-white/60 rounded-xl 
+            @apply w-full px-3 py-2.5 sm:px-4 sm:py-3 
+                   bg-white/50 border border-white/60 rounded-lg sm:rounded-xl 
                    focus:ring-2 focus:ring-primary-500 focus:border-transparent 
-                   transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg 
-                   file:border-0 file:text-sm file:font-semibold 
+                   transition-all 
+                   file:mr-3 sm:file:mr-4 file:py-1.5 file:px-3 sm:file:py-2 sm:file:px-4 
+                   file:rounded-md sm:file:rounded-lg 
+                   file:border-0 file:text-xs sm:file:text-sm file:font-semibold 
                    file:bg-primary-50 file:text-primary-700 
-                   hover:file:bg-primary-100 cursor-pointer;
+                   hover:file:bg-primary-100 cursor-pointer
+                   touch-manipulation;
         }
 
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Hide scrollbar but keep functionality */
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Alpine.js cloak */
         [x-cloak] {
             display: none !important;
+        }
+
+        /* Better select dropdown on mobile */
+        @media (max-width: 640px) {
+            select {
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+                background-position: right 0.5rem center;
+                background-repeat: no-repeat;
+                background-size: 1.5em 1.5em;
+                padding-right: 2.5rem;
+            }
+        }
+
+        /* Improve checkbox/radio button touch targets on mobile */
+        @media (max-width: 640px) {
+            input[type="checkbox"], input[type="radio"] {
+                width: 20px;
+                height: 20px;
+            }
         }
     </style>
 </body>
