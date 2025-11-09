@@ -6,11 +6,11 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 group">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            <span class="text-white font-bold text-xl">L</span>
-                        </div>
+                        <img src="{{ asset('images/icon.png') }}" 
+                             alt="CCA" 
+                             class="w-12 h-12 transition-transform duration-300 group-hover:scale-110">
                         <span class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                            {{ config('app.name', 'Laravel') }}
+                            {{ config('app.name', 'CCA') }}
                         </span>
                     </a>
                 </div>

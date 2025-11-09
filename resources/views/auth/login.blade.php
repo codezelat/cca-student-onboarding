@@ -69,15 +69,6 @@
             <x-primary-button class="w-full justify-center px-6 py-3.5 bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 rounded-xl font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                 {{ __('Sign in') }}
             </x-primary-button>
-
-            @if (Route::has('register'))
-                <p class="text-center text-sm text-gray-600">
-                    Don't have an account?
-                    <a href="{{ route('register') }}" class="font-semibold text-primary-600 hover:text-secondary-600 transition-colors">
-                        Create one now
-                    </a>
-                </p>
-            @endif
         </div>
     </form>
 </x-guest-layout>
