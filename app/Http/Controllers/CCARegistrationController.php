@@ -3,13 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\CCARegistration;
+use App\Services\FileUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class CCARegistrationController extends Controller
 {
+    protected FileUploadService $fileUploadService;
+    
+    public function __construct(FileUploadService $fileUploadService)
+    {
+        $this->fileUploadService = $fileUploadService;
+    }
+    
     /**
      * Show the registration form
      */
@@ -74,22 +81,64 @@ class CCARegistrationController extends Controller
             // Get program details
             $programInfo = $programs[$programId];
 
-            // Handle file uploads
-            $academicDocs = $this->uploadMultipleFiles($request, 'academic_qualification_documents', 'registrations/academic');
-            
-            // NIC/ID documents (optional for international students without NIC)
-            $nicDocs = $request->hasFile('nic_documents') 
-                ? $this->uploadMultipleFiles($request, 'nic_documents', 'registrations/identification')
-                : [];
-                
-            $passportDocs = $request->hasFile('passport_documents') 
-                ? $this->uploadMultipleFiles($request, 'passport_documents', 'registrations/passport')
-                : [];
-            
-            $passportPhoto = $request->file('passport_photo')->store('registrations/photos', 'public');
-            $paymentSlip = $request->file('payment_slip')->store('registrations/payments', 'public');
+            // Handle file uploads to R2
+            $academicDocs = [];
+            $nicDocs = [];
+            $passportDocs = [];
+            $passportPhoto = null;
+            $paymentSlip = null;
 
-            // Create registration
+            try {
+                // Upload academic qualification documents
+                if ($request->hasFile('academic_qualification_documents')) {
+                    $academicFiles = $request->file('academic_qualification_documents');
+                    $academicDocs = $this->fileUploadService->uploadMultipleFiles(
+                        is_array($academicFiles) ? $academicFiles : [$academicFiles],
+                        'registrations/academic'
+                    );
+                }
+                
+                // Upload NIC documents (optional)
+                if ($request->hasFile('nic_documents')) {
+                    $nicFiles = $request->file('nic_documents');
+                    $nicDocs = $this->fileUploadService->uploadMultipleFiles(
+                        is_array($nicFiles) ? $nicFiles : [$nicFiles],
+                        'registrations/identification'
+                    );
+                }
+                    
+                // Upload passport documents (optional)
+                if ($request->hasFile('passport_documents')) {
+                    $passportFiles = $request->file('passport_documents');
+                    $passportDocs = $this->fileUploadService->uploadMultipleFiles(
+                        is_array($passportFiles) ? $passportFiles : [$passportFiles],
+                        'registrations/passport'
+                    );
+                }
+                
+                // Upload passport photo
+                if ($request->hasFile('passport_photo')) {
+                    $passportPhoto = $this->fileUploadService->uploadFile(
+                        $request->file('passport_photo'),
+                        'registrations/photos'
+                    );
+                }
+                
+                // Upload payment slip
+                if ($request->hasFile('payment_slip')) {
+                    $paymentSlip = $this->fileUploadService->uploadFile(
+                        $request->file('payment_slip'),
+                        'registrations/payments'
+                    );
+                }
+
+            } catch (\Exception $uploadException) {
+                // Clean up any uploaded files if there's an error
+                $this->cleanupUploadedFiles($academicDocs, $nicDocs, $passportDocs, $passportPhoto, $paymentSlip);
+                throw $uploadException;
+            }
+
+            // Create registration with file URLs
             $registration = CCARegistration::create([
                 'program_id' => $programId,
                 'program_name' => $programInfo['name'],
@@ -137,42 +186,53 @@ class CCARegistrationController extends Controller
             DB::rollBack();
             
             // Clean up uploaded files on error
-            if (isset($academicDocs)) $this->deleteFiles($academicDocs);
-            if (isset($nicDocs)) $this->deleteFiles($nicDocs);
-            if (isset($passportDocs)) $this->deleteFiles($passportDocs);
-            if (isset($passportPhoto)) Storage::disk('public')->delete($passportPhoto);
-            if (isset($paymentSlip)) Storage::disk('public')->delete($paymentSlip);
+            $this->cleanupUploadedFiles(
+                $academicDocs ?? [],
+                $nicDocs ?? [],
+                $passportDocs ?? [],
+                $passportPhoto ?? null,
+                $paymentSlip ?? null
+            );
+
+            \Log::error('Registration failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
             throw $e;
         }
     }
 
     /**
-     * Upload multiple files and return their paths
+     * Clean up uploaded files on error
      */
-    private function uploadMultipleFiles(Request $request, string $fieldName, string $path): array
-    {
-        $files = $request->file($fieldName);
-        $paths = [];
-
-        if (is_array($files)) {
-            foreach ($files as $file) {
-                $paths[] = $file->store($path, 'public');
+    private function cleanupUploadedFiles(
+        array $academicDocs,
+        array $nicDocs,
+        array $passportDocs,
+        ?array $passportPhoto,
+        ?array $paymentSlip
+    ): void {
+        try {
+            if (!empty($academicDocs)) {
+                $this->fileUploadService->deleteMultipleFiles($academicDocs);
             }
-        }
-
-        return $paths;
-    }
-
-    /**
-     * Delete multiple files
-     */
-    private function deleteFiles(?array $files): void
-    {
-        if ($files) {
-            foreach ($files as $file) {
-                Storage::disk('public')->delete($file);
+            if (!empty($nicDocs)) {
+                $this->fileUploadService->deleteMultipleFiles($nicDocs);
             }
+            if (!empty($passportDocs)) {
+                $this->fileUploadService->deleteMultipleFiles($passportDocs);
+            }
+            if ($passportPhoto && isset($passportPhoto['path'])) {
+                $this->fileUploadService->deleteFile($passportPhoto['path']);
+            }
+            if ($paymentSlip && isset($paymentSlip['path'])) {
+                $this->fileUploadService->deleteFile($paymentSlip['path']);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to cleanup uploaded files', [
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 }
