@@ -90,7 +90,7 @@
                                    x-model="formData.program_id"
                                    @input="validateProgramId"
                                    value="{{ old('program_id') }}"
-                                   placeholder="e.g., PM25, DM25, AI25"
+                                   placeholder="Enter your program ID (E.g., CCA-PM25)"
                                    class="input-glass uppercase" 
                                    required>
                             <p class="mt-2 text-xs text-gray-600 flex items-start gap-2">
@@ -406,7 +406,7 @@
                                        id="postal_code" 
                                        name="postal_code" 
                                        value="{{ old('postal_code') }}"
-                                       placeholder="10100"
+                                       placeholder="Enter postal code"
                                        class="input-glass" 
                                        required>
                                 @error('postal_code')
@@ -520,7 +520,7 @@
                                        id="guardian_contact_name" 
                                        name="guardian_contact_name" 
                                        value="{{ old('guardian_contact_name') }}"
-                                       placeholder="Jane Doe"
+                                       placeholder="Enter guardian or emergency contact name"
                                        class="input-glass" 
                                        required>
                                 @error('guardian_contact_name')
@@ -537,7 +537,7 @@
                                        id="guardian_contact_number" 
                                        name="guardian_contact_number" 
                                        value="{{ old('guardian_contact_number') }}"
-                                       placeholder="+94771234567"
+                                       placeholder="Enter contact number with country code"
                                        class="input-glass" 
                                        required>
                                 @error('guardian_contact_number')
@@ -741,9 +741,7 @@
                             <div>
                                 <p class="text-sm font-semibold text-green-900 mb-1">About Document Photos</p>
                                 <p class="text-sm text-green-800">
-                                    <strong>No scanner required:</strong> You can simply take clear photos with your smartphone. Make sure the text is readable, there's good lighting, and all four corners of the document are visible.<br>
-                                    <strong>File size limit:</strong> Each file must be under 10MB. Large phone photos are usually fine, but if your file is too big, try reducing the image quality or resolution slightly.<br>
-                                    <strong>Accepted formats:</strong> We accept all common formats including iPhone HEIC photos, Android photos, PDFs, and Word documents. See the specific formats listed below each upload field.
+                                    <strong>File size limit:</strong> Each file must be under 10MB. Quality photos are usually fine, but if your file is too big, try compressing the file or reducing the resolution slightly.<br>
                                 </p>
                             </div>
                         </div>
