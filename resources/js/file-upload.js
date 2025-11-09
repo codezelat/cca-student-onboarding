@@ -8,7 +8,9 @@ class FileUploadHandler {
         this.uploadedFiles = new Map(); // Track uploaded files by field name
         this.uploadQueue = [];
         this.isUploading = false;
-        this.csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        this.csrfToken = document.querySelector(
+            'meta[name="csrf-token"]'
+        )?.content;
     }
 
     /**
@@ -22,16 +24,18 @@ class FileUploadHandler {
     async uploadFile(file, fieldName, directory, onProgress = null) {
         return new Promise((resolve, reject) => {
             const formData = new FormData();
-            formData.append('file', file);
-            formData.append('field_name', fieldName);
-            formData.append('directory', directory);
+            formData.append("file", file);
+            formData.append("field_name", fieldName);
+            formData.append("directory", directory);
 
             const xhr = new XMLHttpRequest();
 
             // Track upload progress
-            xhr.upload.addEventListener('progress', (e) => {
+            xhr.upload.addEventListener("progress", (e) => {
                 if (e.lengthComputable) {
-                    const percentComplete = Math.round((e.loaded / e.total) * 100);
+                    const percentComplete = Math.round(
+                        (e.loaded / e.total) * 100
+                    );
                     if (onProgress) {
                         onProgress(percentComplete, e.loaded, e.total);
                     }
@@ -39,43 +43,55 @@ class FileUploadHandler {
             });
 
             // Handle completion
-            xhr.addEventListener('load', () => {
+            xhr.addEventListener("load", () => {
                 if (xhr.status >= 200 && xhr.status < 300) {
                     try {
                         const response = JSON.parse(xhr.responseText);
                         if (response.success) {
                             // Store uploaded file data
-                            this.uploadedFiles.set(fieldName, response.data.file);
+                            this.uploadedFiles.set(
+                                fieldName,
+                                response.data.file
+                            );
                             resolve(response.data.file);
                         } else {
-                            reject(new Error(response.message || 'Upload failed'));
+                            reject(
+                                new Error(response.message || "Upload failed")
+                            );
                         }
                     } catch (error) {
-                        reject(new Error('Failed to parse server response'));
+                        reject(new Error("Failed to parse server response"));
                     }
                 } else {
                     try {
                         const response = JSON.parse(xhr.responseText);
-                        reject(new Error(response.message || `Upload failed with status ${xhr.status}`));
+                        reject(
+                            new Error(
+                                response.message ||
+                                    `Upload failed with status ${xhr.status}`
+                            )
+                        );
                     } catch (error) {
-                        reject(new Error(`Upload failed with status ${xhr.status}`));
+                        reject(
+                            new Error(`Upload failed with status ${xhr.status}`)
+                        );
                     }
                 }
             });
 
             // Handle errors
-            xhr.addEventListener('error', () => {
-                reject(new Error('Network error during upload'));
+            xhr.addEventListener("error", () => {
+                reject(new Error("Network error during upload"));
             });
 
-            xhr.addEventListener('abort', () => {
-                reject(new Error('Upload cancelled'));
+            xhr.addEventListener("abort", () => {
+                reject(new Error("Upload cancelled"));
             });
 
             // Send request
-            xhr.open('POST', '/api/upload-file');
-            xhr.setRequestHeader('X-CSRF-TOKEN', this.csrfToken);
-            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.open("POST", "/api/upload-file");
+            xhr.setRequestHeader("X-CSRF-TOKEN", this.csrfToken);
+            xhr.setRequestHeader("Accept", "application/json");
             xhr.send(formData);
         });
     }
@@ -86,18 +102,18 @@ class FileUploadHandler {
      * @returns {Promise}
      */
     async deleteFile(filePath) {
-        const response = await fetch('/api/delete-file', {
-            method: 'POST',
+        const response = await fetch("/api/delete-file", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': this.csrfToken,
-                'Accept': 'application/json',
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": this.csrfToken,
+                Accept: "application/json",
             },
             body: JSON.stringify({ path: filePath }),
         });
 
         if (!response.ok) {
-            throw new Error('Failed to delete file');
+            throw new Error("Failed to delete file");
         }
 
         return await response.json();
@@ -125,11 +141,13 @@ class FileUploadHandler {
      * @returns {string}
      */
     formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
+        if (bytes === 0) return "0 Bytes";
         const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const sizes = ["Bytes", "KB", "MB", "GB"];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        return (
+            Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i]
+        );
     }
 
     /**
@@ -143,28 +161,40 @@ class FileUploadHandler {
         const maxSize = rules.maxSize || 10 * 1024 * 1024; // 10MB default
 
         if (file.size > maxSize) {
-            errors.push(`File size (${this.formatFileSize(file.size)}) exceeds maximum allowed size (${this.formatFileSize(maxSize)})`);
+            errors.push(
+                `File size (${this.formatFileSize(
+                    file.size
+                )}) exceeds maximum allowed size (${this.formatFileSize(
+                    maxSize
+                )})`
+            );
         }
 
         if (rules.allowedTypes && rules.allowedTypes.length > 0) {
             const fileType = file.type.toLowerCase();
-            const isAllowed = rules.allowedTypes.some(type => {
-                if (type.includes('*')) {
+            const isAllowed = rules.allowedTypes.some((type) => {
+                if (type.includes("*")) {
                     // Handle wildcard types like 'image/*'
-                    const prefix = type.split('/')[0];
-                    return fileType.startsWith(prefix + '/');
+                    const prefix = type.split("/")[0];
+                    return fileType.startsWith(prefix + "/");
                 }
                 return fileType === type;
             });
 
             if (!isAllowed) {
-                errors.push(`File type "${file.type}" is not allowed. Allowed types: ${rules.allowedTypes.join(', ')}`);
+                errors.push(
+                    `File type "${
+                        file.type
+                    }" is not allowed. Allowed types: ${rules.allowedTypes.join(
+                        ", "
+                    )}`
+                );
             }
         }
 
         return {
             valid: errors.length === 0,
-            errors: errors
+            errors: errors,
         };
     }
 }
