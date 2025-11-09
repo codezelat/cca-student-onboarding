@@ -57,7 +57,7 @@
                   action="{{ route('cca.register.store') }}" 
                   enctype="multipart/form-data"
                   x-data="registrationForm()"
-                  @submit="handleSubmit"
+                  id="registrationForm"
                   class="space-y-8">
                 @csrf
 
@@ -769,8 +769,7 @@
                                                name="academic_qualification_documents[]" 
                                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.heic,.webp"
                                                @change="handleFileSelect($event, 'academic_1')"
-                                               class="hidden"
-                                               required>
+                                               class="hidden">
                                         <div class="text-center" x-show="!formData.academic_1">
                                             <svg class="w-12 h-12 mx-auto text-primary-400 group-hover/upload:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
@@ -988,8 +987,7 @@
                                        name="passport_photo" 
                                        accept=".jpg,.jpeg,.png,.heic,.webp"
                                        @change="handleFileSelect($event, 'photo')"
-                                       class="hidden"
-                                       required>
+                                       class="hidden">
                                 <div class="text-center" x-show="!formData.photo">
                                     <svg class="w-12 h-12 mx-auto text-primary-400 group-hover/upload:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -1036,8 +1034,7 @@
                                        name="payment_slip" 
                                        accept=".pdf,.jpg,.jpeg,.png,.heic,.webp"
                                        @change="handleFileSelect($event, 'payment')"
-                                       class="hidden"
-                                       required>
+                                       class="hidden">
                                 <div class="text-center" x-show="!formData.payment">
                                     <svg class="w-12 h-12 mx-auto text-primary-400 group-hover/upload:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
@@ -1119,6 +1116,7 @@
 
                         <!-- Submit Button -->
                         <button type="submit" 
+                                id="submitBtn"
                                 class="w-full px-8 py-5 rounded-2xl bg-gradient-to-r from-primary-500 to-secondary-500 
                                        text-white font-bold text-lg hover:from-primary-600 hover:to-secondary-600 
                                        transition-all duration-300 shadow-2xl hover:shadow-primary-500/50 hover:scale-[1.02]
@@ -1131,6 +1129,17 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                             </svg>
                         </button>
+
+                        <!-- Debug: Backup submit button for testing -->
+                        <!-- <button type="button" 
+                                id="backupSubmitBtn"
+                                onclick="document.getElementById('registrationForm').submit();"
+                                class="w-full mt-4 px-8 py-3 rounded-xl bg-gray-500 hover:bg-gray-600 
+                                       text-white font-semibold transition-all duration-300
+                                       flex items-center justify-center gap-2"
+                                style="display: none;">
+                            🔧 Debug: Force Submit (if main button doesn't work)
+                        </button> -->
 
                         <!-- Important Notes -->
                         <div class="mt-4 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
@@ -1151,6 +1160,128 @@
     </div>
 
     <script>
+        // Debug: Check if form submission is working
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, setting up form debugging...');
+            
+            try {
+                const form = document.querySelector('form');
+                const submitBtn = document.getElementById('submitBtn');
+                
+                if (form) {
+                    console.log('Form found:', form);
+                    console.log('Form action:', form.action);
+                    console.log('Form method:', form.method);
+                    console.log('Form enctype:', form.enctype);
+                    
+                    // Check for required fields
+                    const requiredFields = form.querySelectorAll('[required]');
+                    console.log('Required fields found:', requiredFields.length);
+                    
+                    form.addEventListener('submit', function(e) {
+                        console.log('Form submit event triggered');
+                        
+                        // Check if this is a test submission
+                        if (e.submitter && e.submitter.id === 'submitBtn') {
+                            console.log('Submit button triggered the form submission');
+                        }
+                        
+                        // Basic validation check - but don't prevent submission, let browser handle it
+                        let hasErrors = false;
+                        const requiredFieldsArray = Array.from(requiredFields);
+                        
+                        // Custom validation for required file uploads
+                        const academicDoc1 = form.querySelector('#academic_doc_1');
+                        const passportPhoto = form.querySelector('#passport_photo');
+                        const paymentSlip = form.querySelector('#payment_slip');
+                        
+                        if (academicDoc1 && (!academicDoc1.files || academicDoc1.files.length === 0)) {
+                            console.log('Academic qualification document is required');
+                            hasErrors = true;
+                            alert('Please upload your academic qualification document before submitting.');
+                            // Scroll to the academic documents section
+                            academicDoc1.closest('.group').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            e.preventDefault();
+                            return false;
+                        }
+                        
+                        if (passportPhoto && (!passportPhoto.files || passportPhoto.files.length === 0)) {
+                            console.log('Passport photo is required');
+                            hasErrors = true;
+                            alert('Please upload your passport-size photo before submitting.');
+                            // Scroll to the photo section
+                            passportPhoto.closest('.group').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            e.preventDefault();
+                            return false;
+                        }
+                        
+                        if (paymentSlip && (!paymentSlip.files || paymentSlip.files.length === 0)) {
+                            console.log('Payment slip is required');
+                            hasErrors = true;
+                            alert('Please upload your payment confirmation slip before submitting.');
+                            // Scroll to the payment section
+                            paymentSlip.closest('.group').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            e.preventDefault();
+                            return false;
+                        }
+
+                        requiredFieldsArray.forEach(field => {
+                            if (field.type === 'file') {
+                                // Skip file validation here as we handle it above
+                                return;
+                            } else if (field.type === 'checkbox') {
+                                // For checkboxes, check if checked
+                                if (field.hasAttribute('required') && !field.checked) {
+                                    console.log('Unchecked required checkbox:', field.name || field.id);
+                                    hasErrors = true;
+                                }
+                            } else {
+                                // For other inputs, check if empty
+                                if (field.hasAttribute('required') && (!field.value || field.value.trim() === '')) {
+                                    console.log('Empty required field:', field.name || field.id);
+                                    hasErrors = true;
+                                }
+                            }
+                        });
+                        
+                        if (hasErrors) {
+                            console.log('Form has validation errors, preventing submission');
+                            e.preventDefault();
+                            return false;
+                        } else {
+                            console.log('Form validation passed, submitting...');
+                        }
+                    });
+                    
+                    if (submitBtn) {
+                        submitBtn.addEventListener('click', function(e) {
+                            console.log('Submit button clicked');
+                            
+                            // Add a small delay to ensure all Alpine.js updates are processed
+                            setTimeout(() => {
+                                console.log('Attempting to submit form after Alpine.js processing');
+                                // Don't prevent default - let the normal form submission happen
+                            }, 100);
+                        });
+                    }
+                } else {
+                    console.error('Form not found!');
+                }
+                
+                // Show backup submit button after 5 seconds for debugging
+                setTimeout(() => {
+                    const backupBtn = document.getElementById('backupSubmitBtn');
+                    if (backupBtn) {
+                        backupBtn.style.display = 'flex';
+                        console.log('Backup submit button is now visible for debugging');
+                    }
+                }, 5000);
+                
+            } catch (error) {
+                console.error('Error setting up form debugging:', error);
+            }
+        });
+
         function registrationForm() {
             return {
                 formData: {
@@ -1203,18 +1334,24 @@
                 },
 
                 handleFileSelect(event, fieldName) {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const maxSize = 10 * 1024 * 1024; // 10MB
-                        if (file.size > maxSize) {
-                            alert(`File "${file.name}" is too large!\n\nMaximum file size is 10MB.\nYour file is ${(file.size / (1024 * 1024)).toFixed(2)}MB.\n\nPlease compress or choose a smaller file.`);
-                            event.target.value = '';
-                            this.formData[fieldName] = '';
-                            return false;
+                    try {
+                        const file = event.target.files[0];
+                        if (file) {
+                            const maxSize = 10 * 1024 * 1024; // 10MB
+                            if (file.size > maxSize) {
+                                alert(`File "${file.name}" is too large!\n\nMaximum file size is 10MB.\nYour file is ${(file.size / (1024 * 1024)).toFixed(2)}MB.\n\nPlease compress or choose a smaller file.`);
+                                event.target.value = '';
+                                this.formData[fieldName] = '';
+                                return false;
+                            }
+                            this.formData[fieldName] = file.name;
+                            console.log(`File selected for ${fieldName}:`, file.name);
                         }
-                        this.formData[fieldName] = file.name;
+                        return true;
+                    } catch (error) {
+                        console.error('Error handling file select:', error);
+                        return false;
                     }
-                    return true;
                 },
 
                 validateFileSize(event) {
@@ -1222,17 +1359,24 @@
                 },
 
                 handleSubmit(event) {
+                    console.log('Alpine.js handleSubmit called');
                     // Form will submit normally
                     return true;
                 },
 
                 init() {
+                    console.log('Alpine.js registrationForm initialized');
                     if (this.formData.program_id) {
                         this.validateProgramId();
                     }
                     if (this.formData.province) {
                         this.handleProvinceChange();
                     }
+                    
+                    // Additional debugging
+                    this.$nextTick(() => {
+                        console.log('Alpine.js form data ready:', this.formData);
+                    });
                 }
             }
         }
@@ -1255,12 +1399,6 @@
                    flex items-center justify-center;
         }
 
-        [x-cloak] {
-            display: none !important;
-        }
-    </style>
-</body>
-</html>    <style>
         .file-input {
             @apply w-full px-4 py-3 bg-white/50 border border-white/60 rounded-xl 
                    focus:ring-2 focus:ring-primary-500 focus:border-transparent 
@@ -1272,6 +1410,13 @@
 
         [x-cloak] {
             display: none !important;
+        }
+
+        /* Ensure buttons are clickable */
+        button[type="submit"] {
+            position: relative;
+            z-index: 10;
+            pointer-events: auto;
         }
     </style>
 </body>
