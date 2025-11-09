@@ -6,10 +6,10 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 group">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                             <span class="text-white font-bold text-xl">L</span>
                         </div>
-                        <span class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+                        <span class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
                             {{ config('app.name', 'Laravel') }}
                         </span>
                     </a>
@@ -30,7 +30,7 @@
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-5 py-2.5 rounded-xl bg-white/40 backdrop-blur-md border border-white/60 text-gray-700 font-medium hover:bg-white/60 transition-all duration-300 shadow-lg hover:shadow-xl">
                             <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+                                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
                                     <span class="text-white font-semibold text-sm">{{ substr(Auth::user()->name, 0, 1) }}</span>
                                 </div>
                                 <span>{{ Auth::user()->name }}</span>

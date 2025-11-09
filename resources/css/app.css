@@ -27,7 +27,7 @@
 
     /* Gradient text utilities */
     .gradient-text {
-        @apply bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent;
+        @apply bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent;
     }
 
     /* Smooth scroll */
@@ -46,8 +46,8 @@
 
     /* Gradient button */
     .btn-gradient {
-        @apply px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary-500 to-accent-500 
-               text-white font-semibold hover:from-primary-600 hover:to-accent-600 
+        @apply px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 
+               text-white font-semibold hover:from-primary-600 hover:to-secondary-600 
                transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105;
     }
 

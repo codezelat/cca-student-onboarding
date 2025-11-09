@@ -66,7 +66,7 @@
 
         <!-- Submit Button -->
         <div class="space-y-4">
-            <x-primary-button class="w-full justify-center px-6 py-3.5 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 rounded-xl font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <x-primary-button class="w-full justify-center px-6 py-3.5 bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 rounded-xl font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                 {{ __('Sign in') }}
             </x-primary-button>
 

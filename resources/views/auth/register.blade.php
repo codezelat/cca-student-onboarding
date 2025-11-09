@@ -1,7 +1,7 @@
 <x-guest-layout>
     <!-- Page Title -->
     <div class="mb-6 text-center">
-        <h2 class="text-3xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent mb-2">
+        <h2 class="text-3xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent mb-2">
             Create Account
         </h2>
         <p class="text-gray-600">Join us and start building amazing things</p>
@@ -79,13 +79,13 @@
 
         <!-- Submit Button -->
         <div class="space-y-4 pt-2">
-            <x-primary-button class="w-full justify-center px-6 py-3.5 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 rounded-xl font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <x-primary-button class="w-full justify-center px-6 py-3.5 bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 rounded-xl font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                 {{ __('Create Account') }}
             </x-primary-button>
 
             <p class="text-center text-sm text-gray-600">
                 Already have an account?
-                <a href="{{ route('login') }}" class="font-semibold text-primary-600 hover:text-accent-600 transition-colors">
+                <a href="{{ route('login') }}" class="font-semibold text-primary-600 hover:text-secondary-600 transition-colors">
                     Sign in instead
                 </a>
             </p>

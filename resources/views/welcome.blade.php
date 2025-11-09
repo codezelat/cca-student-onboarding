@@ -25,10 +25,10 @@
                 <nav class="relative z-10 p-6 lg:p-8">
                     <div class="max-w-7xl mx-auto flex items-center justify-between">
                         <div class="flex items-center space-x-2">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-lg">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center shadow-lg">
                                 <span class="text-white font-bold text-xl">L</span>
                             </div>
-                            <span class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+                            <span class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
                                 {{ config('app.name', 'Laravel') }}
                             </span>
                         </div>
@@ -50,8 +50,8 @@
 
                                 @if (Route::has('register'))
                                     <a href="{{ route('register') }}" 
-                                       class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary-500 to-accent-500 
-                                              text-white font-medium hover:from-primary-600 hover:to-accent-600 
+                                       class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 
+                                              text-white font-medium hover:from-primary-600 hover:to-secondary-600 
                                               transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105">
                                         Get Started
                                     </a>
@@ -87,8 +87,8 @@
                             <div class="flex flex-wrap gap-4">
                                 @if (Route::has('register'))
                                     <a href="{{ route('register') }}" 
-                                       class="px-8 py-4 rounded-2xl bg-gradient-to-r from-primary-500 to-accent-500 
-                                              text-white font-semibold hover:from-primary-600 hover:to-accent-600 
+                                       class="px-8 py-4 rounded-2xl bg-gradient-to-r from-primary-500 to-secondary-500 
+                                              text-white font-semibold hover:from-primary-600 hover:to-secondary-600 
                                               transition-all duration-300 shadow-2xl hover:shadow-primary-500/50 
                                               hover:scale-105 inline-flex items-center gap-2">
                                         Get Started Free
@@ -132,10 +132,10 @@
                                 <div class="group relative p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/60 
                                             shadow-2xl hover:shadow-primary-500/20 transition-all duration-500 hover:scale-105 
                                             hover:bg-white/40">
-                                    <div class="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary-500/10 to-accent-500/10 
+                                    <div class="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary-500/10 to-secondary-500/10 
                                                 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                                     <div class="relative">
-                                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 
+                                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 
                                                     flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 
                                                     transition-transform duration-300">
                                             <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,10 +170,10 @@
                                 <div class="group relative p-8 rounded-3xl bg-white/30 backdrop-blur-lg border border-white/60 
                                             shadow-2xl hover:shadow-primary-500/20 transition-all duration-500 hover:scale-105 
                                             hover:bg-white/40">
-                                    <div class="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary-500/10 to-accent-500/10 
+                                    <div class="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary-500/10 to-secondary-500/10 
                                                 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                                     <div class="relative">
-                                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 
+                                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 
                                                     flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 
                                                     transition-transform duration-300">
                                             <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,7 +213,7 @@
                         ] as $feature)
                             <div class="group p-6 rounded-2xl bg-white/30 backdrop-blur-lg border border-white/60 
                                         hover:bg-white/40 transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 
                                             flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $feature['icon'] }}"/>
@@ -241,8 +241,8 @@
                         </p>
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}" 
-                               class="inline-flex items-center gap-2 px-10 py-5 rounded-2xl bg-gradient-to-r from-primary-500 to-accent-500 
-                                      text-white text-lg font-semibold hover:from-primary-600 hover:to-accent-600 
+                               class="inline-flex items-center gap-2 px-10 py-5 rounded-2xl bg-gradient-to-r from-primary-500 to-secondary-500 
+                                      text-white text-lg font-semibold hover:from-primary-600 hover:to-secondary-600 
                                       transition-all duration-300 shadow-2xl hover:shadow-primary-500/50 hover:scale-105">
                                 Start Building Now
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
