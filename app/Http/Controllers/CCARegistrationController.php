@@ -33,19 +33,32 @@ class CCARegistrationController extends Controller
         
         if (!isset($programs[$programId])) {
             throw ValidationException::withMessages([
-                'program_id' => 'Invalid program ID. Please contact our support team for a valid program ID.',
+                'program_id' => 'This Program ID is not recognized. Please contact our support team to verify your Program ID.',
             ]);
         }
 
-        // Check for duplicate registration (same NIC + Program ID)
+        // Custom validation: require either NIC or Passport
+        if (empty($request->nic_number) && empty($request->passport_number)) {
+            throw ValidationException::withMessages([
+                'nic_number' => 'Please provide either your National ID/NIC or Passport number for identification.',
+            ]);
+        }
+
+        // Check for duplicate registration using available ID
+        $identificationField = !empty($request->nic_number) ? 'nic_number' : 'passport_number';
+        $identificationValue = !empty($request->nic_number) ? $request->nic_number : $request->passport_number;
+        
         $existingRegistration = CCARegistration::where('program_id', $programId)
-            ->where('nic_number', $request->nic_number)
+            ->where(function($query) use ($identificationValue) {
+                $query->where('nic_number', $identificationValue)
+                      ->orWhere('passport_number', $identificationValue);
+            })
             ->first();
 
         if ($existingRegistration) {
             $programName = $programs[$programId]['name'];
             throw ValidationException::withMessages([
-                'nic_number' => "A student with this NIC has already registered for {$programName}.",
+                $identificationField => "You have already registered for {$programName}. If you believe this is an error, please contact our support team.",
             ]);
         }
 
@@ -63,10 +76,15 @@ class CCARegistrationController extends Controller
 
             // Handle file uploads
             $academicDocs = $this->uploadMultipleFiles($request, 'academic_qualification_documents', 'registrations/academic');
-            $nicDocs = $this->uploadMultipleFiles($request, 'nic_documents', 'registrations/nic');
+            
+            // NIC/ID documents (optional for international students without NIC)
+            $nicDocs = $request->hasFile('nic_documents') 
+                ? $this->uploadMultipleFiles($request, 'nic_documents', 'registrations/identification')
+                : [];
+                
             $passportDocs = $request->hasFile('passport_documents') 
                 ? $this->uploadMultipleFiles($request, 'passport_documents', 'registrations/passport')
-                : null;
+                : [];
             
             $passportPhoto = $request->file('passport_photo')->store('registrations/photos', 'public');
             $paymentSlip = $request->file('payment_slip')->store('registrations/payments', 'public');
@@ -81,7 +99,7 @@ class CCARegistrationController extends Controller
                 'name_with_initials' => $validated['name_with_initials'],
                 'gender' => $validated['gender'],
                 'date_of_birth' => $validated['date_of_birth'],
-                'nic_number' => $validated['nic_number'],
+                'nic_number' => $validated['nic_number'] ?? null,
                 'passport_number' => $validated['passport_number'] ?? null,
                 'nationality' => $validated['nationality'],
                 'country_of_birth' => $validated['country_of_birth'],
@@ -102,8 +120,8 @@ class CCARegistrationController extends Controller
                 'qualification_completed_date' => $validated['qualification_completed_date'] ?? null,
                 'qualification_expected_completion_date' => $validated['qualification_expected_completion_date'] ?? null,
                 'academic_qualification_documents' => $academicDocs,
-                'nic_documents' => $nicDocs,
-                'passport_documents' => $passportDocs,
+                'nic_documents' => !empty($nicDocs) ? $nicDocs : null,
+                'passport_documents' => !empty($passportDocs) ? $passportDocs : null,
                 'passport_photo' => $passportPhoto,
                 'payment_slip' => $paymentSlip,
                 'terms_accepted' => true,

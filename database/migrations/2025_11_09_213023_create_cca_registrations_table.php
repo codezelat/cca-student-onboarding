@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('name_with_initials');
             $table->enum('gender', ['male', 'female']);
             $table->date('date_of_birth');
-            $table->string('nic_number')->unique();
+            $table->string('nic_number')->nullable(); // Optional for international students
             $table->string('passport_number')->nullable();
             $table->string('nationality');
             $table->string('country_of_birth');
@@ -52,7 +52,7 @@ return new class extends Migration
             
             // Document Paths (JSON for multiple files)
             $table->json('academic_qualification_documents'); // up to 2 files
-            $table->json('nic_documents'); // up to 2 files
+            $table->json('nic_documents')->nullable(); // up to 2 files (optional for international students)
             $table->json('passport_documents')->nullable(); // up to 2 files
             $table->string('passport_photo'); // single file
             $table->string('payment_slip'); // single file
@@ -62,8 +62,9 @@ return new class extends Migration
             
             $table->timestamps();
             
-            // Unique constraint: one registration per program per NIC
-            $table->unique(['program_id', 'nic_number'], 'unique_program_nic');
+            // Indexes for duplicate checking
+            $table->index(['program_id', 'nic_number']);
+            $table->index(['program_id', 'passport_number']);
         });
     }
 

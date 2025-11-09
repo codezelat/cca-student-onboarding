@@ -84,17 +84,26 @@
                                    x-model="formData.program_id"
                                    @input="validateProgramId"
                                    value="{{ old('program_id') }}"
-                                   placeholder="e.g., PM25, DM25"
+                                   placeholder="e.g., PM25, DM25, AI25"
                                    class="input-glass uppercase" 
                                    required>
-                            <p class="mt-2 text-sm text-gray-600">
-                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <p class="mt-2 text-xs text-gray-600 flex items-start gap-2">
+                                <svg class="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                Don't have a Program ID? Contact our support team. One registration per program allowed.
+                                <span>
+                                    Enter the Program ID provided by our team. <strong>Don't have one?</strong> Contact our support team to get yours.
+                                </span>
                             </p>
                             @error('program_id')
-                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                <div class="mt-3 p-4 rounded-xl bg-red-50 border-l-4 border-red-500">
+                                    <div class="flex items-start gap-3">
+                                        <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <p class="text-sm text-red-700 font-medium">{{ $message }}</p>
+                                    </div>
+                                </div>
                             @enderror
                             
                             <!-- Program Info Display -->
@@ -204,24 +213,31 @@
                         <!-- NIC Number -->
                         <div>
                             <label for="nic_number" class="block text-sm font-semibold text-gray-700 mb-2">
-                                NIC Number <span class="text-red-500">*</span>
+                                National ID / NIC Number <span class="text-gray-500 text-xs">(Sri Lankan students)</span>
                             </label>
                             <input type="text" 
                                    id="nic_number" 
                                    name="nic_number" 
                                    value="{{ old('nic_number') }}"
                                    placeholder="200012345678 or 991234567V"
-                                   class="input-glass" 
-                                   required>
+                                   class="input-glass">
+                            <p class="mt-1 text-xs text-gray-600">International students can use Passport number instead</p>
                             @error('nic_number')
-                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                <div class="mt-3 p-4 rounded-xl bg-red-50 border-l-4 border-red-500">
+                                    <div class="flex items-start gap-3">
+                                        <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <p class="text-sm text-red-700 font-medium">{{ $message }}</p>
+                                    </div>
+                                </div>
                             @enderror
                         </div>
 
                         <!-- Passport Number -->
                         <div>
                             <label for="passport_number" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Passport Number <span class="text-gray-400 text-xs">(if available)</span>
+                                Passport Number <span class="text-gray-500 text-xs">(Required for international students)</span>
                             </label>
                             <input type="text" 
                                    id="passport_number" 
@@ -229,6 +245,7 @@
                                    value="{{ old('passport_number') }}"
                                    placeholder="N1234567"
                                    class="input-glass">
+                            <p class="mt-1 text-xs text-gray-600">Provide either NIC or Passport number for identification</p>
                             @error('passport_number')
                                 <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                             @enderror
@@ -558,11 +575,32 @@
                             @enderror
                         </div>
 
+                        <!-- Work Experience Company Name (if work_experience selected) -->
+                        <div x-show="formData.highest_qualification === 'work_experience'" 
+                             x-transition
+                             x-cloak>
+                            <label for="qualification_other_details" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Company/Organization Name <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" 
+                                   id="qualification_other_details" 
+                                   name="qualification_other_details" 
+                                   value="{{ old('qualification_other_details') }}"
+                                   placeholder="Enter your current or most recent employer"
+                                   class="input-glass"
+                                   :required="formData.highest_qualification === 'work_experience'">
+                            @error('qualification_other_details')
+                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Qualification Status -->
                             <div>
                                 <label for="qualification_status" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Qualification Status <span class="text-red-500">*</span>
+                                    <span x-show="formData.highest_qualification === 'work_experience'">Employment Status</span>
+                                    <span x-show="formData.highest_qualification !== 'work_experience'">Qualification Status</span>
+                                    <span class="text-red-500">*</span>
                                 </label>
                                 <select id="qualification_status" 
                                         name="qualification_status" 
@@ -570,8 +608,18 @@
                                         class="input-glass" 
                                         required>
                                     <option value="">Select Status</option>
-                                    <option value="completed" {{ old('qualification_status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                                    <option value="ongoing" {{ old('qualification_status') == 'ongoing' ? 'selected' : '' }}>Currently Pursuing</option>
+                                    <template x-if="formData.highest_qualification === 'work_experience'">
+                                        <optgroup label="Employment Status">
+                                            <option value="completed" {{ old('qualification_status') == 'completed' ? 'selected' : '' }}>Left/Completed</option>
+                                            <option value="ongoing" {{ old('qualification_status') == 'ongoing' ? 'selected' : '' }}>Currently Working</option>
+                                        </optgroup>
+                                    </template>
+                                    <template x-if="formData.highest_qualification !== 'work_experience'">
+                                        <optgroup label="Study Status">
+                                            <option value="completed" {{ old('qualification_status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                                            <option value="ongoing" {{ old('qualification_status') == 'ongoing' ? 'selected' : '' }}>Currently Pursuing</option>
+                                        </optgroup>
+                                    </template>
                                 </select>
                                 @error('qualification_status')
                                     <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
@@ -583,7 +631,9 @@
                                  x-transition
                                  x-cloak>
                                 <label for="qualification_completed_date" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Date of Completion <span class="text-red-500">*</span>
+                                    <span x-show="formData.highest_qualification === 'work_experience'">Employment End Date</span>
+                                    <span x-show="formData.highest_qualification !== 'work_experience'">Date of Completion</span>
+                                    <span class="text-red-500">*</span>
                                 </label>
                                 <input type="date" 
                                        id="qualification_completed_date" 
@@ -602,15 +652,21 @@
                                  x-transition
                                  x-cloak>
                                 <label for="qualification_expected_completion_date" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Expected Completion Date <span class="text-red-500">*</span>
+                                    <span x-show="formData.highest_qualification === 'work_experience'">Employment Start Date</span>
+                                    <span x-show="formData.highest_qualification !== 'work_experience'">Expected Completion Date</span>
+                                    <span class="text-red-500">*</span>
                                 </label>
                                 <input type="date" 
                                        id="qualification_expected_completion_date" 
                                        name="qualification_expected_completion_date" 
                                        value="{{ old('qualification_expected_completion_date') }}"
-                                       min="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                                       :max="formData.highest_qualification === 'work_experience' ? '{{ date('Y-m-d') }}' : null"
+                                       :min="formData.highest_qualification !== 'work_experience' ? '{{ date('Y-m-d', strtotime('+1 day')) }}' : null"
                                        class="input-glass"
                                        :required="formData.qualification_status === 'ongoing'">
+                                <p class="mt-1 text-xs text-gray-600" x-show="formData.highest_qualification === 'work_experience'">
+                                    When did you start working at this company?
+                                </p>
                                 @error('qualification_expected_completion_date')
                                     <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                                 @enderror
@@ -633,123 +689,320 @@
                         </div>
                     </div>
 
-                    <div class="space-y-6">
+                    <div class="space-y-8">
                         <!-- Academic/Work Qualification Proof -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-3">
-                                Academic or Work Qualification Proof <span class="text-red-500">*</span>
-                                <span class="text-gray-500 font-normal">(Upload up to 2 documents)</span>
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-800 mb-4">
+                                <span class="flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    Academic or Work Qualification Proof <span class="text-red-500">*</span>
+                                </span>
+                                <span class="text-xs font-normal text-gray-600 mt-1 block">Upload your degree, diploma, or experience letter (up to 2 files)</span>
                             </label>
-                            <div class="space-y-3">
-                                <div>
-                                    <input type="file" 
-                                           name="academic_qualification_documents[]" 
-                                           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                                           @change="validateFileSize($event)"
-                                           class="file-input"
-                                           required>
+                            <div class="space-y-4">
+                                <div class="relative">
+                                    <div class="upload-area group/upload" onclick="document.getElementById('academic_doc_1').click()">
+                                        <input type="file" 
+                                               id="academic_doc_1"
+                                               name="academic_qualification_documents[]" 
+                                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.heic,.webp"
+                                               @change="handleFileSelect($event, 'academic_1')"
+                                               class="hidden"
+                                               required>
+                                        <div class="text-center" x-show="!formData.academic_1">
+                                            <svg class="w-12 h-12 mx-auto text-primary-400 group-hover/upload:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                            </svg>
+                                            <p class="mt-3 text-sm font-semibold text-gray-700">Click to upload Document #1</p>
+                                            <p class="mt-1 text-xs text-gray-500">PDF, Word, Images • Photos accepted • Max 10MB</p>
+                                        </div>
+                                        <div x-show="formData.academic_1" class="flex items-center gap-3">
+                                            <svg class="w-8 h-8 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-semibold text-gray-900 truncate" x-text="formData.academic_1"></p>
+                                                <p class="text-xs text-gray-500">Click to change file</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <input type="file" 
-                                           name="academic_qualification_documents[]" 
-                                           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                                           @change="validateFileSize($event)"
-                                           class="file-input">
+                                <div class="relative">
+                                    <div class="upload-area-optional group/upload" onclick="document.getElementById('academic_doc_2').click()">
+                                        <input type="file" 
+                                               id="academic_doc_2"
+                                               name="academic_qualification_documents[]" 
+                                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.heic,.webp"
+                                               @change="handleFileSelect($event, 'academic_2')"
+                                               class="hidden">
+                                        <div class="text-center" x-show="!formData.academic_2">
+                                            <svg class="w-10 h-10 mx-auto text-gray-400 group-hover/upload:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            </svg>
+                                            <p class="mt-2 text-sm font-medium text-gray-600">Add Document #2 (Optional)</p>
+                                            <p class="mt-1 text-xs text-gray-500">PDF, Word, Images • Photos accepted • Max 10MB</p>
+                                        </div>
+                                        <div x-show="formData.academic_2" class="flex items-center gap-3">
+                                            <svg class="w-8 h-8 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-semibold text-gray-900 truncate" x-text="formData.academic_2"></p>
+                                                <p class="text-xs text-gray-500">Click to change file</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <p class="mt-2 text-xs text-gray-600">Accepted: PDF, DOC, DOCX, JPG, PNG (max 10MB each)</p>
                             @error('academic_qualification_documents.*')
-                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                <div class="mt-3 p-3 rounded-lg bg-red-50 border border-red-200">
+                                    <p class="text-xs text-red-700 font-medium flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                </div>
                             @enderror
                         </div>
 
                         <!-- NIC Documents -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-3">
-                                NIC Copy <span class="text-red-500">*</span>
-                                <span class="text-gray-500 font-normal">(Front and back - up to 2 files)</span>
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-800 mb-4">
+                                <span class="flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                    </svg>
+                                    National ID Copy <span class="text-gray-500 text-xs font-normal">(For Sri Lankan students)</span>
+                                </span>
+                                <span class="text-xs font-normal text-gray-600 mt-1 block">Upload both sides of your NIC • International students can skip this</span>
                             </label>
-                            <div class="space-y-3">
-                                <div>
-                                    <input type="file" 
-                                           name="nic_documents[]" 
-                                           accept=".pdf,.jpg,.jpeg,.png"
-                                           @change="validateFileSize($event)"
-                                           class="file-input"
-                                           required>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <div class="upload-area-optional group/upload" onclick="document.getElementById('nic_doc_1').click()">
+                                        <input type="file" 
+                                               id="nic_doc_1"
+                                               name="nic_documents[]" 
+                                               accept=".pdf,.jpg,.jpeg,.png,.heic,.webp"
+                                               @change="handleFileSelect($event, 'nic_1')"
+                                               class="hidden">
+                                        <div class="text-center" x-show="!formData.nic_1">
+                                            <svg class="w-10 h-10 mx-auto text-gray-400 group-hover/upload:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            <p class="mt-2 text-xs font-semibold text-gray-700">NIC Front</p>
+                                            <p class="mt-1 text-xs text-gray-500">Photo or scan</p>
+                                        </div>
+                                        <div x-show="formData.nic_1" class="text-center">
+                                            <svg class="w-8 h-8 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <p class="text-xs font-semibold text-gray-900 mt-2 truncate px-2" x-text="formData.nic_1"></p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <input type="file" 
-                                           name="nic_documents[]" 
-                                           accept=".pdf,.jpg,.jpeg,.png"
-                                           @change="validateFileSize($event)"
-                                           class="file-input">
+                                <div class="relative">
+                                    <div class="upload-area-optional group/upload" onclick="document.getElementById('nic_doc_2').click()">
+                                        <input type="file" 
+                                               id="nic_doc_2"
+                                               name="nic_documents[]" 
+                                               accept=".pdf,.jpg,.jpeg,.png,.heic,.webp"
+                                               @change="handleFileSelect($event, 'nic_2')"
+                                               class="hidden">
+                                        <div class="text-center" x-show="!formData.nic_2">
+                                            <svg class="w-10 h-10 mx-auto text-gray-400 group-hover/upload:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            <p class="mt-2 text-xs font-medium text-gray-600">NIC Back</p>
+                                            <p class="mt-1 text-xs text-gray-500">Photo or scan</p>
+                                        </div>
+                                        <div x-show="formData.nic_2" class="text-center">
+                                            <svg class="w-8 h-8 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <p class="text-xs font-semibold text-gray-900 mt-2 truncate px-2" x-text="formData.nic_2"></p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <p class="mt-2 text-xs text-gray-600">Accepted: PDF, JPG, PNG (max 10MB each)</p>
                             @error('nic_documents.*')
-                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                <div class="mt-3 p-3 rounded-lg bg-red-50 border border-red-200">
+                                    <p class="text-xs text-red-700 font-medium flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                </div>
                             @enderror
                         </div>
 
-                        <!-- Passport Documents -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-3">
-                                Passport Copy <span class="text-gray-400 text-xs">(if available, up to 2 files)</span>
+                        <!-- Passport Documents (Optional) -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-800 mb-4">
+                                <span class="flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                    </svg>
+                                    Passport Copy <span class="text-gray-500 text-xs font-normal">(Optional)</span>
+                                </span>
+                                <span class="text-xs font-normal text-gray-600 mt-1 block">If you have a passport, upload both information page & back page</span>
                             </label>
-                            <div class="space-y-3">
-                                <div>
-                                    <input type="file" 
-                                           name="passport_documents[]" 
-                                           accept=".pdf,.jpg,.jpeg,.png"
-                                           @change="validateFileSize($event)"
-                                           class="file-input">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <div class="upload-area-optional group/upload" onclick="document.getElementById('passport_doc_1').click()">
+                                        <input type="file" 
+                                               id="passport_doc_1"
+                                               name="passport_documents[]" 
+                                               accept=".pdf,.jpg,.jpeg,.png,.heic,.webp"
+                                               @change="handleFileSelect($event, 'passport_1')"
+                                               class="hidden">
+                                        <div class="text-center" x-show="!formData.passport_1">
+                                            <svg class="w-10 h-10 mx-auto text-gray-400 group-hover/upload:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            </svg>
+                                            <p class="mt-2 text-xs font-medium text-gray-600">Information Page</p>
+                                            <p class="mt-1 text-xs text-gray-500">Photo or scan</p>
+                                        </div>
+                                        <div x-show="formData.passport_1" class="text-center">
+                                            <svg class="w-8 h-8 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <p class="text-xs font-semibold text-gray-900 mt-2 truncate px-2" x-text="formData.passport_1"></p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <input type="file" 
-                                           name="passport_documents[]" 
-                                           accept=".pdf,.jpg,.jpeg,.png"
-                                           @change="validateFileSize($event)"
-                                           class="file-input">
+                                <div class="relative">
+                                    <div class="upload-area-optional group/upload" onclick="document.getElementById('passport_doc_2').click()">
+                                        <input type="file" 
+                                               id="passport_doc_2"
+                                               name="passport_documents[]" 
+                                               accept=".pdf,.jpg,.jpeg,.png,.heic,.webp"
+                                               @change="handleFileSelect($event, 'passport_2')"
+                                               class="hidden">
+                                        <div class="text-center" x-show="!formData.passport_2">
+                                            <svg class="w-10 h-10 mx-auto text-gray-400 group-hover/upload:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            </svg>
+                                            <p class="mt-2 text-xs font-medium text-gray-600">Back Page</p>
+                                            <p class="mt-1 text-xs text-gray-500">Photo or scan</p>
+                                        </div>
+                                        <div x-show="formData.passport_2" class="text-center">
+                                            <svg class="w-8 h-8 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <p class="text-xs font-semibold text-gray-900 mt-2 truncate px-2" x-text="formData.passport_2"></p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <p class="mt-2 text-xs text-gray-600">Accepted: PDF, JPG, PNG (max 10MB each)</p>
                             @error('passport_documents.*')
-                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                <div class="mt-3 p-3 rounded-lg bg-red-50 border border-red-200">
+                                    <p class="text-xs text-red-700 font-medium flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                </div>
                             @enderror
                         </div>
 
                         <!-- Passport Size Photo -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-3">
-                                Passport Size Photo (2x2 inch) <span class="text-red-500">*</span>
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-800 mb-4">
+                                <span class="flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Passport-Size Photo (2x2 inch) <span class="text-red-500">*</span>
+                                </span>
+                                <span class="text-xs font-normal text-gray-600 mt-1 block">Recent color photo for your student ID card</span>
                             </label>
-                            <input type="file" 
-                                   name="passport_photo" 
-                                   accept=".jpg,.jpeg,.png"
-                                   @change="validateFileSize($event)"
-                                   class="file-input"
-                                   required>
-                            <p class="mt-2 text-xs text-gray-600">Accepted: JPG, PNG (max 10MB)</p>
+                            <div class="upload-area group/upload" onclick="document.getElementById('passport_photo').click()">
+                                <input type="file" 
+                                       id="passport_photo"
+                                       name="passport_photo" 
+                                       accept=".jpg,.jpeg,.png,.heic,.webp"
+                                       @change="handleFileSelect($event, 'photo')"
+                                       class="hidden"
+                                       required>
+                                <div class="text-center" x-show="!formData.photo">
+                                    <svg class="w-12 h-12 mx-auto text-primary-400 group-hover/upload:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <p class="mt-3 text-sm font-semibold text-gray-700">Upload Your Photo</p>
+                                    <p class="mt-1 text-xs text-gray-500">iPhone photos accepted • Max 10MB</p>
+                                </div>
+                                <div x-show="formData.photo" class="flex items-center gap-3">
+                                    <svg class="w-8 h-8 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-semibold text-gray-900 truncate" x-text="formData.photo"></p>
+                                        <p class="text-xs text-gray-500">Click to change photo</p>
+                                    </div>
+                                </div>
+                            </div>
                             @error('passport_photo')
-                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                <div class="mt-3 p-3 rounded-lg bg-red-50 border border-red-200">
+                                    <p class="text-xs text-red-700 font-medium flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                </div>
                             @enderror
                         </div>
 
                         <!-- Payment Slip -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-3">
-                                Payment Slip <span class="text-red-500">*</span>
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-800 mb-4">
+                                <span class="flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z"/>
+                                    </svg>
+                                    Payment Confirmation Slip <span class="text-red-500">*</span>
+                                </span>
+                                <span class="text-xs font-normal text-gray-600 mt-1 block">Upload proof of payment for program registration fee</span>
                             </label>
-                            <input type="file" 
-                                   name="payment_slip" 
-                                   accept=".pdf,.jpg,.jpeg,.png"
-                                   @change="validateFileSize($event)"
-                                   class="file-input"
-                                   required>
-                            <p class="mt-2 text-xs text-gray-600">Accepted: PDF, JPG, PNG (max 10MB)</p>
+                            <div class="upload-area group/upload" onclick="document.getElementById('payment_slip').click()">
+                                <input type="file" 
+                                       id="payment_slip"
+                                       name="payment_slip" 
+                                       accept=".pdf,.jpg,.jpeg,.png,.heic,.webp"
+                                       @change="handleFileSelect($event, 'payment')"
+                                       class="hidden"
+                                       required>
+                                <div class="text-center" x-show="!formData.payment">
+                                    <svg class="w-12 h-12 mx-auto text-primary-400 group-hover/upload:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                    </svg>
+                                    <p class="mt-3 text-sm font-semibold text-gray-700">Upload Payment Slip</p>
+                                    <p class="mt-1 text-xs text-gray-500">Bank slip or screenshot • All formats accepted • Max 10MB</p>
+                                </div>
+                                <div x-show="formData.payment" class="flex items-center gap-3">
+                                    <svg class="w-8 h-8 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-semibold text-gray-900 truncate" x-text="formData.payment"></p>
+                                        <p class="text-xs text-gray-500">Click to change file</p>
+                                    </div>
+                                </div>
+                            </div>
                             @error('payment_slip')
-                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                <div class="mt-3 p-3 rounded-lg bg-red-50 border border-red-200">
+                                    <p class="text-xs text-red-700 font-medium flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                </div>
                             @enderror
                         </div>
                     </div>
@@ -759,45 +1012,80 @@
                 <div class="card-glass">
                     <div class="space-y-6">
                         <!-- Terms Acceptance -->
-                        <div class="flex items-start gap-3">
-                            <input type="checkbox" 
-                                   id="terms_accepted" 
-                                   name="terms_accepted" 
-                                   value="1"
-                                   class="mt-1 w-5 h-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                                   required>
-                            <label for="terms_accepted" class="text-sm text-gray-700">
-                                I hereby declare that all the information provided above is true and accurate to the best of my knowledge. I understand that any false information may result in the rejection of my application or termination of enrollment. I agree to abide by all rules and regulations of the institution.
-                                <span class="text-red-500">*</span>
-                            </label>
+                        <div class="p-5 rounded-xl bg-gradient-to-br from-primary-50 to-secondary-50 border-2 border-primary-200">
+                            <div class="flex items-start gap-4">
+                                <input type="checkbox" 
+                                       id="terms_accepted" 
+                                       name="terms_accepted" 
+                                       value="1"
+                                       class="mt-1.5 w-5 h-5 rounded border-primary-300 text-primary-600 focus:ring-primary-500 focus:ring-2 flex-shrink-0 cursor-pointer"
+                                       required>
+                                <label for="terms_accepted" class="text-sm text-gray-800 cursor-pointer select-none">
+                                    <span class="font-semibold">I confirm that:</span>
+                                    <ul class="mt-2 space-y-1 text-gray-700">
+                                        <li class="flex items-start gap-2">
+                                            <svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            All information provided is true and accurate
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            I understand false information may result in application rejection
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            I agree to abide by all institution rules and regulations
+                                        </li>
+                                    </ul>
+                                </label>
+                            </div>
                         </div>
                         @error('terms_accepted')
-                            <p class="text-sm text-red-600 font-medium">{{ $message }}</p>
+                            <div class="p-4 rounded-xl bg-red-50 border-l-4 border-red-500">
+                                <div class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <p class="text-sm text-red-700 font-medium">{{ $message }}</p>
+                                </div>
+                            </div>
                         @enderror
 
                         <!-- Submit Button -->
-                        <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                            <button type="submit" 
-                                    class="flex-1 px-8 py-4 rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 
-                                           text-white font-semibold text-lg hover:from-primary-600 hover:to-secondary-600 
-                                           transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105
-                                           flex items-center justify-center gap-3">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        <button type="submit" 
+                                class="w-full px-8 py-5 rounded-2xl bg-gradient-to-r from-primary-500 to-secondary-500 
+                                       text-white font-bold text-lg hover:from-primary-600 hover:to-secondary-600 
+                                       transition-all duration-300 shadow-2xl hover:shadow-primary-500/50 hover:scale-[1.02]
+                                       flex items-center justify-center gap-3 group">
+                            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Submit My Registration
+                            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </button>
+
+                        <!-- Important Notes -->
+                        <div class="mt-4 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                Submit Registration
-                            </button>
-                            
-                            <a href="{{ url('/') }}" 
-                               class="px-8 py-4 rounded-xl bg-white/60 backdrop-blur-md border-2 border-white/80
-                                      text-gray-700 font-semibold text-lg hover:bg-white/80 
-                                      transition-all duration-300 shadow-lg hover:shadow-xl
-                                      flex items-center justify-center gap-3">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                                </svg>
-                                Cancel
-                            </a>
+                                <div class="text-sm text-blue-900">
+                                    <p class="font-semibold mb-1">📋 Important Information</p>
+                                    <ul class="space-y-1 text-blue-800">
+                                        <li>• <strong>Multiple Programs:</strong> If you're joining multiple programs, submit one registration form for each program</li>
+                                        <li>• <strong>Need Help?</strong> Contact our support team if you have any questions or issues</li>
+                                        <li>• <strong>Document Tips:</strong> Clear photos taken with your phone are perfectly acceptable for all documents</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -815,7 +1103,15 @@
                     province: '{{ old('province') }}',
                     district: '{{ old('district') }}',
                     highest_qualification: '{{ old('highest_qualification') }}',
-                    qualification_status: '{{ old('qualification_status') }}'
+                    qualification_status: '{{ old('qualification_status') }}',
+                    academic_1: '',
+                    academic_2: '',
+                    nic_1: '',
+                    nic_2: '',
+                    passport_1: '',
+                    passport_2: '',
+                    photo: '',
+                    payment: ''
                 },
                 programInfo: null,
                 availableDistricts: [],
@@ -848,13 +1144,65 @@
                     }
                 },
 
-                validateFileSize(event) {
+                handleFileSelect(event, fieldName) {
                     const file = event.target.files[0];
                     if (file) {
                         const maxSize = 10 * 1024 * 1024; // 10MB
                         if (file.size > maxSize) {
-                            alert('File size must not exceed 10MB. Please choose a smaller file.');
+                            alert(`File "${file.name}" is too large!\n\nMaximum file size is 10MB.\nYour file is ${(file.size / (1024 * 1024)).toFixed(2)}MB.\n\nPlease compress or choose a smaller file.`);
                             event.target.value = '';
+                            this.formData[fieldName] = '';
+                            return false;
+                        }
+                        this.formData[fieldName] = file.name;
+                    }
+                    return true;
+                },
+
+                validateFileSize(event) {
+                    return this.handleFileSelect(event, 'temp');
+                },
+
+                handleSubmit(event) {
+                    // Form will submit normally
+                    return true;
+                },
+
+                init() {
+                    if (this.formData.program_id) {
+                        this.validateProgramId();
+                    }
+                    if (this.formData.province) {
+                        this.handleProvinceChange();
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .upload-area {
+            @apply relative p-6 rounded-2xl bg-gradient-to-br from-white/60 to-white/40 
+                   backdrop-blur-md border-2 border-primary-200 border-dashed
+                   hover:border-primary-400 hover:bg-white/70 hover:shadow-lg
+                   transition-all duration-300 cursor-pointer min-h-[140px]
+                   flex items-center justify-center;
+        }
+
+        .upload-area-optional {
+            @apply relative p-6 rounded-2xl bg-white/40 backdrop-blur-md 
+                   border-2 border-gray-200 border-dashed
+                   hover:border-primary-300 hover:bg-white/60 hover:shadow-md
+                   transition-all duration-300 cursor-pointer min-h-[140px]
+                   flex items-center justify-center;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+</body>
+</html>
                             return false;
                         }
                     }
