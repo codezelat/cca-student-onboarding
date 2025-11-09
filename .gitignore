@@ -41,6 +41,17 @@ Homestead.json
 /.vagrant
 .phpunit.result.cache
 
+#build output
+/public/hot
+/public/storage
+/storage/*.key
+
+### Laravel Patch ###
+# Ignoring IDE helper files
+/_ide_helper.php
+/_ide_helper_models.php
+### End Laravel ###
+
 ### macOS ###
 # General
 .DS_Store

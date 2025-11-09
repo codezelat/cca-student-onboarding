@@ -1,3 +1,66 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    /* Glassmorphism utilities */
+    .glass {
+        @apply bg-white/40 backdrop-blur-lg border border-white/60;
+    }
+
+    .glass-dark {
+        @apply bg-white/30 backdrop-blur-md border border-white/50;
+    }
+
+    .glass-light {
+        @apply bg-white/50 backdrop-blur-xl border border-white/70;
+    }
+
+    /* Animation delay utilities */
+    .animation-delay-2000 {
+        animation-delay: 2s;
+    }
+
+    .animation-delay-4000 {
+        animation-delay: 4s;
+    }
+
+    /* Gradient text utilities */
+    .gradient-text {
+        @apply bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent;
+    }
+
+    /* Smooth scroll */
+    .smooth-scroll {
+        scroll-behavior: smooth;
+    }
+}
+
+@layer components {
+    /* Glassmorphic button base */
+    .btn-glass {
+        @apply px-6 py-2.5 rounded-xl bg-white/40 backdrop-blur-md border border-white/60 
+               font-medium hover:bg-white/60 transition-all duration-300 shadow-lg 
+               hover:shadow-xl hover:scale-105;
+    }
+
+    /* Gradient button */
+    .btn-gradient {
+        @apply px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary-500 to-accent-500 
+               text-white font-semibold hover:from-primary-600 hover:to-accent-600 
+               transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105;
+    }
+
+    /* Glassmorphic card */
+    .card-glass {
+        @apply p-6 rounded-2xl bg-white/40 backdrop-blur-lg border border-white/60 
+               shadow-lg hover:shadow-xl transition-all duration-300;
+    }
+
+    /* Input field glassmorphic */
+    .input-glass {
+        @apply w-full px-4 py-3 bg-white/50 border-white/60 rounded-xl 
+               focus:ring-2 focus:ring-primary-500 focus:border-transparent 
+               transition-all;
+    }
+}
