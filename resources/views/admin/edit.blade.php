@@ -1,17 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Edit Registration - CCA Admin</title>
-    
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&display=swap" rel="stylesheet" />
-    
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="font-sans antialiased">
+@extends('admin.layouts.app')
+
+@section('title', 'Edit Registration | ' . config('app.name', 'CCA'))
+@section('meta_description', 'Edit student registration details within the Codezela Career Accelerator admin portal.')
+@section('og_title', 'Edit Registration | ' . config('app.name', 'CCA'))
+@section('og_description', 'Update applicant information securely inside the Codezela Career Accelerator admin dashboard.')
+@section('twitter_title', 'Edit Registration | ' . config('app.name', 'CCA'))
+@section('twitter_description', 'Update applicant information securely inside the Codezela Career Accelerator admin dashboard.')
+
+@section('body')
     <!-- Animated Background -->
     <div class="fixed inset-0 bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 overflow-hidden -z-10">
         <div class="absolute top-0 -left-4 w-96 h-96 bg-violet-200 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob"></div>
@@ -259,14 +255,4 @@
             </div>
         </main>
     </div>
-
-    <style>
-        .animation-delay-2000 {
-            animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-            animation-delay: 4s;
-        }
-    </style>
-</body>
-</html>
+@endsection

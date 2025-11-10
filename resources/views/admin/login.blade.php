@@ -1,17 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Admin Login - CCA</title>
-    
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&display=swap" rel="stylesheet" />
-    
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="font-sans antialiased">
+@extends('admin.layouts.app')
+
+@section('title', 'Admin Login | ' . config('app.name', 'CCA'))
+@section('meta_description', 'Sign in to the Codezela Career Accelerator admin portal to securely manage registrations and student data.')
+@section('og_title', 'Admin Login | ' . config('app.name', 'CCA'))
+@section('og_description', 'Secure login area for the Codezela Career Accelerator internal team.')
+@section('twitter_title', 'Admin Login | ' . config('app.name', 'CCA'))
+@section('twitter_description', 'Secure login area for the Codezela Career Accelerator internal team.')
+
+@section('body')
     <!-- Animated Background with Liquid Gradient Blobs -->
     <div class="fixed inset-0 bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 overflow-hidden -z-10">
         <!-- Animated Blobs -->
@@ -124,14 +120,4 @@
             </div>
         </div>
     </div>
-
-    <style>
-        .animation-delay-2000 {
-            animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-            animation-delay: 4s;
-        }
-    </style>
-</body>
-</html>
+@endsection

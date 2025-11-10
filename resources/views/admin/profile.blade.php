@@ -1,17 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Admin Profile - CCA</title>
-    
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&display=swap" rel="stylesheet" />
-    
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="font-sans antialiased">
+@extends('admin.layouts.app')
+
+@section('title', 'Admin Profile | ' . config('app.name', 'CCA'))
+@section('meta_description', 'Update your Codezela Career Accelerator admin profile, password, and account preferences.')
+@section('og_title', 'Admin Profile | ' . config('app.name', 'CCA'))
+@section('og_description', 'Manage your Codezela Career Accelerator admin account details in a secure environment.')
+@section('twitter_title', 'Admin Profile | ' . config('app.name', 'CCA'))
+@section('twitter_description', 'Manage your Codezela Career Accelerator admin account details in a secure environment.')
+
+@section('body')
     <!-- Animated Background -->
     <div class="fixed inset-0 bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 overflow-hidden -z-10">
         <div class="absolute top-0 -left-4 w-96 h-96 bg-violet-200 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob"></div>
@@ -103,5 +99,4 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+@endsection
