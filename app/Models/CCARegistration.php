@@ -95,6 +95,7 @@ class CCARegistration extends Model
             'passport_photo' => 'required|file|mimes:jpg,jpeg,png,heic,webp|max:10240',
             'payment_slip' => 'required|file|mimes:pdf,jpg,jpeg,png,heic,webp|max:10240',
             'terms_accepted' => 'required|accepted',
+            'recaptcha_token' => 'required|string',
         ];
     }
 
@@ -132,6 +133,7 @@ class CCARegistration extends Model
             'terms_accepted.accepted' => 'Please read and accept the terms to complete your registration.',
             'qualification_completed_date.before_or_equal' => 'Completion date cannot be in the future.',
             'date_of_birth.before' => 'Please enter a valid date of birth.',
+            'recaptcha_token.required' => 'Security verification is required before submitting the form.',
         ];
     }
 }

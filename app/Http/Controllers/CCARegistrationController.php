@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CCARegistration;
 use App\Services\FileUploadService;
+use App\Services\RecaptchaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -11,10 +12,14 @@ use Illuminate\Validation\ValidationException;
 class CCARegistrationController extends Controller
 {
     protected FileUploadService $fileUploadService;
+    protected RecaptchaService $recaptchaService;
     
-    public function __construct(FileUploadService $fileUploadService)
-    {
+    public function __construct(
+        FileUploadService $fileUploadService,
+        RecaptchaService $recaptchaService
+    ) {
         $this->fileUploadService = $fileUploadService;
+        $this->recaptchaService = $recaptchaService;
     }
     
     /**
@@ -66,6 +71,25 @@ class CCARegistrationController extends Controller
             $programName = $programs[$programId]['name'];
             throw ValidationException::withMessages([
                 $identificationField => "You have already registered for {$programName}. If you believe this is an error, please contact our support team.",
+            ]);
+        }
+
+        // Verify reCAPTCHA token before processing
+        $recaptchaResult = $this->recaptchaService->verify(
+            $request->input('recaptcha_token')
+        );
+
+        if (!$recaptchaResult['success']) {
+            \Log::warning('reCAPTCHA verification failed for registration attempt', [
+                'program_id' => $programId,
+                'score' => $recaptchaResult['score'],
+                'hostname' => $recaptchaResult['hostname'],
+                'action' => $recaptchaResult['action'],
+                'errors' => $recaptchaResult['errors'],
+            ]);
+
+            throw ValidationException::withMessages([
+                'recaptcha' => 'We could not verify that you are human. Please refresh the page and try again.',
             ]);
         }
 

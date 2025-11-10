@@ -24,6 +24,15 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @if (config('services.recaptcha.site_key'))
+        <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}" async defer></script>
+        <script>
+            window.recaptchaConfig = {
+                siteKey: "{{ config('services.recaptcha.site_key') }}",
+                action: "{{ config('services.recaptcha.expected_action', 'cca_registration') }}",
+            };
+        </script>
+    @endif
 </head>
 <body class="font-sans antialiased">
     <!-- Glassmorphic Background with Purple Liquid Blobs -->
@@ -68,9 +77,11 @@
                   action="{{ route('cca.register.store') }}" 
                   enctype="multipart/form-data"
                   x-data="registrationForm()"
-                  @submit="handleSubmit"
+                  @submit.prevent="handleSubmit"
+                  id="registrationForm"
                   class="space-y-6 sm:space-y-8">
                 @csrf
+                <input type="hidden" name="recaptcha_token" id="recaptcha_token" value="">
 
                 <!-- Section 1: Program Selection -->
                 <div class="card-glass">
@@ -1129,18 +1140,53 @@
                         <!-- Submit Button -->
                         <button type="submit" 
                                 id="submitBtn"
+                                :disabled="isSubmitting"
                                 class="w-full px-8 py-5 rounded-2xl bg-gradient-to-r from-primary-500 to-secondary-500 
                                        text-white font-bold text-lg hover:from-primary-600 hover:to-secondary-600 
                                        transition-all duration-300 shadow-2xl hover:shadow-primary-500/50 hover:scale-[1.02]
-                                       flex items-center justify-center gap-3 group">
+                                       flex items-center justify-center gap-3 group
+                                       disabled:opacity-70 disabled:cursor-not-allowed">
                             <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            Submit My Registration
+                            <span x-text="isSubmitting ? 'Submitting...' : 'Submit My Registration'"></span>
                             <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                             </svg>
                         </button>
+
+                        <template x-if="recaptchaError">
+                            <div class="p-4 rounded-xl bg-red-50 border-l-4 border-red-500" x-cloak>
+                                <div class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <p class="text-sm text-red-700 font-medium" x-text="recaptchaError"></p>
+                                </div>
+                            </div>
+                        </template>
+
+                        @error('recaptcha_token')
+                            <div class="p-4 rounded-xl bg-red-50 border-l-4 border-red-500">
+                                <div class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <p class="text-sm text-red-700 font-medium">{{ $message }}</p>
+                                </div>
+                            </div>
+                        @enderror
+
+                        @error('recaptcha')
+                            <div class="p-4 rounded-xl bg-red-50 border-l-4 border-red-500">
+                                <div class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <p class="text-sm text-red-700 font-medium">{{ $message }}</p>
+                                </div>
+                            </div>
+                        @enderror
 
                         <!-- Debug: Backup submit button for testing -->
                         <!-- <button type="button" 
@@ -1318,6 +1364,8 @@
                 availableDistricts: [],
                 sriLankaDistricts: @json($sriLankaDistricts),
                 programs: @json($programs),
+                isSubmitting: false,
+                recaptchaError: null,
 
                 validateProgramId() {
                     const programId = this.formData.program_id.toUpperCase();
@@ -1371,9 +1419,51 @@
                 },
 
                 handleSubmit(event) {
-                    console.log('Alpine.js handleSubmit called');
-                    // Form will submit normally
-                    return true;
+                    const recaptchaConfig = window.recaptchaConfig || {};
+
+                    if (this.isSubmitting) {
+                        return false;
+                    }
+
+                    if (!window.grecaptcha || !recaptchaConfig.siteKey) {
+                        this.recaptchaError = 'Security verification could not be loaded. Please refresh the page and try again.';
+                        console.error('reCAPTCHA not available', {
+                            hasGrecaptcha: !!window.grecaptcha,
+                            siteKey: recaptchaConfig.siteKey ?? null,
+                        });
+                        return false;
+                    }
+
+                    this.isSubmitting = true;
+                    this.recaptchaError = null;
+
+                    try {
+                        grecaptcha.ready(() => {
+                            grecaptcha.execute(recaptchaConfig.siteKey, {
+                                action: recaptchaConfig.action || 'cca_registration'
+                            }).then(token => {
+                                const tokenField = document.getElementById('recaptcha_token');
+                                if (tokenField) {
+                                    tokenField.value = token;
+                                }
+                                const form = event.target;
+                                if (form) {
+                                    form.submit();
+                                }
+                            }).catch(error => {
+                                console.error('reCAPTCHA execution failed', error);
+                                this.isSubmitting = false;
+                                this.recaptchaError = 'Security verification failed. Please refresh the page and try again.';
+                            });
+                        });
+                    } catch (error) {
+                        console.error('Unexpected reCAPTCHA error', error);
+                        this.isSubmitting = false;
+                        this.recaptchaError = 'Security verification could not be completed. Please try again shortly.';
+                        return false;
+                    }
+
+                    return false;
                 },
 
                 init() {

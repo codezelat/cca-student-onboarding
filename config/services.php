@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+    'recaptcha' => [
+        'site_key' => env('GOOGLE_RECAPTCHA_SITE_KEY'),
+        'secret_key' => env('GOOGLE_RECAPTCHA_SECRET_KEY'),
+        'score_threshold' => env('GOOGLE_RECAPTCHA_SCORE_THRESHOLD', 0.6),
+        'expected_action' => env('GOOGLE_RECAPTCHA_ACTION', 'cca_registration'),
+        'allowed_hostnames' => array_filter(
+            array_map(
+                'trim',
+                explode(',', env('GOOGLE_RECAPTCHA_ALLOWED_HOSTNAMES', 'portal.cca.it.com,localhost,127.0.0.1'))
+            )
+        ),
+    ],
+
 ];
