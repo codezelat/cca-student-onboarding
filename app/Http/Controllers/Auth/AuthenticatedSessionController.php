@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,37 +33,27 @@ class AuthenticatedSessionController extends Controller
             'password' => 'required',
         ]);
 
-        // First, try to authenticate as admin
-        $admin = Admin::where('email', $request->email)->first();
+        // Try to authenticate the user
+        $user = User::where('email', $request->email)->first();
         
-        if ($admin && Hash::check($request->password, $admin->password)) {
-            // Check if admin is active
-            if (!$admin->is_active) {
-                throw ValidationException::withMessages([
-                    'email' => ['Your admin account has been deactivated.'],
-                ]);
+        if ($user && Hash::check($request->password, $user->password)) {
+            // Check if user has admin role
+            if ($user->hasRole('admin')) {
+                // Log in the user using the admin guard
+                Auth::guard('admin')->login($user, $request->boolean('remember'));
+                $request->session()->regenerate();
+                
+                return redirect()->route('admin.dashboard');
             }
-
-            // Update last login
-            $admin->update(['last_login_at' => now()]);
-
-            // Log in the admin using the admin guard
-            Auth::guard('admin')->login($admin, $request->boolean('remember'));
+            
+            // Regular user login (if needed in the future)
+            Auth::guard('web')->login($user, $request->boolean('remember'));
             $request->session()->regenerate();
-
-            return redirect(route('admin.dashboard'));
+            
+            return redirect()->intended(route('admin.dashboard'));
         }
 
-        // If not admin, try regular user authentication
-        if (Auth::guard('web')->attempt(
-            $request->only('email', 'password'),
-            $request->boolean('remember')
-        )) {
-            $request->session()->regenerate();
-            return redirect()->intended(route('dashboard', absolute: false));
-        }
-
-        // If neither worked, throw validation error
+        // If authentication failed, throw validation error
         throw ValidationException::withMessages([
             'email' => ['The provided credentials are incorrect.'],
         ]);

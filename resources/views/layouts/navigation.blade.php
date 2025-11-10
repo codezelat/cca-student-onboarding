@@ -5,7 +5,7 @@
             <div class="flex items-center">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 group">
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 group">
                         <img src="{{ asset('images/icon.png') }}" 
                              alt="CCA" 
                              class="w-12 h-12 transition-transform duration-300 group-hover:scale-110">
@@ -17,8 +17,8 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-2 sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
-                        class="px-4 py-2 rounded-xl {{ request()->routeIs('dashboard') ? 'bg-white/40 backdrop-blur-md border border-white/60 text-primary-700 font-semibold shadow-lg' : 'text-gray-700 hover:bg-white/30 hover:backdrop-blur-sm' }} transition-all duration-300">
+                    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')"
+                        class="px-4 py-2 rounded-xl {{ request()->routeIs('admin.dashboard') ? 'bg-white/40 backdrop-blur-md border border-white/60 text-primary-700 font-semibold shadow-lg' : 'text-gray-700 hover:bg-white/30 hover:backdrop-blur-sm' }} transition-all duration-300">
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
@@ -46,7 +46,7 @@
 
                     <x-slot name="content">
                         <div class="bg-white/90 backdrop-blur-xl border border-white/60 shadow-2xl rounded-xl overflow-hidden">
-                            <x-dropdown-link :href="route('profile.edit')" 
+                            <x-dropdown-link :href="route('admin.profile.edit')" 
                                 class="flex items-center space-x-3 px-4 py-3 hover:bg-primary-50 transition-colors">
                                 <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -87,8 +87,8 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1 px-4">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
-                class="block w-full px-4 py-3 rounded-xl {{ request()->routeIs('dashboard') ? 'bg-white/40 backdrop-blur-md border border-white/60 text-primary-700 font-semibold' : 'text-gray-700 hover:bg-white/30' }} transition-all duration-300">
+            <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')"
+                class="block w-full px-4 py-3 rounded-xl {{ request()->routeIs('admin.dashboard') ? 'bg-white/40 backdrop-blur-md border border-white/60 text-primary-700 font-semibold' : 'text-gray-700 hover:bg-white/30' }} transition-all duration-300">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>
@@ -101,7 +101,7 @@
             </div>
 
             <div class="space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')"
+                <x-responsive-nav-link :href="route('admin.profile.edit')"
                     class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-white/30 transition-all">
                     <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>

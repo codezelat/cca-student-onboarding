@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -29,25 +29,22 @@ class AdminAuthController extends Controller
             'password' => 'required',
         ]);
 
-        $admin = Admin::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-        if (!$admin || !Hash::check($request->password, $admin->password)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        if (!$admin->is_active) {
+        if (!$user->hasRole('admin')) {
             throw ValidationException::withMessages([
-                'email' => ['Your account has been deactivated.'],
+                'email' => ['You do not have admin access.'],
             ]);
         }
 
-        // Update last login
-        $admin->update(['last_login_at' => now()]);
-
-        // Log in the admin using the admin guard
-        Auth::guard('admin')->login($admin, $request->boolean('remember'));
+        // Log in the user using the admin guard
+        Auth::guard('admin')->login($user, $request->boolean('remember'));
 
         $request->session()->regenerate();
 
