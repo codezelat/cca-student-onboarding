@@ -52,6 +52,8 @@ class CCARegistration extends Model
         'academic_qualification_documents' => 'array',
         'nic_documents' => 'array',
         'passport_documents' => 'array',
+        'passport_photo' => 'array',
+        'payment_slip' => 'array',
         'terms_accepted' => 'boolean',
     ];
 
