@@ -38,7 +38,7 @@
                     </div>
                     <div class="flex items-center space-x-4">
                         <span class="text-sm text-gray-700">{{ Auth::guard('admin')->user()->name }}</span>
-                        <form method="POST" action="{{ route('admin.logout') }}">
+                        <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="px-4 py-2 bg-white/50 hover:bg-white/70 text-gray-700 rounded-xl transition-all duration-200 border border-gray-200">
                                 Logout

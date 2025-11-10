@@ -5,6 +5,7 @@
             Welcome Back
         </h2>
         <p class="text-gray-600">Sign in to your account to continue</p>
+        <p class="text-sm text-gray-500 mt-1">Admin and user login</p>
     </div>
 
     <!-- Session Status -->

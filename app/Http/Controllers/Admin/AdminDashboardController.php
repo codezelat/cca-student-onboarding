@@ -16,11 +16,12 @@ class AdminDashboardController extends Controller
     {
         $query = CCARegistration::query();
 
-        // Search by Register ID, Email, NIC, or WhatsApp Number
+        // Search by Register ID, Full Name, Email, NIC, or WhatsApp Number
         if ($request->filled('search')) {
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
                 $q->where('register_id', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('full_name', 'like', '%' . $searchTerm . '%')
                   ->orWhere('email_address', 'like', '%' . $searchTerm . '%')
                   ->orWhere('nic_number', 'like', '%' . $searchTerm . '%')
                   ->orWhere('whatsapp_number', 'like', '%' . $searchTerm . '%');
@@ -38,8 +39,10 @@ class AdminDashboardController extends Controller
             ->orderBy('program_name')
             ->get();
 
-        // Paginate results (25 per page)
-        $registrations = $query->orderBy('created_at', 'desc')->paginate(25);
+        // Paginate results (25 per page) and append query string
+        $registrations = $query->orderBy('created_at', 'desc')
+            ->paginate(25)
+            ->appends($request->query());
 
         return view('admin.dashboard', compact('registrations', 'programs'));
     }
@@ -127,6 +130,7 @@ class AdminDashboardController extends Controller
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
                 $q->where('register_id', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('full_name', 'like', '%' . $searchTerm . '%')
                   ->orWhere('email_address', 'like', '%' . $searchTerm . '%')
                   ->orWhere('nic_number', 'like', '%' . $searchTerm . '%')
                   ->orWhere('whatsapp_number', 'like', '%' . $searchTerm . '%');

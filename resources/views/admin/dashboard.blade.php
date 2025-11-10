@@ -38,7 +38,7 @@
                     </div>
                     <div class="flex items-center space-x-4">
                         <span class="text-sm text-gray-700">{{ Auth::guard('admin')->user()->name }}</span>
-                        <form method="POST" action="{{ route('admin.logout') }}">
+                        <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="px-4 py-2 bg-white/50 hover:bg-white/70 text-gray-700 rounded-xl transition-all duration-200 border border-gray-200">
                                 Logout
@@ -78,14 +78,14 @@
                         <!-- Search Box -->
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
-                                Search by Register ID, Email, NIC, or WhatsApp
+                                Search by Full Name, Email, NIC, or WhatsApp
                             </label>
                             <input 
                                 type="text" 
                                 name="search" 
                                 id="search"
                                 value="{{ request('search') }}"
-                                placeholder="Enter Register ID, Email, NIC, or WhatsApp..."
+                                placeholder="Enter Register ID, Full Name, Email, NIC, or WhatsApp..."
                                 class="w-full px-4 py-2 bg-white/50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                             >
                         </div>
@@ -183,9 +183,6 @@
                                     NIC/Passport
                                 </th>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                    Date of Birth
-                                </th>
-                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                     Email
                                 </th>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -214,9 +211,6 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                         {{ $registration->nic_number ?? $registration->passport_number ?? 'N/A' }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                        {{ $registration->date_of_birth->format('Y-m-d') }}
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-700">
                                         {{ Str::limit($registration->email_address, 25) }}
@@ -290,7 +284,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="px-6 py-12 text-center">
+                                    <td colspan="8" class="px-6 py-12 text-center">
                                         <div class="flex flex-col items-center justify-center">
                                             <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
