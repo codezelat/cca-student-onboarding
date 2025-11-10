@@ -89,47 +89,72 @@ class CCARegistrationController extends Controller
             $paymentSlip = null;
 
             try {
-                // Upload academic qualification documents
+                // Upload academic qualification documents (required - at least 1 file)
                 if ($request->hasFile('academic_qualification_documents')) {
                     $academicFiles = $request->file('academic_qualification_documents');
-                    $academicDocs = $this->fileUploadService->uploadMultipleFiles(
-                        is_array($academicFiles) ? $academicFiles : [$academicFiles],
-                        'registrations/academic'
-                    );
+                    // Filter out empty/invalid files and ensure it's an array
+                    $validFiles = is_array($academicFiles) 
+                        ? array_filter($academicFiles, fn($file) => $file && $file->isValid())
+                        : ($academicFiles && $academicFiles->isValid() ? [$academicFiles] : []);
+                    
+                    if (!empty($validFiles)) {
+                        $academicDocs = $this->fileUploadService->uploadMultipleFiles(
+                            $validFiles,
+                            'registrations/academic'
+                        );
+                    }
                 }
                 
-                // Upload NIC documents (optional)
+                // Upload NIC documents (optional - but required if NIC number provided)
                 if ($request->hasFile('nic_documents')) {
                     $nicFiles = $request->file('nic_documents');
-                    $nicDocs = $this->fileUploadService->uploadMultipleFiles(
-                        is_array($nicFiles) ? $nicFiles : [$nicFiles],
-                        'registrations/identification'
-                    );
+                    $validFiles = is_array($nicFiles)
+                        ? array_filter($nicFiles, fn($file) => $file && $file->isValid())
+                        : ($nicFiles && $nicFiles->isValid() ? [$nicFiles] : []);
+                    
+                    if (!empty($validFiles)) {
+                        $nicDocs = $this->fileUploadService->uploadMultipleFiles(
+                            $validFiles,
+                            'registrations/identification'
+                        );
+                    }
                 }
                     
                 // Upload passport documents (optional)
                 if ($request->hasFile('passport_documents')) {
                     $passportFiles = $request->file('passport_documents');
-                    $passportDocs = $this->fileUploadService->uploadMultipleFiles(
-                        is_array($passportFiles) ? $passportFiles : [$passportFiles],
-                        'registrations/passport'
-                    );
+                    $validFiles = is_array($passportFiles)
+                        ? array_filter($passportFiles, fn($file) => $file && $file->isValid())
+                        : ($passportFiles && $passportFiles->isValid() ? [$passportFiles] : []);
+                    
+                    if (!empty($validFiles)) {
+                        $passportDocs = $this->fileUploadService->uploadMultipleFiles(
+                            $validFiles,
+                            'registrations/passport'
+                        );
+                    }
                 }
                 
-                // Upload passport photo
+                // Upload passport photo (required - single file)
                 if ($request->hasFile('passport_photo')) {
-                    $passportPhoto = $this->fileUploadService->uploadFile(
-                        $request->file('passport_photo'),
-                        'registrations/photos'
-                    );
+                    $photoFile = $request->file('passport_photo');
+                    if ($photoFile && $photoFile->isValid()) {
+                        $passportPhoto = $this->fileUploadService->uploadFile(
+                            $photoFile,
+                            'registrations/photos'
+                        );
+                    }
                 }
                 
-                // Upload payment slip
+                // Upload payment slip (required - single file)
                 if ($request->hasFile('payment_slip')) {
-                    $paymentSlip = $this->fileUploadService->uploadFile(
-                        $request->file('payment_slip'),
-                        'registrations/payments'
-                    );
+                    $paymentFile = $request->file('payment_slip');
+                    if ($paymentFile && $paymentFile->isValid()) {
+                        $paymentSlip = $this->fileUploadService->uploadFile(
+                            $paymentFile,
+                            'registrations/payments'
+                        );
+                    }
                 }
 
             } catch (\Exception $uploadException) {
