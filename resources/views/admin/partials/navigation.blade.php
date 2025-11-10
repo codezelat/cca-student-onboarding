@@ -1,3 +1,10 @@
+@php
+    $adminUser = Auth::guard('admin')->user();
+    $adminName = $adminUser?->name ?? 'Administrator';
+    $adminEmail = $adminUser?->email ?? 'N/A';
+    $adminInitial = strtoupper(substr($adminName, 0, 1));
+@endphp
+
 <nav class="bg-white/60 backdrop-blur-xl border-b border-white/60 shadow-sm relative z-50" x-data="{ open: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -21,11 +28,11 @@
                         class="flex items-center space-x-3 px-4 py-2 rounded-xl bg-white/40 backdrop-blur-md border border-white/60 hover:bg-white/60 transition-all duration-300 shadow-lg hover:shadow-xl group">
                         <!-- Avatar -->
                         <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
-                            <span class="text-white font-semibold text-sm">{{ substr(Auth::guard('admin')->user()->name, 0, 1) }}</span>
+                            <span class="text-white font-semibold text-sm">{{ $adminInitial }}</span>
                         </div>
                         <!-- Name -->
                         <div class="hidden md:block text-left">
-                            <div class="text-sm font-semibold text-gray-800">{{ Auth::guard('admin')->user()->name }}</div>
+                            <div class="text-sm font-semibold text-gray-800">{{ $adminName }}</div>
                             <div class="text-xs text-gray-600">Administrator</div>
                         </div>
                         <!-- Dropdown Icon -->
@@ -49,11 +56,11 @@
                         <div class="px-4 py-3 bg-gradient-to-r from-primary-500 to-secondary-500">
                             <div class="flex items-center space-x-3">
                                 <div class="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                                    <span class="text-white font-bold text-lg">{{ substr(Auth::guard('admin')->user()->name, 0, 1) }}</span>
+                                    <span class="text-white font-bold text-lg">{{ $adminInitial }}</span>
                                 </div>
                                 <div>
-                                    <div class="text-sm font-semibold text-white">{{ Auth::guard('admin')->user()->name }}</div>
-                                    <div class="text-xs text-white/80">{{ Auth::guard('admin')->user()->email }}</div>
+                                    <div class="text-sm font-semibold text-white">{{ $adminName }}</div>
+                                    <div class="text-xs text-white/80">{{ $adminEmail }}</div>
                                 </div>
                             </div>
                         </div>
