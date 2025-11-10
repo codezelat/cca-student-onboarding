@@ -9,6 +9,7 @@ class CCARegistration extends Model
     protected $table = 'cca_registrations';
 
     protected $fillable = [
+        'register_id',
         'program_id',
         'program_name',
         'program_year',
@@ -97,6 +98,31 @@ class CCARegistration extends Model
             'terms_accepted' => 'required|accepted',
             'recaptcha_token' => 'required|string',
         ];
+    }
+
+    /**
+     * Boot method to handle model events
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($registration) {
+            if (empty($registration->register_id)) {
+                $registration->register_id = self::generateRegisterId();
+            }
+        });
+    }
+
+    /**
+     * Generate the next available register ID
+     */
+    public static function generateRegisterId(): string
+    {
+        $lastRegistration = self::orderBy('id', 'desc')->first();
+        $nextNumber = $lastRegistration ? $lastRegistration->id + 1 : 1;
+        
+        return 'cca-A' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
     }
 
     /**
