@@ -1,2 +1,16 @@
 User-agent: *
-Disallow:
+Disallow: /login
+Disallow: /register
+Disallow: /admin/
+Disallow: /admin
+Disallow: /password/
+Disallow: /email/
+Disallow: /profile
+Disallow: /dashboard
+
+# Allow public pages
+Allow: /
+Allow: /cca/register
+
+# Sitemap (update this URL when you create a sitemap)
+# Sitemap: https://yourdomain.com/sitemap.xml

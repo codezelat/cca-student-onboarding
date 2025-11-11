@@ -8,6 +8,10 @@
 
         <title>{{ config('app.name', 'CCA') }}</title>
 
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/icon.png') }}">
+
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-YDEF398QWX"></script>
         <script>

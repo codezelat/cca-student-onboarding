@@ -4,8 +4,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Registration Form - Codezela Career Accelerator</title>
+    
+    <!-- SEO Meta Tags -->
+    <title>Registration Form - Codezela Career Accelerator | Join Our Career Development Program</title>
+    <meta name="description" content="Register for Codezela Career Accelerator. Fill out the application form to join our professional career development and tech training programs. Start your career transformation today.">
+    <meta name="keywords" content="career accelerator registration, tech training application, CCA registration, Codezela enrollment, career development program, tech bootcamp registration">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ url('/cca/register') }}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/cca/register') }}">
+    <meta property="og:title" content="Register - Codezela Career Accelerator">
+    <meta property="og:description" content="Apply now to join Codezela Career Accelerator. Complete the registration form to start your career transformation.">
+    <meta property="og:image" content="{{ asset('images/logo-wide.png') }}">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ url('/cca/register') }}">
+    <meta name="twitter:title" content="Register - Codezela Career Accelerator">
+    <meta name="twitter:description" content="Apply now to join Codezela Career Accelerator. Complete the registration form to start your career transformation.">
+    <meta name="twitter:image" content="{{ asset('images/logo-wide.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}">
