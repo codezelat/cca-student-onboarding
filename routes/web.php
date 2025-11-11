@@ -10,6 +10,26 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/sitemap.xml', function () {
+    $lastModified = now()->toAtomString();
+
+    $urls = collect(config('sitemap.static', []))
+        ->map(function (array $page) use ($lastModified) {
+            $path = $page['path'] ?? '/';
+
+            return [
+                'loc' => url($path),
+                'lastmod' => $page['lastmod'] ?? $lastModified,
+                'changefreq' => $page['changefreq'] ?? 'monthly',
+                'priority' => number_format((float) ($page['priority'] ?? 0.5), 1, '.', ''),
+            ];
+        });
+
+    return response()
+        ->view('sitemap', ['urls' => $urls])
+        ->header('Content-Type', 'application/xml');
+});
+
 // CCA Student Registration Routes (Public - No Authentication Required)
 Route::get('/cca-register', [CCARegistrationController::class, 'create'])->name('cca.register');
 Route::post('/cca-register', [CCARegistrationController::class, 'store'])->name('cca.register.store');

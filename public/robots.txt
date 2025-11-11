@@ -1,16 +1,20 @@
 User-agent: *
+Disallow: /admin
+Disallow: /admin/
 Disallow: /login
 Disallow: /register
-Disallow: /admin/
-Disallow: /admin
+Disallow: /forgot-password
+Disallow: /reset-password
 Disallow: /password/
+Disallow: /verify-email
+Disallow: /confirm-password
 Disallow: /email/
-Disallow: /profile
+Disallow: /api/
 Disallow: /dashboard
+Disallow: /logout
 
-# Allow public pages
 Allow: /
-Allow: /cca/register
+Allow: /cca-register
 
-# Sitemap (update this URL when you create a sitemap)
-# Sitemap: https://yourdomain.com/sitemap.xml
+# Update with your production domain if different
+Sitemap: https://portal.cca.it.com/sitemap.xml
