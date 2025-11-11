@@ -172,6 +172,11 @@ class AdminDashboardController extends Controller
                 'Guardian Contact',
                 'Highest Qualification',
                 'Registration Date',
+                'Academic Qualification Documents',
+                'NIC Documents',
+                'Passport Documents',
+                'Passport Photo',
+                'Payment Slip',
             ]);
 
             // Add data rows
@@ -194,6 +199,11 @@ class AdminDashboardController extends Controller
                     $reg->guardian_contact_number,
                     $reg->highest_qualification,
                     $reg->created_at->format('Y-m-d H:i:s'),
+                    $this->getFileUrls($reg->academic_qualification_documents),
+                    $this->getFileUrls($reg->nic_documents),
+                    $this->getFileUrls($reg->passport_documents),
+                    $this->getFileUrls($reg->passport_photo),
+                    $this->getFileUrls($reg->payment_slip),
                 ]);
             }
 
@@ -264,5 +274,39 @@ class AdminDashboardController extends Controller
         }
 
         \Log::info("Deleted {$deletedFiles} out of {$totalFiles} files for registration {$registration->id}");
+    }
+
+    /**
+     * Extract file URLs from array and format them for Excel export
+     * 
+     * @param array|null $files
+     * @return string
+     */
+    private function getFileUrls($files): string
+    {
+        if (empty($files)) {
+            return 'N/A';
+        }
+
+        // If files is an array of file objects
+        if (is_array($files)) {
+            $urls = [];
+            foreach ($files as $file) {
+                if (isset($file['url'])) {
+                    $urls[] = $file['url'];
+                } elseif (isset($file['path'])) {
+                    // Generate URL from path if URL is not stored
+                    try {
+                        $urls[] = Storage::disk('r2')->url($file['path']);
+                    } catch (\Exception $e) {
+                        $urls[] = 'Error generating URL';
+                    }
+                }
+            }
+            // Join multiple URLs with newline for better readability in Excel
+            return !empty($urls) ? implode("\n", $urls) : 'N/A';
+        }
+
+        return 'N/A';
     }
 }
