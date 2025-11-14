@@ -335,9 +335,13 @@
                                     required>
                                 <option value="">Select Country</option>
                                 @foreach($countries as $country)
-                                    <option value="{{ $country }}" {{ old('country_of_birth') == $country ? 'selected' : '' }}>
-                                        {{ $country }}
-                                    </option>
+                                    @if($country === '---')
+                                        <option disabled>──────────</option>
+                                    @else
+                                        <option value="{{ $country }}" {{ old('country_of_birth') == $country ? 'selected' : '' }}>
+                                            {{ $country }}
+                                        </option>
+                                    @endif
                                 @endforeach
                             </select>
                             @error('country_of_birth')
@@ -357,9 +361,13 @@
                                     required>
                                 <option value="">Select Country</option>
                                 @foreach($countries as $country)
-                                    <option value="{{ $country }}" {{ old('country_of_residence') == $country ? 'selected' : '' }}>
-                                        {{ $country }}
-                                    </option>
+                                    @if($country === '---')
+                                        <option disabled>──────────</option>
+                                    @else
+                                        <option value="{{ $country }}" {{ old('country_of_residence') == $country ? 'selected' : '' }}>
+                                            {{ $country }}
+                                        </option>
+                                    @endif
                                 @endforeach
                             </select>
                             @error('country_of_residence')
@@ -431,9 +439,13 @@
                                         required>
                                     <option value="">Select Country</option>
                                     @foreach($countries as $country)
-                                        <option value="{{ $country }}" {{ old('country') == $country ? 'selected' : '' }}>
-                                            {{ $country }}
-                                        </option>
+                                        @if($country === '---')
+                                            <option disabled>──────────</option>
+                                        @else
+                                            <option value="{{ $country }}" {{ old('country') == $country ? 'selected' : '' }}>
+                                                {{ $country }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
                                 @error('country')

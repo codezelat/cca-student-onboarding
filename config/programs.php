@@ -127,9 +127,15 @@ return [
     |--------------------------------------------------------------------------
     | Countries List (All Countries)
     |--------------------------------------------------------------------------
+    |
+    | Sri Lanka is listed first as it's the primary country for this application.
+    | Other countries follow in alphabetical order.
+    |
     */
 
     'countries' => [
+        'Sri Lanka',
+        '---', // Separator
         'Afghanistan',
         'Albania',
         'Algeria',
@@ -293,7 +299,6 @@ return [
         'South Korea',
         'South Sudan',
         'Spain',
-        'Sri Lanka',
         'Sudan',
         'Suriname',
         'Sweden',
