@@ -91,6 +91,16 @@
                 </div>
             @endif
 
+            <!-- AJAX Success Message (from sessionStorage) -->
+            <div id="ajax-success-message" style="display: none;" class="mb-4 sm:mb-6 p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 glass">
+                <div class="flex items-start gap-2 sm:gap-3">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p id="ajax-success-text" class="text-sm sm:text-base text-green-800 font-medium"></p>
+                </div>
+            </div>
+
             <!-- Registration Form -->
             <form method="POST" 
                   action="{{ route('cca.register.store') }}" 
@@ -1370,6 +1380,25 @@
     </div>
 
     <script>
+        // Check for AJAX success message from sessionStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const successMessage = sessionStorage.getItem('registration_success');
+            if (successMessage) {
+                const messageDiv = document.getElementById('ajax-success-message');
+                const messageText = document.getElementById('ajax-success-text');
+                if (messageDiv && messageText) {
+                    messageText.textContent = successMessage;
+                    messageDiv.style.display = 'block';
+                    
+                    // Scroll to the message
+                    messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Clear the message from sessionStorage
+                    sessionStorage.removeItem('registration_success');
+                }
+            }
+        });
+
         // Debug: Check if form submission is working
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, setting up form debugging...');
@@ -1659,6 +1688,9 @@
                                     if (response.success && response.redirect) {
                                         this.uploadStatus = 'submitting';
                                         this.uploadProgress = 100;
+                                        
+                                        // Store success message in sessionStorage for the next page
+                                        sessionStorage.setItem('registration_success', response.message);
                                         
                                         // Redirect to success page
                                         setTimeout(() => {
