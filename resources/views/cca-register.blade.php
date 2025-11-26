@@ -1705,11 +1705,27 @@
                                     this.isSubmitting = false;
                                     this.showProgressModal = false;
                                     this.recaptchaError = 'Unexpected error. Please try again.';
+                                    console.error('Parse error:', e, 'Response:', xhr.responseText);
+                                }
+                            } else if (xhr.status === 422) {
+                                // Validation error
+                                try {
+                                    const response = JSON.parse(xhr.responseText);
+                                    const errors = response.errors || {};
+                                    const firstError = Object.values(errors)[0];
+                                    this.isSubmitting = false;
+                                    this.showProgressModal = false;
+                                    this.recaptchaError = firstError ? firstError[0] : 'Validation failed. Please check your entries.';
+                                } catch (e) {
+                                    this.isSubmitting = false;
+                                    this.showProgressModal = false;
+                                    this.recaptchaError = 'Validation failed. Please check your entries.';
                                 }
                             } else {
                                 this.isSubmitting = false;
                                 this.showProgressModal = false;
-                                this.recaptchaError = 'Submission failed. Please try again.';
+                                this.recaptchaError = 'Submission failed. Please try again. (Status: ' + xhr.status + ')';
+                                console.error('Server error:', xhr.status, xhr.responseText);
                             }
                         });
 
@@ -1719,8 +1735,14 @@
                             this.recaptchaError = 'Network error. Please check your connection and try again.';
                         });
 
+                        // Get CSRF token
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                        
                         xhr.open('POST', form.action);
                         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                        if (csrfToken) {
+                            xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+                        }
                         xhr.send(formData);
 
                     } catch (error) {
