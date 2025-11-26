@@ -6,7 +6,7 @@
         
         <!-- SEO Meta Tags -->
         <title>Codezela Career Accelerator | Professional Career Development & Tech Training Programs in Sri Lanka</title>
-        <meta name="description" content="Transform your career with Codezela Career Accelerator. Industry-leading tech training programs, expert mentorship, and recognized certifications. Join 500+ successful students in Sri Lanka's premier career accelerator program.">
+        <meta name="description" content="Transform your career with Codezela Career Accelerator. Industry-leading tech training programs, expert mentorship, and recognized certifications. Join 1000+ successful students in Sri Lanka's premier career accelerator program.">
         <meta name="keywords" content="career accelerator, tech training Sri Lanka, professional development, software development courses, IT training, career transformation, tech bootcamp, coding courses Sri Lanka, professional certification, tech education, career growth, Codezela">
         <meta name="author" content="Codezela Technologies">
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -16,7 +16,7 @@
         <meta property="og:type" content="website">
         <meta property="og:url" content="{{ url('/') }}">
         <meta property="og:title" content="Codezela Career Accelerator | Transform Your Career with Expert Tech Training">
-        <meta property="og:description" content="Join 500+ students accelerating their careers with industry-leading tech programs. Expert mentorship, recognized certifications, and 24/7 support.">
+        <meta property="og:description" content="Join 1000+ students accelerating their careers with industry-leading tech programs. Expert mentorship, recognized certifications, and 24/7 support.">
         <meta property="og:image" content="{{ asset('images/logo-wide.png') }}">
         <meta property="og:locale" content="en_US">
         <meta property="og:site_name" content="Codezela Career Accelerator">
@@ -25,7 +25,7 @@
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:url" content="{{ url('/') }}">
         <meta name="twitter:title" content="Codezela Career Accelerator | Transform Your Career">
-        <meta name="twitter:description" content="Industry-leading tech training programs with expert mentorship and recognized certifications. Join 500+ successful students.">
+        <meta name="twitter:description" content="Industry-leading tech training programs with expert mentorship and recognized certifications. Join 1000+ successful students.">
         <meta name="twitter:image" content="{{ asset('images/logo-wide.png') }}">
         <meta name="twitter:site" content="@codezelaca">
         <meta name="twitter:creator" content="@codezelaca">
@@ -156,7 +156,7 @@
                             <!-- Stats -->
                             <div class="grid grid-cols-3 gap-6 pt-8">
                                 <div class="text-center p-4 rounded-2xl bg-white/70 backdrop-blur-xl border border-white/90 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                                    <div class="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">500+</div>
+                                    <div class="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">1000+</div>
                                     <div class="text-sm text-gray-700 mt-1 font-medium">Students Enrolled</div>
                                 </div>
                                 <div class="text-center p-4 rounded-2xl bg-white/70 backdrop-blur-xl border border-white/90 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">

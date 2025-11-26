@@ -296,6 +296,7 @@
                             <input type="text" 
                                    id="passport_number" 
                                    name="passport_number" 
+                                   x-model="formData.passport_number"
                                    value="{{ old('passport_number') }}"
                                    placeholder="Enter your passport number"
                                    class="input-glass">
@@ -657,39 +658,25 @@
                             @enderror
                         </div>
 
-                        <!-- Other Qualification Details -->
-                        <div x-show="formData.highest_qualification === 'other'" 
-                             x-transition
-                             x-cloak>
+                        <!-- Other Qualification Details / Work Experience Company (Single Field) -->
+                        <div x-show="formData.highest_qualification === 'other' || formData.highest_qualification === 'work_experience'" 
+                             x-transition>
                             <label for="qualification_other_details" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Please Specify Your Qualification <span class="text-red-500">*</span>
+                                <template x-if="formData.highest_qualification === 'other'">
+                                    <span>Please Specify Your Qualification <span class="text-red-500">*</span></span>
+                                </template>
+                                <template x-if="formData.highest_qualification === 'work_experience'">
+                                    <span>Company/Organization Name <span class="text-red-500">*</span></span>
+                                </template>
                             </label>
                             <input type="text" 
                                    id="qualification_other_details" 
                                    name="qualification_other_details" 
+                                   x-model="formData.qualification_other_details"
                                    value="{{ old('qualification_other_details') }}"
-                                   placeholder="Describe your qualification"
+                                   :placeholder="formData.highest_qualification === 'work_experience' ? 'Enter your current or most recent employer' : 'Describe your qualification'"
                                    class="input-glass"
-                                   :required="formData.highest_qualification === 'other'">
-                            @error('qualification_other_details')
-                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Work Experience Company Name (if work_experience selected) -->
-                        <div x-show="formData.highest_qualification === 'work_experience'" 
-                             x-transition
-                             x-cloak>
-                            <label for="qualification_other_details" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Company/Organization Name <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" 
-                                   id="qualification_other_details" 
-                                   name="qualification_other_details" 
-                                   value="{{ old('qualification_other_details') }}"
-                                   placeholder="Enter your current or most recent employer"
-                                   class="input-glass"
-                                   :required="formData.highest_qualification === 'work_experience'">
+                                   :required="formData.highest_qualification === 'other' || formData.highest_qualification === 'work_experience'">
                             @error('qualification_other_details')
                                 <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                             @enderror
@@ -954,7 +941,7 @@
                         </div>
 
                         <!-- Passport Documents (Optional) -->
-                        <div class="group">
+                        <div class="group" x-show="formData.passport_number && formData.passport_number.trim() !== ''" x-transition>
                             <label class="block text-sm font-semibold text-gray-800 mb-4">
                                 <span class="flex items-center gap-2">
                                     <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -962,7 +949,7 @@
                                     </svg>
                                     Passport Copy <span class="text-gray-500 text-xs font-normal">(Optional)</span>
                                 </span>
-                                <span class="text-xs font-normal text-gray-600 mt-1 block">If you have a passport, upload both information page & back page</span>
+                                <span class="text-xs font-normal text-gray-600 mt-1 block">Upload both information page & back page of your passport</span>
                             </label>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="relative">
@@ -1376,11 +1363,13 @@
                 formData: {
                     program_id: '{{ old('program_id') }}',
                     nic_number: '{{ old('nic_number') }}',
+                    passport_number: '{{ old('passport_number') }}',
                     country_of_residence: '{{ old('country_of_residence') }}',
                     country: '{{ old('country') }}',
                     province: '{{ old('province') }}',
                     district: '{{ old('district') }}',
                     highest_qualification: '{{ old('highest_qualification') }}',
+                    qualification_other_details: '{{ old('qualification_other_details') }}',
                     qualification_status: '{{ old('qualification_status') }}',
                     academic_1: '',
                     academic_2: '',
