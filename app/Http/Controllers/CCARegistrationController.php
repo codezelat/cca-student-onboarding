@@ -227,6 +227,15 @@ class CCARegistrationController extends Controller
 
             DB::commit();
 
+            // Check if AJAX request
+            if ($request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Registration successful! Your application for {$programInfo['name']} has been submitted. We'll contact you at {$validated['email_address']} soon.",
+                    'redirect' => route('cca.register')
+                ]);
+            }
+
             return redirect()
                 ->route('cca.register')
                 ->with('success', "Registration successful! Your application for {$programInfo['name']} has been submitted. We'll contact you at {$validated['email_address']} soon.");

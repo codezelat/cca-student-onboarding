@@ -1231,7 +1231,141 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Upload Progress Modal (Inside Form for Alpine.js scope) -->
+                <div x-show="showProgressModal" 
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     class="fixed inset-0 z-50 overflow-y-auto"
+                     style="display: none;">
+                    <!-- Backdrop -->
+                    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm"></div>
+                    
+                <!-- Modal Content -->
+                <div class="flex min-h-full items-center justify-center p-4">
+                    <div x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         class="relative w-full max-w-sm transform overflow-hidden rounded-2xl bg-white/95 backdrop-blur-xl p-6 shadow-2xl border-2 border-white">
+                            <!-- Header -->
+                            <div class="text-center mb-6">
+                                <div class="w-16 h-16 mx-auto mb-3 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center shadow-xl">
+                                    <svg x-show="uploadStatus === 'uploading'" class="w-8 h-8 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                    </svg>
+                                    <svg x-show="uploadStatus === 'submitting'" class="w-8 h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-bold text-gray-800 mb-1" x-text="uploadStatus === 'uploading' ? 'Uploading Files...' : 'Submitting Registration...'"></h3>
+                                <p class="text-sm text-gray-600">Please wait...</p>
+                            </div>
+
+                            <!-- Progress Items -->
+                            <div class="space-y-2 mb-4">
+                                <!-- Academic Documents -->
+                                <div class="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r from-primary-50 to-secondary-50">
+                                    <div class="flex-shrink-0">
+                                        <svg x-show="!progressItems.academic" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                        </svg>
+                                        <svg x-show="progressItems.academic" class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-xs font-semibold text-gray-800">Academic Documents</p>
+                                        <p class="text-xs text-gray-500" x-text="progressItems.academic ? 'Uploaded ✓' : 'Uploading...'"></p>
+                                    </div>
+                                </div>
+
+                                <!-- ID Documents -->
+                                <div x-show="formData.nic_number || formData.passport_number" class="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r from-primary-50 to-secondary-50">
+                                    <div class="flex-shrink-0">
+                                        <svg x-show="!progressItems.id" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                        </svg>
+                                        <svg x-show="progressItems.id" class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-xs font-semibold text-gray-800">ID Documents</p>
+                                        <p class="text-xs text-gray-500" x-text="progressItems.id ? 'Uploaded ✓' : 'Uploading...'"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Photo -->
+                                <div class="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r from-primary-50 to-secondary-50">
+                                    <div class="flex-shrink-0">
+                                        <svg x-show="!progressItems.photo" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                        </svg>
+                                        <svg x-show="progressItems.photo" class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-xs font-semibold text-gray-800">Passport Photo</p>
+                                        <p class="text-xs text-gray-500" x-text="progressItems.photo ? 'Uploaded ✓' : 'Uploading...'"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Slip -->
+                                <div class="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r from-primary-50 to-secondary-50">
+                                    <div class="flex-shrink-0">
+                                        <svg x-show="!progressItems.payment" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                        </svg>
+                                        <svg x-show="progressItems.payment" class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-xs font-semibold text-gray-800">Payment Slip</p>
+                                        <p class="text-xs text-gray-500" x-text="progressItems.payment ? 'Uploaded ✓' : 'Uploading...'"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Final Submission -->
+                                <div x-show="uploadStatus === 'submitting'" class="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200">
+                                    <div class="flex-shrink-0">
+                                        <svg class="w-5 h-5 text-green-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-xs font-semibold text-gray-800">Finalizing Registration</p>
+                                        <p class="text-xs text-gray-500">Almost done...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                                <div class="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full transition-all duration-500 ease-out"
+                                     :style="'width: ' + uploadProgress + '%'"></div>
+                            </div>
+                            <p class="text-center text-xs text-gray-600 mt-2" x-text="uploadProgress + '% Complete'"></p>
+
+                            <!-- Warning -->
+                            <div class="mt-4 p-2 rounded-lg bg-yellow-50 border border-yellow-200">
+                                <p class="text-xs text-yellow-800 text-center">
+                                    <strong>⚠️ Please don't close this page</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </form>
+
         </div>
     </div>
 
@@ -1386,6 +1520,15 @@
                 programs: @json($programs),
                 isSubmitting: false,
                 recaptchaError: null,
+                showProgressModal: false,
+                uploadStatus: 'uploading', // 'uploading' or 'submitting'
+                uploadProgress: 0,
+                progressItems: {
+                    academic: false,
+                    id: false,
+                    photo: false,
+                    payment: false
+                },
 
                 validateProgramId() {
                     const programId = this.formData.program_id.toUpperCase();
@@ -1425,11 +1568,9 @@
                                 return false;
                             }
                             this.formData[fieldName] = file.name;
-                            console.log(`File selected for ${fieldName}:`, file.name);
                         }
                         return true;
                     } catch (error) {
-                        console.error('Error handling file select:', error);
                         return false;
                     }
                 },
@@ -1438,7 +1579,7 @@
                     return this.handleFileSelect(event, 'temp');
                 },
 
-                handleSubmit(event) {
+                async handleSubmit(event) {
                     const recaptchaConfig = window.recaptchaConfig || {};
 
                     if (this.isSubmitting) {
@@ -1447,38 +1588,112 @@
 
                     if (!window.grecaptcha || !recaptchaConfig.siteKey) {
                         this.recaptchaError = 'Security verification could not be loaded. Please refresh the page and try again.';
-                        console.error('reCAPTCHA not available', {
-                            hasGrecaptcha: !!window.grecaptcha,
-                            siteKey: recaptchaConfig.siteKey ?? null,
-                        });
                         return false;
                     }
 
                     this.isSubmitting = true;
                     this.recaptchaError = null;
+                    this.showProgressModal = true;
+                    this.uploadStatus = 'uploading';
+                    this.uploadProgress = 0;
 
                     try {
-                        grecaptcha.ready(() => {
-                            grecaptcha.execute(recaptchaConfig.siteKey, {
-                                action: recaptchaConfig.action || 'cca_registration'
-                            }).then(token => {
-                                const tokenField = document.getElementById('recaptcha_token');
-                                if (tokenField) {
-                                    tokenField.value = token;
-                                }
-                                const form = event.target;
-                                if (form) {
-                                    form.submit();
-                                }
-                            }).catch(error => {
-                                console.error('reCAPTCHA execution failed', error);
-                                this.isSubmitting = false;
-                                this.recaptchaError = 'Security verification failed. Please refresh the page and try again.';
+                        // Get reCAPTCHA token first
+                        const token = await new Promise((resolve, reject) => {
+                            grecaptcha.ready(() => {
+                                grecaptcha.execute(recaptchaConfig.siteKey, {
+                                    action: recaptchaConfig.action || 'cca_registration'
+                                }).then(resolve).catch(reject);
                             });
                         });
+
+                        // Prepare form data with progress tracking
+                        const form = document.getElementById('registrationForm');
+                        const formData = new FormData(form);
+                        formData.set('recaptcha_token', token);
+
+                        // Track file uploads
+                        const totalFiles = [
+                            formData.getAll('academic_qualification_documents[]').filter(f => f.size > 0),
+                            formData.getAll('nic_documents[]').filter(f => f.size > 0),
+                            formData.getAll('passport_documents[]').filter(f => f.size > 0),
+                            formData.get('passport_photo')?.size > 0 ? [formData.get('passport_photo')] : [],
+                            formData.get('payment_slip')?.size > 0 ? [formData.get('payment_slip')] : []
+                        ];
+
+                        let completedSteps = 0;
+                        const totalSteps = 4;
+
+                        // Submit form via AJAX with progress
+                        const xhr = new XMLHttpRequest();
+                        
+                        xhr.upload.addEventListener('progress', (e) => {
+                            if (e.lengthComputable) {
+                                const percentComplete = Math.round((e.loaded / e.total) * 90);
+                                this.uploadProgress = percentComplete;
+                                
+                                // Update progress items based on percentage
+                                if (percentComplete >= 20 && !this.progressItems.academic) {
+                                    this.progressItems.academic = true;
+                                    completedSteps++;
+                                }
+                                if (percentComplete >= 40 && !this.progressItems.id) {
+                                    this.progressItems.id = true;
+                                    completedSteps++;
+                                }
+                                if (percentComplete >= 60 && !this.progressItems.photo) {
+                                    this.progressItems.photo = true;
+                                    completedSteps++;
+                                }
+                                if (percentComplete >= 80 && !this.progressItems.payment) {
+                                    this.progressItems.payment = true;
+                                    completedSteps++;
+                                }
+                            }
+                        });
+
+                        xhr.addEventListener('load', () => {
+                            if (xhr.status === 200) {
+                                try {
+                                    const response = JSON.parse(xhr.responseText);
+                                    if (response.success && response.redirect) {
+                                        this.uploadStatus = 'submitting';
+                                        this.uploadProgress = 100;
+                                        
+                                        // Redirect to success page
+                                        setTimeout(() => {
+                                            window.location.href = response.redirect;
+                                        }, 500);
+                                    } else {
+                                        this.isSubmitting = false;
+                                        this.showProgressModal = false;
+                                        this.recaptchaError = response.message || 'Submission failed. Please try again.';
+                                    }
+                                } catch (e) {
+                                    this.isSubmitting = false;
+                                    this.showProgressModal = false;
+                                    this.recaptchaError = 'Unexpected error. Please try again.';
+                                }
+                            } else {
+                                this.isSubmitting = false;
+                                this.showProgressModal = false;
+                                this.recaptchaError = 'Submission failed. Please try again.';
+                            }
+                        });
+
+                        xhr.addEventListener('error', () => {
+                            this.isSubmitting = false;
+                            this.showProgressModal = false;
+                            this.recaptchaError = 'Network error. Please check your connection and try again.';
+                        });
+
+                        xhr.open('POST', form.action);
+                        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                        xhr.send(formData);
+
                     } catch (error) {
-                        console.error('Unexpected reCAPTCHA error', error);
                         this.isSubmitting = false;
+                        this.showProgressModal = false;
                         this.recaptchaError = 'Security verification could not be completed. Please try again shortly.';
                         return false;
                     }
@@ -1487,18 +1702,12 @@
                 },
 
                 init() {
-                    console.log('Alpine.js registrationForm initialized');
                     if (this.formData.program_id) {
                         this.validateProgramId();
                     }
                     if (this.formData.province) {
                         this.handleProvinceChange();
                     }
-                    
-                    // Additional debugging
-                    this.$nextTick(() => {
-                        console.log('Alpine.js form data ready:', this.formData);
-                    });
                 }
             }
         }
