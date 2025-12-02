@@ -41,14 +41,14 @@ class AuthenticatedSessionController extends Controller
             if ($user->hasRole('admin')) {
                 // Log in the user using the admin guard
                 Auth::guard('admin')->login($user, $request->boolean('remember'));
-                $request->session()->regenerate();
+                $request->session()->regenerateToken();
                 
                 return redirect()->route('admin.dashboard');
             }
             
             // Regular user login (if needed in the future)
             Auth::guard('web')->login($user, $request->boolean('remember'));
-            $request->session()->regenerate();
+            $request->session()->regenerateToken();
             
             return redirect()->intended(route('admin.dashboard'));
         }

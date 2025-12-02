@@ -34,6 +34,11 @@ Route::get('/sitemap.xml', function () {
 Route::get('/cca-register', [CCARegistrationController::class, 'create'])->name('cca.register');
 Route::post('/cca-register', [CCARegistrationController::class, 'store'])->name('cca.register.store');
 
+// CSRF Token Route for AJAX refresh
+Route::get('/csrf-token', function () {
+    return response()->json(['token' => csrf_token()]);
+});
+
 // File Upload API Routes (Public for registration form)
 Route::prefix('api')->group(function () {
     Route::post('/upload-file', [FileUploadController::class, 'upload'])->name('api.upload.file');

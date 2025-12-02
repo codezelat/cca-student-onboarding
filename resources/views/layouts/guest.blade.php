@@ -28,6 +28,23 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <script>
+            // Refresh CSRF token every 30 minutes to prevent expiration
+            setInterval(function() {
+                fetch('/csrf-token', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }).then(response => response.json())
+                .then(data => {
+                    document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.token);
+                }).catch(err => {
+                    console.log('CSRF token refresh failed');
+                });
+            }, 30 * 60 * 1000); // 30 minutes
+        </script>
     </head>
     <body class="font-sans antialiased overflow-x-hidden">
         <!-- Animated Background with Liquid Gradient Blobs -->
