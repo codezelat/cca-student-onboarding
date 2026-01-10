@@ -41,6 +41,48 @@
                     @csrf
                     @method('PUT')
 
+                    <!-- Program Selection -->
+                    <div class="mb-8 pb-8 border-b border-gray-200">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-800">Program Selection</h2>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">Update the program this student is enrolled in.</p>
+                        
+                        <div class="bg-gradient-to-br from-primary-50/50 to-secondary-50/50 border border-primary-100 rounded-xl p-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Program *</label>
+                            <select name="program_id" required 
+                                    class="w-full px-4 py-3 bg-white border-2 border-primary-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200">
+                                <option value="">Choose a program...</option>
+                                @foreach($programs as $programId => $programDetails)
+                                    <option value="{{ $programId }}" 
+                                            {{ old('program_id', $registration->program_id) == $programId ? 'selected' : '' }}>
+                                        {{ $programDetails['name'] }} ({{ $programDetails['year'] }} - {{ $programDetails['duration'] }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('program_id')
+                                <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                            
+                            <!-- Current Program Display -->
+                            <div class="mt-4 p-3 bg-white/60 rounded-lg border border-primary-100">
+                                <p class="text-xs font-medium text-gray-500 mb-1">Current Program</p>
+                                <p class="text-sm font-semibold text-gray-800">{{ $registration->program_name }}</p>
+                                <p class="text-xs text-gray-600 mt-1">Program ID: <span class="font-mono">{{ $registration->program_id }}</span></p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Personal Information -->
                     <div class="mb-8">
                         <h2 class="text-xl font-bold text-gray-800 mb-4">Personal Information</h2>

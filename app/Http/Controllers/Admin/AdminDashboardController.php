@@ -77,6 +77,7 @@ class AdminDashboardController extends Controller
         $registration = CCARegistration::findOrFail($id);
         
         $validated = $request->validate([
+            'program_id' => 'required|string|max:20',
             'full_name' => 'required|string|max:255',
             'name_with_initials' => 'required|string|max:255',
             'email_address' => 'required|email|max:255',
@@ -95,6 +96,12 @@ class AdminDashboardController extends Controller
             'guardian_contact_name' => 'required|string|max:255',
             'guardian_contact_number' => 'required|string|max:20',
         ]);
+
+        // Update program_name if program_id changed
+        $programs = config('programs.programs');
+        if (isset($programs[$validated['program_id']])) {
+            $validated['program_name'] = $programs[$validated['program_id']]['name'];
+        }
 
         $registration->update($validated);
 
