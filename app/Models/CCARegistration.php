@@ -44,6 +44,8 @@ class CCARegistration extends Model
         'passport_photo',
         'payment_slip',
         'terms_accepted',
+        'tags',
+        'current_paid_amount',
     ];
 
     protected $casts = [
@@ -56,6 +58,8 @@ class CCARegistration extends Model
         'passport_photo' => 'array',
         'payment_slip' => 'array',
         'terms_accepted' => 'boolean',
+        'tags' => 'array',
+        'current_paid_amount' => 'decimal:2',
     ];
 
     /**

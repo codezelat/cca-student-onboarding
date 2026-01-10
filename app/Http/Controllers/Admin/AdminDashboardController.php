@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\CCARegistration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AdminDashboardController extends Controller
 {
@@ -39,12 +41,34 @@ class AdminDashboardController extends Controller
             ->orderBy('program_name')
             ->get();
 
+        // Calculate statistics
+        $totalRegistrations = CCARegistration::count();
+        
+        // Count General Rate registrations (those with "General Rate" tag)
+        $generalRateCount = CCARegistration::whereJsonContains('tags', 'General Rate')->count();
+        
+        // Count Special Offer registrations (those with "Special 50% Offer" tag)
+        $specialOfferCount = CCARegistration::whereJsonContains('tags', 'Special 50% Offer')->count();
+        
+        // Get most registered program
+        $mostRegisteredProgram = CCARegistration::select('program_id', 'program_name', DB::raw('count(*) as total'))
+            ->groupBy('program_id', 'program_name')
+            ->orderByDesc('total')
+            ->first();
+
         // Paginate results (25 per page) and append query string
         $registrations = $query->orderBy('created_at', 'desc')
             ->paginate(25)
             ->appends($request->query());
 
-        return view('admin.dashboard', compact('registrations', 'programs'));
+        return view('admin.dashboard', compact(
+            'registrations', 
+            'programs',
+            'totalRegistrations',
+            'generalRateCount',
+            'specialOfferCount',
+            'mostRegisteredProgram'
+        ));
     }
 
     /**
@@ -95,6 +119,9 @@ class AdminDashboardController extends Controller
             'home_contact_number' => 'nullable|string|max:20',
             'guardian_contact_name' => 'required|string|max:255',
             'guardian_contact_number' => 'required|string|max:20',
+            'tags' => 'nullable|array',
+            'tags.*' => 'string',
+            'current_paid_amount' => 'nullable|numeric|min:0',
         ]);
 
         // Update program_name if program_id changed
@@ -249,7 +276,7 @@ class AdminDashboardController extends Controller
                                 $deletedFiles++;
                             }
                         } catch (\Exception $e) {
-                            \Log::warning("Failed to delete file from R2: {$file['path']}", [
+                            Log::warning("Failed to delete file from R2: {$file['path']}", [
                                 'error' => $e->getMessage(),
                                 'registration_id' => $registration->id
                             ]);
@@ -272,7 +299,7 @@ class AdminDashboardController extends Controller
                         $deletedFiles++;
                     }
                 } catch (\Exception $e) {
-                    \Log::warning("Failed to delete file from R2: {$files}", [
+                    Log::warning("Failed to delete file from R2: {$files}", [
                         'error' => $e->getMessage(),
                         'registration_id' => $registration->id
                     ]);
@@ -280,7 +307,7 @@ class AdminDashboardController extends Controller
             }
         }
 
-        \Log::info("Deleted {$deletedFiles} out of {$totalFiles} files for registration {$registration->id}");
+        Log::info("Deleted {$deletedFiles} out of {$totalFiles} files for registration {$registration->id}");
     }
 
     /**

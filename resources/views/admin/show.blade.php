@@ -49,6 +49,72 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Main Information -->
                 <div class="lg:col-span-2 space-y-6">
+                    <!-- Payment & Tags Information -->
+                    <div class="bg-gradient-to-br from-indigo-50/80 to-purple-50/80 backdrop-blur-xl border border-indigo-200 rounded-2xl shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Payment Information
+                        </h2>
+                        <div class="space-y-4">
+                            <!-- Tags Display -->
+                            <div>
+                                <p class="text-sm font-medium text-gray-700 mb-3">Payment Tags</p>
+                                @if($registration->tags && count($registration->tags) > 0)
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach($registration->tags as $tag)
+                                            @php
+                                                $tagColors = [
+                                                    'Full Payment' => 'bg-gradient-to-r from-green-500 to-green-600 text-white',
+                                                    'Special 50% Offer' => 'bg-gradient-to-r from-purple-500 to-purple-600 text-white',
+                                                    'Registration Fee' => 'bg-gradient-to-r from-blue-500 to-blue-600 text-white',
+                                                    'Partial Registration Fee' => 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white',
+                                                    'General Rate' => 'bg-gradient-to-r from-indigo-500 to-indigo-600 text-white',
+                                                    '125000' => 'bg-gradient-to-r from-red-500 to-red-600 text-white',
+                                                    '105000' => 'bg-gradient-to-r from-orange-500 to-orange-600 text-white',
+                                                    '62500' => 'bg-gradient-to-r from-pink-500 to-pink-600 text-white',
+                                                ];
+                                                $colorClass = $tagColors[$tag] ?? 'bg-gradient-to-r from-gray-500 to-gray-600 text-white';
+                                            @endphp
+                                            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 {{ $colorClass }}">
+                                                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                                                </svg>
+                                                {{ $tag }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="flex items-center p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                                        <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                        </svg>
+                                        <span class="text-sm text-gray-500 italic">No tags assigned</span>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Current Paid Amount -->
+                            <div>
+                                <p class="text-sm font-medium text-gray-700 mb-2">Current Paid Amount</p>
+                                <div class="flex items-center p-4 bg-white/70 border-2 border-indigo-200 rounded-xl">
+                                    <svg class="w-6 h-6 text-indigo-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Amount Paid</p>
+                                        @if($registration->current_paid_amount)
+                                            <p class="text-2xl font-bold text-indigo-600">LKR {{ number_format($registration->current_paid_amount, 2) }}</p>
+                                        @else
+                                            <p class="text-lg font-semibold text-gray-400">Not specified</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Program Information -->
                     <div class="bg-white/60 backdrop-blur-xl border border-white/60 rounded-2xl shadow-lg p-6">
                         <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">

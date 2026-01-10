@@ -118,17 +118,68 @@
             </div>
 
             <!-- Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div class="p-4 bg-white/60 backdrop-blur-xl border border-white/60 rounded-xl shadow-lg">
-                    <div class="flex items-center">
-                        <div class="p-3 bg-blue-100 rounded-lg">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <!-- Total Registrations -->
+                <div class="p-6 bg-white/60 backdrop-blur-xl border border-white/60 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">Total Registrations</p>
+                            <p class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">{{ $totalRegistrations }}</p>
+                        </div>
+                        <div class="p-3 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl">
+                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                             </svg>
                         </div>
-                        <div class="ml-4">
-                            <p class="text-sm text-gray-600">Total Registrations</p>
-                            <p class="text-2xl font-bold text-gray-800">{{ $registrations->total() }}</p>
+                    </div>
+                </div>
+
+                <!-- General Rate Registrations -->
+                <div class="p-6 bg-white/60 backdrop-blur-xl border border-white/60 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">General Rate</p>
+                            <p class="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">{{ $generalRateCount }}</p>
+                        </div>
+                        <div class="p-3 bg-gradient-to-br from-green-100 to-green-200 rounded-xl">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Special Offer Registrations -->
+                <div class="p-6 bg-white/60 backdrop-blur-xl border border-white/60 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">Special Offer</p>
+                            <p class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">{{ $specialOfferCount }}</p>
+                        </div>
+                        <div class="p-3 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl">
+                            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Most Registered Program -->
+                <div class="p-6 bg-white/60 backdrop-blur-xl border border-white/60 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-600 mb-1">Top Program</p>
+                            @if($mostRegisteredProgram)
+                                <p class="text-lg font-bold text-orange-600 truncate" title="{{ $mostRegisteredProgram->program_id }}">{{ $mostRegisteredProgram->program_id }}</p>
+                                <p class="text-xs text-gray-500 mt-1">{{ $mostRegisteredProgram->total }} registrations</p>
+                            @else
+                                <p class="text-lg font-semibold text-gray-400">N/A</p>
+                            @endif
+                        </div>
+                        <div class="p-3 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex-shrink-0">
+                            <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                            </svg>
                         </div>
                     </div>
                 </div>
