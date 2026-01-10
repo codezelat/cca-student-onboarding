@@ -30,15 +30,21 @@
     <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/icon.png') }}">
     
+    @if(app()->environment('production'))
     <!-- Google tag (gtag.js) -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YDEF398QWX"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'G-YDEF398QWX');
+        gtag('config', 'G-YDEF398QWX', {
+            'cookie_domain': 'auto',
+            'cookie_flags': 'SameSite=None;Secure'
+        });
     </script>
+    @endif
     
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700" rel="stylesheet" />

@@ -42,6 +42,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&display=swap" rel="stylesheet" />
 
+    @if(app()->environment('production'))
     <!-- Google tag (gtag.js) -->
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YDEF398QWX"></script>
@@ -50,8 +51,12 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'G-YDEF398QWX');
+        gtag('config', 'G-YDEF398QWX', {
+            'cookie_domain': 'auto',
+            'cookie_flags': 'SameSite=None;Secure'
+        });
     </script>
+    @endif
 
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
