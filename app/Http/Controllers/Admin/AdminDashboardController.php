@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CCARegistration;
 use Illuminate\Http\Request;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -322,6 +323,9 @@ class AdminDashboardController extends Controller
             return 'N/A';
         }
 
+        /** @var FilesystemAdapter $r2Disk */
+        $r2Disk = Storage::disk('r2');
+
         // If files is an array of file objects
         if (is_array($files)) {
             $urls = [];
@@ -331,7 +335,7 @@ class AdminDashboardController extends Controller
                 } elseif (isset($file['path'])) {
                     // Generate URL from path if URL is not stored
                     try {
-                        $urls[] = Storage::disk('r2')->url($file['path']);
+                        $urls[] = $r2Disk->url($file['path']);
                     } catch (\Exception $e) {
                         $urls[] = 'Error generating URL';
                     }

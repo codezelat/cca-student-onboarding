@@ -7,6 +7,7 @@ use App\Services\FileUploadService;
 use App\Services\RecaptchaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class CCARegistrationController extends Controller
@@ -88,7 +89,7 @@ class CCARegistrationController extends Controller
         );
 
         if (!$recaptchaResult['success']) {
-            \Log::warning('reCAPTCHA verification failed for registration attempt', [
+            Log::warning('reCAPTCHA verification failed for registration attempt', [
                 'program_id' => $programId,
                 'score' => $recaptchaResult['score'],
                 'hostname' => $recaptchaResult['hostname'],
@@ -260,7 +261,7 @@ class CCARegistrationController extends Controller
                 $paymentSlip ?? null
             );
 
-            \Log::error('Registration failed', [
+            Log::error('Registration failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -296,7 +297,7 @@ class CCARegistrationController extends Controller
                 $this->fileUploadService->deleteFile($paymentSlip['path']);
             }
         } catch (\Exception $e) {
-            \Log::error('Failed to cleanup uploaded files', [
+            Log::error('Failed to cleanup uploaded files', [
                 'error' => $e->getMessage(),
             ]);
         }
