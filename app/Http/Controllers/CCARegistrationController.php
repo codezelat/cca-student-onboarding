@@ -49,6 +49,14 @@ class CCARegistrationController extends Controller
             ]);
         }
 
+        // Check if program is active and accepting registrations
+        $programInfo = $programs[$programId];
+        if (isset($programInfo['active']) && $programInfo['active'] === false) {
+            throw ValidationException::withMessages([
+                'program_id' => "Registration for {$programInfo['name']} is currently closed. This batch has reached full capacity and is no longer accepting new students. Please check back later for the next intake or contact our admissions team for alternative program options.",
+            ]);
+        }
+
         // Custom validation: require either NIC or Passport
         if (empty($request->nic_number) && empty($request->passport_number)) {
             throw ValidationException::withMessages([

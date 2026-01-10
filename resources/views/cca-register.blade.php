@@ -175,7 +175,22 @@
                             <!-- Program Info Display -->
                             <div x-show="programInfo" 
                                  x-transition
-                                 class="mt-4 p-4 rounded-xl bg-gradient-to-r from-primary-50 to-secondary-50 border border-primary-200">
+                                 class="mt-4 p-4 rounded-xl border"
+                                 :class="programInfo && programInfo.active === false ? 'bg-red-50 border-red-300' : 'bg-gradient-to-r from-primary-50 to-secondary-50 border-primary-200'">
+                                
+                                <!-- Inactive Program Warning -->
+                                <div x-show="programInfo && programInfo.active === false" class="mb-3 p-3 bg-red-100 border-l-4 border-red-500 rounded">
+                                    <div class="flex items-start gap-2">
+                                        <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                        </svg>
+                                        <div>
+                                            <p class="text-sm font-bold text-red-800 mb-1">⚠️ Registration Closed - Batch Full</p>
+                                            <p class="text-xs text-red-700">This program is currently not accepting new registrations. The batch has reached full capacity. Please contact our admissions team for information about the next intake or explore alternative programs.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                     <div>
                                         <span class="text-gray-600 font-medium">Program:</span>
@@ -1569,8 +1584,27 @@
                     const programId = this.formData.program_id.toUpperCase();
                     if (programId && this.programs[programId]) {
                         this.programInfo = this.programs[programId];
+                        
+                        // Check if program is inactive
+                        if (this.programInfo.active === false) {
+                            // Show warning but still display info
+                            const programIdInput = document.getElementById('program_id');
+                            if (programIdInput) {
+                                programIdInput.classList.add('border-red-300', 'bg-red-50');
+                                programIdInput.classList.remove('border-gray-300');
+                            }
+                        } else {
+                            const programIdInput = document.getElementById('program_id');
+                            if (programIdInput) {
+                                programIdInput.classList.remove('border-red-300', 'bg-red-50');
+                            }
+                        }
                     } else {
                         this.programInfo = null;
+                        const programIdInput = document.getElementById('program_id');
+                        if (programIdInput) {
+                            programIdInput.classList.remove('border-red-300', 'bg-red-50');
+                        }
                     }
                 },
 
@@ -1616,6 +1650,13 @@
 
                 async handleSubmit(event) {
                     const recaptchaConfig = window.recaptchaConfig || {};
+
+                    // Check if program is inactive before submission
+                    const programId = this.formData.program_id.toUpperCase();
+                    if (this.programs[programId] && this.programs[programId].active === false) {
+                        alert('❌ Registration Not Available\\n\\nThe program you selected is currently closed and not accepting new registrations. The batch has reached full capacity.\\n\\nPlease contact our admissions team for information about:\\n• Next intake dates\\n• Alternative program options\\n• Waitlist availability');
+                        return false;
+                    }
 
                     if (this.isSubmitting) {
                         return false;

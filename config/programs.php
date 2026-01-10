@@ -16,91 +16,109 @@ return [
             'name' => 'Full Stack Developer Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-FE25' => [
             'name' => 'Frontend Developer Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => false,  // Batch Full
         ],
         'CCA-BE25' => [
             'name' => 'Backend Developer Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => false,  // Batch Full
         ],
         'CCA-MA25' => [
             'name' => 'Mobile App Developer Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => false,  // Batch Full
         ],
         'CCA-SE25' => [
             'name' => 'Software Engineer Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-DA25' => [
             'name' => 'Data Analyst Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-DS25' => [
             'name' => 'Data Scientist Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => false,  // Batch Full
         ],
         'CCA-DE25' => [
             'name' => 'Data Engineer Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-AI25' => [
             'name' => 'AI ML Engineer Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-UX25' => [
             'name' => 'UI UX Designer Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-GD25' => [
             'name' => 'Graphic Designer Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-DM25' => [
             'name' => 'Digital Marketing Specialist Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-SEO25' => [
             'name' => 'SEO AEO Specialist Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-DO25' => [
             'name' => 'DevOps Engineer Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-QA25' => [
             'name' => 'QA Engineer Manual Automation Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-PM25' => [
             'name' => 'Project Manager Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-BA25' => [
             'name' => 'Business Analyst Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
         'CCA-CS25' => [
             'name' => 'Cyber Security Engineer Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
+            'active' => true,
         ],
     ],
 
