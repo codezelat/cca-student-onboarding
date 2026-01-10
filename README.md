@@ -25,24 +25,24 @@
 
 ## 📋 Table of Contents
 
-- [Overview](#-overview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [System Requirements](#-system-requirements)
-- [Installation](#-installation)
-- [Configuration](#%EF%B8%8F-configuration)
-- [Usage](#-usage)
-- [Admin Panel](#-admin-panel)
-- [Database Schema](#-database-schema)
-- [File Structure](#-file-structure)
-- [Security](#-security)
-- [API Documentation](#-api-documentation)
-- [Best Practices](#-best-practices-implemented)
-- [Deployment](#-deployment)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Support](#-support)
+-   [Overview](#-overview)
+-   [Features](#-features)
+-   [Tech Stack](#-tech-stack)
+-   [System Requirements](#-system-requirements)
+-   [Installation](#-installation)
+-   [Configuration](#%EF%B8%8F-configuration)
+-   [Usage](#-usage)
+-   [Admin Panel](#-admin-panel)
+-   [Database Schema](#-database-schema)
+-   [File Structure](#-file-structure)
+-   [Security](#-security)
+-   [API Documentation](#-api-documentation)
+-   [Best Practices](#-best-practices-implemented)
+-   [Deployment](#-deployment)
+-   [Troubleshooting](#-troubleshooting)
+-   [Contributing](#-contributing)
+-   [License](#-license)
+-   [Support](#-support)
 
 ---
 
@@ -52,15 +52,15 @@ The **Codezela Career Accelerator (CCA) Student Onboarding Portal** is a full-fe
 
 ### Key Highlights
 
-- 🎯 **18 Career Programs** - Full Stack, Frontend, Backend, Mobile App, Data Science, AI/ML, and more
-- 🌍 **Multi-country Support** - Sri Lanka districts + 195 countries
-- 📁 **Cloud Storage** - Cloudflare R2 integration for secure document storage
-- 🔒 **Enterprise Security** - reCAPTCHA v3, CSRF protection, XSS prevention
-- 📊 **Advanced Admin Dashboard** - Real-time statistics, filtering, Excel export
-- 💰 **Payment Management** - Tags system, payment tracking, special offers
-- 🎨 **Modern UI/UX** - Responsive design, animations, dark/light themes
-- ♿ **Accessibility** - WCAG 2.1 compliant, keyboard navigation, ARIA labels
-- 📱 **Mobile-First** - Fully responsive across all devices
+-   🎯 **18 Career Programs** - Full Stack, Frontend, Backend, Mobile App, Data Science, AI/ML, and more
+-   🌍 **Multi-country Support** - Sri Lanka districts + 195 countries
+-   📁 **Cloud Storage** - Cloudflare R2 integration for secure document storage
+-   🔒 **Enterprise Security** - reCAPTCHA v3, CSRF protection, XSS prevention
+-   📊 **Advanced Admin Dashboard** - Real-time statistics, filtering, Excel export
+-   💰 **Payment Management** - Tags system, payment tracking, special offers
+-   🎨 **Modern UI/UX** - Responsive design, animations, dark/light themes
+-   ♿ **Accessibility** - WCAG 2.1 compliant, keyboard navigation, ARIA labels
+-   📱 **Mobile-First** - Fully responsive across all devices
 
 ---
 
@@ -69,132 +69,148 @@ The **Codezela Career Accelerator (CCA) Student Onboarding Portal** is a full-fe
 ### 🎓 Student Features
 
 #### Registration System
-- **Smart Program Selection** - Real-time program validation with active/inactive status
-- **Multi-document Upload** - Academic qualifications, ID documents, passport, photos
-- **Progress Tracking** - Visual progress indicators during upload and submission
-- **Duplicate Prevention** - Automatic detection of existing registrations
-- **Form Validation** - Client-side and server-side validation with helpful error messages
-- **Auto-fill Support** - Browser autofill compatibility for faster form completion
+
+-   **Smart Program Selection** - Real-time program validation with active/inactive status
+-   **Multi-document Upload** - Academic qualifications, ID documents, passport, photos
+-   **Progress Tracking** - Visual progress indicators during upload and submission
+-   **Duplicate Prevention** - Automatic detection of existing registrations
+-   **Form Validation** - Client-side and server-side validation with helpful error messages
+-   **Auto-fill Support** - Browser autofill compatibility for faster form completion
 
 #### Document Management
-- **Multiple File Types** - Support for PDF, JPG, PNG, HEIC, and more
-- **File Size Validation** - 10MB per file limit with user-friendly error messages
-- **Secure Upload** - Direct upload to Cloudflare R2 with encryption
-- **Preview Support** - View uploaded documents before submission
+
+-   **Multiple File Types** - Support for PDF, JPG, PNG, HEIC, and more
+-   **File Size Validation** - 10MB per file limit with user-friendly error messages
+-   **Secure Upload** - Direct upload to Cloudflare R2 with encryption
+-   **Preview Support** - View uploaded documents before submission
 
 #### User Experience
-- **3D Hero Section** - Interactive Three.js animation on landing page
-- **Animated Backgrounds** - Liquid gradient blob animations
-- **Glassmorphism UI** - Modern frosted glass design elements
-- **Real-time Feedback** - Instant validation and status updates
-- **Multi-step Forms** - Organized sections with clear navigation
-- **Helpful Tooltips** - Contextual help throughout the form
+
+-   **3D Hero Section** - Interactive Three.js animation on landing page
+-   **Animated Backgrounds** - Liquid gradient blob animations
+-   **Glassmorphism UI** - Modern frosted glass design elements
+-   **Real-time Feedback** - Instant validation and status updates
+-   **Multi-step Forms** - Organized sections with clear navigation
+-   **Helpful Tooltips** - Contextual help throughout the form
 
 ### 👨‍💼 Admin Features
 
 #### Dashboard
-- **Real-time Statistics**
-  - Total registrations count
-  - General rate registrations
-  - Special offer registrations
-  - Most registered program
-- **Advanced Filtering** - Search by name, email, phone, program
-- **Pagination** - Efficient data loading for large datasets
-- **Export to Excel** - One-click export of filtered results
+
+-   **Real-time Statistics**
+    -   Total registrations count
+    -   General rate registrations
+    -   Special offer registrations
+    -   Most registered program
+-   **Advanced Filtering** - Search by name, email, phone, program
+-   **Pagination** - Efficient data loading for large datasets
+-   **Export to Excel** - One-click export of filtered results
 
 #### Registration Management
-- **Detailed View** - Complete student information with all documents
-- **Edit Capabilities** - Update student information and program assignments
-- **Payment Management**
-  - Multi-tag system (Full Payment, Partial, Special Offers, etc.)
-  - Current paid amount tracking
-  - Visual tag display with color coding
-- **Delete Functionality** - Safe deletion with file cleanup
-- **Bulk Actions** - Process multiple registrations efficiently
+
+-   **Detailed View** - Complete student information with all documents
+-   **Edit Capabilities** - Update student information and program assignments
+-   **Payment Management**
+    -   Multi-tag system (Full Payment, Partial, Special Offers, etc.)
+    -   Current paid amount tracking
+    -   Visual tag display with color coding
+-   **Delete Functionality** - Safe deletion with file cleanup
+-   **Bulk Actions** - Process multiple registrations efficiently
 
 #### Document Viewer
-- **Unified Viewer** - View all student documents in one modal
-- **Navigation Controls** - Previous/Next buttons and keyboard shortcuts
-- **Image Zoom & Pan** - Zoom in/out with mouse wheel, drag to pan
-- **PDF Support** - Embedded PDF viewer with controls
-- **Download Options** - Direct download and open in new tab
-- **Category Badges** - Personal, Payment, Academic, Identity labels
+
+-   **Unified Viewer** - View all student documents in one modal
+-   **Navigation Controls** - Previous/Next buttons and keyboard shortcuts
+-   **Image Zoom & Pan** - Zoom in/out with mouse wheel, drag to pan
+-   **PDF Support** - Embedded PDF viewer with controls
+-   **Download Options** - Direct download and open in new tab
+-   **Category Badges** - Personal, Payment, Academic, Identity labels
 
 #### User Management
-- **Role-based Access** - Admin roles with Spatie Permissions
-- **Profile Management** - Update admin profiles and passwords
-- **Secure Authentication** - Laravel Breeze with admin guard
-- **Session Management** - Remember me, timeout controls
+
+-   **Role-based Access** - Admin roles with Spatie Permissions
+-   **Profile Management** - Update admin profiles and passwords
+-   **Secure Authentication** - Laravel Breeze with admin guard
+-   **Session Management** - Remember me, timeout controls
 
 ### 🔒 Security Features
 
 #### Protection Layers
-- **Google reCAPTCHA v3** - Invisible bot protection on registration
-- **CSRF Protection** - Laravel's built-in CSRF tokens on all forms
-- **XSS Prevention** - Input sanitization and output escaping
-- **SQL Injection Prevention** - Eloquent ORM and prepared statements
-- **File Upload Security** - MIME type validation, size limits, virus scanning ready
-- **Rate Limiting** - Prevent brute force attacks
-- **Security Headers** - X-Frame-Options, X-Content-Type-Options, XSS-Protection
+
+-   **Google reCAPTCHA v3** - Invisible bot protection on registration
+-   **CSRF Protection** - Laravel's built-in CSRF tokens on all forms
+-   **XSS Prevention** - Input sanitization and output escaping
+-   **SQL Injection Prevention** - Eloquent ORM and prepared statements
+-   **File Upload Security** - MIME type validation, size limits, virus scanning ready
+-   **Rate Limiting** - Prevent brute force attacks
+-   **Security Headers** - X-Frame-Options, X-Content-Type-Options, XSS-Protection
 
 #### Data Privacy
-- **Encrypted Storage** - All files stored with encryption on Cloudflare R2
-- **Secure URLs** - Pre-signed URLs with expiration for document access
-- **HTTPS Enforcement** - Force HTTPS in production
-- **No Index for Admin** - Admin pages excluded from search engines
-- **Audit Logging Ready** - Database structure supports activity logging
+
+-   **Encrypted Storage** - All files stored with encryption on Cloudflare R2
+-   **Secure URLs** - Pre-signed URLs with expiration for document access
+-   **HTTPS Enforcement** - Force HTTPS in production
+-   **No Index for Admin** - Admin pages excluded from search engines
+-   **Audit Logging Ready** - Database structure supports activity logging
 
 ---
 
 ## 🛠 Tech Stack
 
 ### Backend
-- **Laravel 12.x** - PHP framework for web artisans
-- **PHP 8.2+** - Modern PHP with type safety and performance
-- **MySQL 8.0+** - Relational database (also supports PostgreSQL, SQLite)
-- **Laravel Breeze** - Authentication scaffolding
-- **Spatie Laravel Permission** - Role and permission management
-- **Guzzle HTTP** - API client for external services
+
+-   **Laravel 12.x** - PHP framework for web artisans
+-   **PHP 8.2+** - Modern PHP with type safety and performance
+-   **MySQL 8.0+** - Relational database (also supports PostgreSQL, SQLite)
+-   **Laravel Breeze** - Authentication scaffolding
+-   **Spatie Laravel Permission** - Role and permission management
+-   **Guzzle HTTP** - API client for external services
 
 ### Frontend
-- **Blade Templates** - Laravel's templating engine
-- **Tailwind CSS 3.x** - Utility-first CSS framework
-- **Alpine.js 3.x** - Lightweight JavaScript framework
-- **Vite** - Next-generation frontend tooling
-- **Three.js** - 3D graphics and animations
-- **Axios** - Promise-based HTTP client
+
+-   **Blade Templates** - Laravel's templating engine
+-   **Tailwind CSS 3.x** - Utility-first CSS framework
+-   **Alpine.js 3.x** - Lightweight JavaScript framework
+-   **Vite** - Next-generation frontend tooling
+-   **Three.js** - 3D graphics and animations
+-   **Axios** - Promise-based HTTP client
 
 ### Cloud Services
-- **Cloudflare R2** - S3-compatible object storage
-- **Google reCAPTCHA v3** - Bot protection
-- **Google Analytics** - Web analytics (production only)
+
+-   **Cloudflare R2** - S3-compatible object storage
+-   **Google reCAPTCHA v3** - Bot protection
+-   **Google Analytics** - Web analytics (production only)
 
 ### Development Tools
-- **Laravel Pint** - PHP code style fixer
-- **Laravel Pail** - Real-time log viewer
-- **Laravel Sail** - Docker development environment
-- **Composer** - PHP dependency manager
-- **NPM** - JavaScript package manager
+
+-   **Laravel Pint** - PHP code style fixer
+-   **Laravel Pail** - Real-time log viewer
+-   **Laravel Sail** - Docker development environment
+-   **Composer** - PHP dependency manager
+-   **NPM** - JavaScript package manager
 
 ---
 
 ## 💻 System Requirements
 
 ### Minimum Requirements
-- **PHP**: 8.2 or higher
-- **Database**: MySQL 8.0+ / PostgreSQL 13+ / SQLite 3.35+
-- **Web Server**: Apache 2.4+ / Nginx 1.18+
-- **Node.js**: 18.x or higher
-- **NPM**: 9.x or higher
-- **Composer**: 2.5+
+
+-   **PHP**: 8.2 or higher
+-   **Database**: MySQL 8.0+ / PostgreSQL 13+ / SQLite 3.35+
+-   **Web Server**: Apache 2.4+ / Nginx 1.18+
+-   **Node.js**: 18.x or higher
+-   **NPM**: 9.x or higher
+-   **Composer**: 2.5+
 
 ### Recommended Server Specifications
-- **RAM**: 2GB minimum, 4GB recommended
-- **Storage**: 10GB minimum (+ space for uploaded documents)
-- **CPU**: 2 cores minimum, 4 cores recommended
-- **SSL Certificate**: Required for production
+
+-   **RAM**: 2GB minimum, 4GB recommended
+-   **Storage**: 10GB minimum (+ space for uploaded documents)
+-   **CPU**: 2 cores minimum, 4 cores recommended
+-   **SSL Certificate**: Required for production
 
 ### PHP Extensions Required
+
 ```
 - BCMath
 - Ctype
@@ -229,22 +245,26 @@ composer dev
 ### Detailed Installation
 
 #### 1. Clone Repository
+
 ```bash
 git clone https://github.com/yourusername/cca-student-onboarding.git
 cd cca-student-onboarding
 ```
 
 #### 2. Install PHP Dependencies
+
 ```bash
 composer install
 ```
 
 #### 3. Install Node Dependencies
+
 ```bash
 npm install
 ```
 
 #### 4. Environment Configuration
+
 ```bash
 # Copy environment file
 cp .env.example .env
@@ -254,6 +274,7 @@ php artisan key:generate
 ```
 
 #### 5. Configure Environment Variables
+
 Edit `.env` file with your settings:
 
 ```env
@@ -298,6 +319,7 @@ MAIL_FROM_NAME="${APP_NAME}"
 ```
 
 #### 6. Database Setup
+
 ```bash
 # Run migrations
 php artisan migrate
@@ -308,12 +330,14 @@ php artisan db:seed --class=AdminUserSeeder
 ```
 
 #### 7. Storage Setup
+
 ```bash
 # Create storage link (if using local storage)
 php artisan storage:link
 ```
 
 #### 8. Build Assets
+
 ```bash
 # For development
 npm run dev
@@ -323,6 +347,7 @@ npm run build
 ```
 
 #### 9. Set Permissions
+
 ```bash
 # Linux/Mac
 chmod -R 775 storage bootstrap/cache
@@ -333,6 +358,7 @@ chmod -R 777 storage bootstrap/cache
 ```
 
 #### 10. Start Application
+
 ```bash
 # Development server
 php artisan serve
@@ -365,62 +391,70 @@ Edit `config/programs.php` to manage available programs:
 ```
 
 **Program Status Management:**
-- Set `'active' => false` to close registrations for a program
-- System automatically prevents new registrations for inactive programs
-- Visual indicators appear on registration form
-- Backend validation ensures no bypass
+
+-   Set `'active' => false` to close registrations for a program
+-   System automatically prevents new registrations for inactive programs
+-   Visual indicators appear on registration form
+-   Backend validation ensures no bypass
 
 ### Cloudflare R2 Setup
 
 1. **Create R2 Bucket:**
-   - Login to Cloudflare dashboard
-   - Navigate to R2 → Create bucket
-   - Note your Account ID and bucket name
+
+    - Login to Cloudflare dashboard
+    - Navigate to R2 → Create bucket
+    - Note your Account ID and bucket name
 
 2. **Generate API Credentials:**
-   - R2 → Manage R2 API Tokens
-   - Create API token with read/write permissions
-   - Copy Access Key ID and Secret Access Key
+
+    - R2 → Manage R2 API Tokens
+    - Create API token with read/write permissions
+    - Copy Access Key ID and Secret Access Key
 
 3. **Configure Public Access (Optional):**
-   - Enable custom domain for public access
-   - Configure CORS if needed
+
+    - Enable custom domain for public access
+    - Configure CORS if needed
 
 4. **Update `.env`:**
-   ```env
-   AWS_ACCESS_KEY_ID=your_key
-   AWS_SECRET_ACCESS_KEY=your_secret
-   AWS_BUCKET=your_bucket
-   AWS_ENDPOINT=https://account_id.r2.cloudflarestorage.com
-   AWS_URL=https://your_public_url.com
-   ```
+    ```env
+    AWS_ACCESS_KEY_ID=your_key
+    AWS_SECRET_ACCESS_KEY=your_secret
+    AWS_BUCKET=your_bucket
+    AWS_ENDPOINT=https://account_id.r2.cloudflarestorage.com
+    AWS_URL=https://your_public_url.com
+    ```
 
 ### Google reCAPTCHA Setup
 
 1. **Register Site:**
-   - Visit [Google reCAPTCHA](https://www.google.com/recaptcha/admin)
-   - Register a new site with reCAPTCHA v3
-   - Add your domain
+
+    - Visit [Google reCAPTCHA](https://www.google.com/recaptcha/admin)
+    - Register a new site with reCAPTCHA v3
+    - Add your domain
 
 2. **Get Keys:**
-   - Copy Site Key and Secret Key
+
+    - Copy Site Key and Secret Key
 
 3. **Configure `.env`:**
-   ```env
-   RECAPTCHA_SITE_KEY=your_site_key
-   RECAPTCHA_SECRET_KEY=your_secret_key
-   RECAPTCHA_MINIMUM_SCORE=0.5
-   ```
+    ```env
+    RECAPTCHA_SITE_KEY=your_site_key
+    RECAPTCHA_SECRET_KEY=your_secret_key
+    RECAPTCHA_MINIMUM_SCORE=0.5
+    ```
 
 ### Admin User Creation
 
 **Default Admin Credentials:**
+
 ```
 Email: admin@cca.it
 Password: password
 ```
 
 **Create Additional Admins:**
+
 ```bash
 php artisan tinker
 
@@ -455,98 +489,115 @@ MAIL_FROM_NAME="CCA Portal"
 ### For Students
 
 #### 1. Access Registration Form
+
 Navigate to `https://your-domain.com/register`
 
 #### 2. Complete Form Sections
 
 **Program Information:**
-- Enter your Program ID (e.g., CCA-PM25)
-- System validates and displays program details
-- Red warning appears if program is full
+
+-   Enter your Program ID (e.g., CCA-PM25)
+-   System validates and displays program details
+-   Red warning appears if program is full
 
 **Personal Information:**
-- Full name, date of birth
-- Gender selection
-- NIC or Passport number (at least one required)
+
+-   Full name, date of birth
+-   Gender selection
+-   NIC or Passport number (at least one required)
 
 **Contact Information:**
-- Permanent address
-- Country and district (Sri Lanka specific)
-- Email address
-- Phone number (with validation)
-- WhatsApp number
+
+-   Permanent address
+-   Country and district (Sri Lanka specific)
+-   Email address
+-   Phone number (with validation)
+-   WhatsApp number
 
 **Guardian Information:**
-- Guardian's name
-- Occupation
-- Contact number
+
+-   Guardian's name
+-   Occupation
+-   Contact number
 
 **Academic Qualifications:**
-- Academic qualification level
-- Upload documents (PDF/Images, max 10MB each)
+
+-   Academic qualification level
+-   Upload documents (PDF/Images, max 10MB each)
 
 **Identity Documents:**
-- Upload NIC or Passport documents
-- Multiple files supported
+
+-   Upload NIC or Passport documents
+-   Multiple files supported
 
 **Photo & Payment:**
-- Upload passport-sized photo
-- Upload payment slip
-- Agree to terms and conditions
+
+-   Upload passport-sized photo
+-   Upload payment slip
+-   Agree to terms and conditions
 
 #### 3. Submit Registration
-- Click "Submit Registration" button
-- Real-time progress indicator shows upload status
-- Success confirmation with registration ID
-- Automatic redirect to confirmation page
+
+-   Click "Submit Registration" button
+-   Real-time progress indicator shows upload status
+-   Success confirmation with registration ID
+-   Automatic redirect to confirmation page
 
 ### For Administrators
 
 #### 1. Login
+
 Navigate to `https://your-domain.com/admin/login`
 
 **Default Credentials:**
+
 ```
 Email: admin@cca.it
 Password: password
 ```
 
 #### 2. Dashboard Overview
-- View registration statistics
-- Filter by program, search students
-- Export data to Excel
-- Access individual registrations
+
+-   View registration statistics
+-   Filter by program, search students
+-   Export data to Excel
+-   Access individual registrations
 
 #### 3. View Registration Details
-- Click "View" button on any registration
-- See complete student information
-- View all uploaded documents
-- Check payment status and tags
+
+-   Click "View" button on any registration
+-   See complete student information
+-   View all uploaded documents
+-   Check payment status and tags
 
 #### 4. Document Viewing
-- Click "View All" button in Documents section
-- Navigate through all documents with arrow keys
-- Zoom images with mouse wheel
-- Download or open in new tab
+
+-   Click "View All" button in Documents section
+-   Navigate through all documents with arrow keys
+-   Zoom images with mouse wheel
+-   Download or open in new tab
 
 #### 5. Edit Registration
-- Click "Edit" button on registration detail page
-- Update program assignment
-- Modify contact information
-- Add payment tags (Full Payment, Special Offer, etc.)
-- Set current paid amount
-- Save changes
+
+-   Click "Edit" button on registration detail page
+-   Update program assignment
+-   Modify contact information
+-   Add payment tags (Full Payment, Special Offer, etc.)
+-   Set current paid amount
+-   Save changes
 
 #### 6. Delete Registration
-- Click "Delete" button
-- Confirm deletion
-- System automatically removes all associated files
+
+-   Click "Delete" button
+-   Confirm deletion
+-   System automatically removes all associated files
 
 #### 7. Manage Profile
-- Click profile dropdown in navigation
-- Select "Profile Settings"
-- Update name, email, password
-- Logout securely
+
+-   Click profile dropdown in navigation
+-   Select "Profile Settings"
+-   Update name, email, password
+-   Logout securely
 
 ---
 
@@ -555,69 +606,78 @@ Password: password
 ### Dashboard Features
 
 #### Statistics Cards
+
 1. **Total Registrations** - Overall count with blue gradient
 2. **General Rate Registrations** - Count of general rate students (green)
 3. **Special Offer Registrations** - Count of special offer students (purple)
 4. **Most Registered Program** - Program with highest registrations (orange)
 
 #### Filtering & Search
-- **Search Bar** - Search by name, email, phone, or NIC
-- **Program Filter** - Filter by specific program
-- **Clear Filters** - Reset all filters
-- **Export Button** - Export filtered results to Excel
+
+-   **Search Bar** - Search by name, email, phone, or NIC
+-   **Program Filter** - Filter by specific program
+-   **Clear Filters** - Reset all filters
+-   **Export Button** - Export filtered results to Excel
 
 #### Registration Table
-- **Registration ID** - Auto-generated unique ID
-- **Student Name** - Full name with email
-- **Program** - Program code with badge
-- **Contact** - Phone and WhatsApp
-- **Submitted Date** - Registration timestamp
-- **Actions** - View, Edit, Delete buttons
+
+-   **Registration ID** - Auto-generated unique ID
+-   **Student Name** - Full name with email
+-   **Program** - Program code with badge
+-   **Contact** - Phone and WhatsApp
+-   **Submitted Date** - Registration timestamp
+-   **Actions** - View, Edit, Delete buttons
 
 ### Payment Management
 
 #### Available Tags
-- **Full Payment** (Green)
-- **Special 50% Offer** (Purple)
-- **Registration Fee** (Blue)
-- **Partial Registration Fee** (Yellow)
-- **General Rate** (Indigo)
-- **125000** (Red)
-- **105000** (Orange)
-- **62500** (Pink)
+
+-   **Full Payment** (Green)
+-   **Special 50% Offer** (Purple)
+-   **Registration Fee** (Blue)
+-   **Partial Registration Fee** (Yellow)
+-   **General Rate** (Indigo)
+-   **125000** (Red)
+-   **105000** (Orange)
+-   **62500** (Pink)
 
 #### Tag Management
-- Add multiple tags per registration
-- Visual color-coded badges
-- Easy removal with click
-- Saved automatically
+
+-   Add multiple tags per registration
+-   Visual color-coded badges
+-   Easy removal with click
+-   Saved automatically
 
 #### Payment Tracking
-- **Current Paid Amount** - Input field for amount paid
-- **Payment Slip Viewer** - Quick link to view payment proof
-- **Payment History Ready** - Database supports payment logging
+
+-   **Current Paid Amount** - Input field for amount paid
+-   **Payment Slip Viewer** - Quick link to view payment proof
+-   **Payment History Ready** - Database supports payment logging
 
 ### Document Management
 
 #### Document Viewer Features
-- **Unified Interface** - All documents in one modal
-- **Navigation** - Previous/Next buttons, arrow keys, document counter
-- **Image Controls** - Zoom in/out, pan, reset zoom
-- **PDF Support** - Embedded viewer with toolbar
-- **Download** - Direct download button
-- **Open in Tab** - View in separate browser tab
-- **Error Handling** - Graceful fallback for unsupported formats
+
+-   **Unified Interface** - All documents in one modal
+-   **Navigation** - Previous/Next buttons, arrow keys, document counter
+-   **Image Controls** - Zoom in/out, pan, reset zoom
+-   **PDF Support** - Embedded viewer with toolbar
+-   **Download** - Direct download button
+-   **Open in Tab** - View in separate browser tab
+-   **Error Handling** - Graceful fallback for unsupported formats
 
 #### Supported File Types
-- **Images**: JPG, JPEG, PNG, GIF, WebP, HEIC, SVG, BMP
-- **Documents**: PDF
-- **Error Display** - User-friendly message for unsupported files
+
+-   **Images**: JPG, JPEG, PNG, GIF, WebP, HEIC, SVG, BMP
+-   **Documents**: PDF
+-   **Error Display** - User-friendly message for unsupported files
 
 ---
 
 ## 🗄 Database Schema
 
 ### `users` Table
+
 ```sql
 - id: bigint (PK)
 - name: varchar(255)
@@ -630,6 +690,7 @@ Password: password
 ```
 
 ### `cca_registrations` Table
+
 ```sql
 - id: bigint (PK, auto-increment)
 - register_id: varchar(20) UNIQUE (auto-generated)
@@ -673,13 +734,16 @@ Indexes:
 ```
 
 ### `roles` & `permissions` Tables
+
 Managed by Spatie Laravel Permission package:
-- roles: id, name, guard_name, created_at, updated_at
-- permissions: id, name, guard_name, created_at, updated_at
-- model_has_roles: Pivot table
-- role_has_permissions: Pivot table
+
+-   roles: id, name, guard_name, created_at, updated_at
+-   permissions: id, name, guard_name, created_at, updated_at
+-   model_has_roles: Pivot table
+-   role_has_permissions: Pivot table
 
 ### `jobs` Table
+
 ```sql
 - id: bigint (PK)
 - queue: varchar(255)
@@ -691,6 +755,7 @@ Managed by Spatie Laravel Permission package:
 ```
 
 ### `cache` Table
+
 ```sql
 - key: varchar(255) (PK)
 - value: mediumtext
@@ -802,30 +867,35 @@ cca-student-onboarding/
 ## 🔐 Security
 
 ### Authentication & Authorization
-- **Laravel Breeze** - Modern authentication with admin guard separation
-- **Spatie Permissions** - Role-based access control (RBAC)
-- **Session Management** - Secure session handling with database driver
-- **Remember Me** - Optional persistent login with encrypted tokens
+
+-   **Laravel Breeze** - Modern authentication with admin guard separation
+-   **Spatie Permissions** - Role-based access control (RBAC)
+-   **Session Management** - Secure session handling with database driver
+-   **Remember Me** - Optional persistent login with encrypted tokens
 
 ### Input Validation
-- **Form Requests** - Centralized validation rules in `CCARegistration` model
-- **Custom Rules** - NIC/Passport validation, program status check
-- **File Validation** - MIME type checking, size limits, extension whitelist
-- **Sanitization** - HTML purification, SQL injection prevention
+
+-   **Form Requests** - Centralized validation rules in `CCARegistration` model
+-   **Custom Rules** - NIC/Passport validation, program status check
+-   **File Validation** - MIME type checking, size limits, extension whitelist
+-   **Sanitization** - HTML purification, SQL injection prevention
 
 ### Data Protection
-- **Encryption** - Sensitive data encrypted at rest
-- **HTTPS Enforcement** - Force SSL in production
-- **Password Hashing** - BCrypt with configurable rounds
-- **API Token Security** - Sanctum-ready for API authentication
+
+-   **Encryption** - Sensitive data encrypted at rest
+-   **HTTPS Enforcement** - Force SSL in production
+-   **Password Hashing** - BCrypt with configurable rounds
+-   **API Token Security** - Sanctum-ready for API authentication
 
 ### File Security
-- **Cloudflare R2** - Encrypted storage with access controls
-- **Pre-signed URLs** - Temporary access with expiration
-- **File Scanning** - Ready for antivirus integration
-- **Upload Limits** - 10MB per file, configurable
+
+-   **Cloudflare R2** - Encrypted storage with access controls
+-   **Pre-signed URLs** - Temporary access with expiration
+-   **File Scanning** - Ready for antivirus integration
+-   **Upload Limits** - 10MB per file, configurable
 
 ### Headers & CORS
+
 ```php
 X-Frame-Options: DENY
 X-Content-Type-Options: nosniff
@@ -835,11 +905,13 @@ Strict-Transport-Security: max-age=31536000
 ```
 
 ### Rate Limiting
-- **API Rate Limiting** - 60 requests per minute per IP
-- **Login Throttling** - Protection against brute force attacks
-- **Registration Throttling** - Prevent spam submissions
+
+-   **API Rate Limiting** - 60 requests per minute per IP
+-   **Login Throttling** - Protection against brute force attacks
+-   **Registration Throttling** - Prevent spam submissions
 
 ### Security Best Practices Implemented
+
 ✅ SQL Injection Prevention (Eloquent ORM)
 ✅ XSS Protection (Blade escaping)
 ✅ CSRF Protection (Laravel tokens)
@@ -858,12 +930,14 @@ Strict-Transport-Security: max-age=31536000
 ### Public Endpoints
 
 #### Register Student
+
 ```http
 POST /register
 Content-Type: multipart/form-data
 ```
 
 **Request Body:**
+
 ```json
 {
   "program_id": "CCA-PM25",
@@ -892,30 +966,33 @@ Content-Type: multipart/form-data
 ```
 
 **Response (Success):**
+
 ```json
 {
-  "success": true,
-  "message": "Registration submitted successfully!",
-  "registration_id": "REG-2025-001234",
-  "redirect_url": "/registration-success"
+    "success": true,
+    "message": "Registration submitted successfully!",
+    "registration_id": "REG-2025-001234",
+    "redirect_url": "/registration-success"
 }
 ```
 
 **Response (Error):**
+
 ```json
 {
-  "message": "The given data was invalid.",
-  "errors": {
-    "program_id": [
-      "Registration for Frontend Developer Career Accelerator is currently closed..."
-    ]
-  }
+    "message": "The given data was invalid.",
+    "errors": {
+        "program_id": [
+            "Registration for Frontend Developer Career Accelerator is currently closed..."
+        ]
+    }
 }
 ```
 
 ### Admin Endpoints
 
 #### List Registrations
+
 ```http
 GET /admin/registrations
 Authorization: Session Cookie
@@ -927,34 +1004,37 @@ Query Parameters:
 ```
 
 **Response:**
+
 ```json
 {
-  "current_page": 1,
-  "data": [
-    {
-      "id": 1,
-      "register_id": "REG-2025-001234",
-      "full_name": "John Doe",
-      "email": "john@example.com",
-      "program_id": "CCA-PM25",
-      "program_name": "Project Manager Career Accelerator",
-      "phone_number": "+94771234567",
-      "created_at": "2025-01-11T10:30:00.000000Z"
-    }
-  ],
-  "total": 150,
-  "per_page": 20,
-  "last_page": 8
+    "current_page": 1,
+    "data": [
+        {
+            "id": 1,
+            "register_id": "REG-2025-001234",
+            "full_name": "John Doe",
+            "email": "john@example.com",
+            "program_id": "CCA-PM25",
+            "program_name": "Project Manager Career Accelerator",
+            "phone_number": "+94771234567",
+            "created_at": "2025-01-11T10:30:00.000000Z"
+        }
+    ],
+    "total": 150,
+    "per_page": 20,
+    "last_page": 8
 }
 ```
 
 #### View Registration
+
 ```http
 GET /admin/registrations/{id}
 Authorization: Session Cookie
 ```
 
 **Response:**
+
 ```json
 {
   "id": 1,
@@ -995,6 +1075,7 @@ Authorization: Session Cookie
 ```
 
 #### Update Registration
+
 ```http
 PUT /admin/registrations/{id}
 Authorization: Session Cookie
@@ -1002,32 +1083,36 @@ Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
-  "program_id": "CCA-PM25",
-  "full_name": "John Doe",
-  "email": "john@example.com",
-  "phone_number": "+94771234567",
-  "tags": ["Full Payment", "General Rate"],
-  "current_paid_amount": 125000.00
+    "program_id": "CCA-PM25",
+    "full_name": "John Doe",
+    "email": "john@example.com",
+    "phone_number": "+94771234567",
+    "tags": ["Full Payment", "General Rate"],
+    "current_paid_amount": 125000.0
 }
 ```
 
 #### Delete Registration
+
 ```http
 DELETE /admin/registrations/{id}
 Authorization: Session Cookie
 ```
 
 **Response:**
+
 ```json
 {
-  "success": true,
-  "message": "Registration deleted successfully"
+    "success": true,
+    "message": "Registration deleted successfully"
 }
 ```
 
 #### Export to Excel
+
 ```http
 GET /admin/registrations/export
 Authorization: Session Cookie
@@ -1044,6 +1129,7 @@ Query Parameters:
 ## 🏆 Best Practices Implemented
 
 ### Code Quality
+
 ✅ **PSR-12 Coding Standards** - Laravel Pint enforcement
 ✅ **Type Hints** - Strict typing throughout
 ✅ **Dependency Injection** - Service container usage
@@ -1053,6 +1139,7 @@ Query Parameters:
 ✅ **Meaningful Names** - Self-documenting code
 
 ### Database
+
 ✅ **Migrations** - Version-controlled schema
 ✅ **Seeders** - Repeatable data population
 ✅ **Eloquent ORM** - Query builder with relationships
@@ -1061,6 +1148,7 @@ Query Parameters:
 ✅ **Soft Deletes Ready** - Recoverable deletions
 
 ### Frontend
+
 ✅ **Responsive Design** - Mobile-first approach
 ✅ **Progressive Enhancement** - Works without JavaScript
 ✅ **Accessibility** - WCAG 2.1 Level AA compliant
@@ -1069,6 +1157,7 @@ Query Parameters:
 ✅ **Cross-browser** - IE11+, Chrome, Firefox, Safari, Edge
 
 ### Security
+
 ✅ **Least Privilege** - Minimal permissions
 ✅ **Defense in Depth** - Multiple security layers
 ✅ **Input Validation** - Never trust user input
@@ -1077,6 +1166,7 @@ Query Parameters:
 ✅ **Audit Logging Ready** - Track admin actions
 
 ### Performance
+
 ✅ **Query Optimization** - Eager loading, indexes
 ✅ **Caching** - Database cache driver
 ✅ **Asset Optimization** - Vite bundling, minification
@@ -1085,12 +1175,14 @@ Query Parameters:
 ✅ **Queue System** - Background job processing
 
 ### Testing
+
 ✅ **Unit Tests Ready** - PHPUnit configured
 ✅ **Feature Tests Ready** - HTTP testing
 ✅ **Factory Pattern** - Test data generation
 ✅ **Continuous Integration Ready** - CI/CD compatible
 
 ### Documentation
+
 ✅ **Inline Comments** - Complex logic explained
 ✅ **PHPDoc Blocks** - All classes and methods
 ✅ **README.md** - Comprehensive documentation
@@ -1104,16 +1196,18 @@ Query Parameters:
 ### Production Checklist
 
 #### Pre-deployment
-- [ ] Set `APP_ENV=production` in `.env`
-- [ ] Set `APP_DEBUG=false` in `.env`
-- [ ] Generate secure `APP_KEY`
-- [ ] Configure production database
-- [ ] Set up Cloudflare R2 bucket
-- [ ] Register Google reCAPTCHA domain
-- [ ] Configure email provider
-- [ ] Set up SSL certificate
+
+-   [ ] Set `APP_ENV=production` in `.env`
+-   [ ] Set `APP_DEBUG=false` in `.env`
+-   [ ] Generate secure `APP_KEY`
+-   [ ] Configure production database
+-   [ ] Set up Cloudflare R2 bucket
+-   [ ] Register Google reCAPTCHA domain
+-   [ ] Configure email provider
+-   [ ] Set up SSL certificate
 
 #### Optimization
+
 ```bash
 # Optimize application
 php artisan config:cache
@@ -1130,6 +1224,7 @@ composer install --optimize-autoloader --no-dev
 #### Server Configuration
 
 **Nginx Example:**
+
 ```nginx
 server {
     listen 80;
@@ -1184,12 +1279,13 @@ server {
 ```
 
 **Apache Example (.htaccess):**
+
 ```apache
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteCond %{HTTPS} off
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-    
+
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
@@ -1210,6 +1306,7 @@ php_value max_execution_time 300
 #### Queue Worker Setup
 
 **Systemd Service (`/etc/systemd/system/cca-queue.service`):**
+
 ```ini
 [Unit]
 Description=CCA Queue Worker
@@ -1236,6 +1333,7 @@ sudo systemctl start cca-queue
 #### Cron Jobs
 
 Add to crontab:
+
 ```bash
 * * * * * cd /var/www/cca-student-onboarding && php artisan schedule:run >> /dev/null 2>&1
 ```
@@ -1243,6 +1341,7 @@ Add to crontab:
 #### Monitoring
 
 **Laravel Telescope (Development):**
+
 ```bash
 composer require laravel/telescope --dev
 php artisan telescope:install
@@ -1250,6 +1349,7 @@ php artisan migrate
 ```
 
 **Log Monitoring:**
+
 ```bash
 # Real-time logs
 php artisan pail
@@ -1261,13 +1361,14 @@ tail -f storage/logs/laravel.log
 ### Hosting Providers
 
 **Recommended:**
-- **DigitalOcean** - App Platform or Droplets
-- **AWS** - Elastic Beanstalk or EC2
-- **Cloudways** - Managed Laravel hosting
-- **Laravel Forge** - Automated deployment
-- **Ploi** - Server management
-- **Heroku** - Quick deployment
-- **Shared Hosting** - With SSH access
+
+-   **DigitalOcean** - App Platform or Droplets
+-   **AWS** - Elastic Beanstalk or EC2
+-   **Cloudways** - Managed Laravel hosting
+-   **Laravel Forge** - Automated deployment
+-   **Ploi** - Server management
+-   **Heroku** - Quick deployment
+-   **Shared Hosting** - With SSH access
 
 ---
 
@@ -1278,6 +1379,7 @@ tail -f storage/logs/laravel.log
 #### File Upload Errors
 
 **Problem:** Files fail to upload to R2
+
 ```
 Solution:
 1. Check R2 credentials in .env
@@ -1289,6 +1391,7 @@ Solution:
 #### reCAPTCHA Verification Fails
 
 **Problem:** "Could not verify that you are human"
+
 ```
 Solution:
 1. Verify site key in .env matches domain
@@ -1301,6 +1404,7 @@ Solution:
 #### Admin Can't Login
 
 **Problem:** "These credentials do not match our records"
+
 ```
 Solution:
 1. Verify admin user exists: php artisan tinker, User::where('email', 'admin@cca.it')->first()
@@ -1312,6 +1416,7 @@ Solution:
 #### Permission Denied Errors
 
 **Problem:** "The stream or file could not be opened"
+
 ```
 Solution:
 # Linux/Mac
@@ -1325,6 +1430,7 @@ chmod -R 777 storage bootstrap/cache
 #### Database Connection Failed
 
 **Problem:** "SQLSTATE[HY000] [1045] Access denied"
+
 ```
 Solution:
 1. Verify database credentials in .env
@@ -1337,6 +1443,7 @@ Solution:
 #### 404 Not Found
 
 **Problem:** Routes not working
+
 ```
 Solution:
 1. Check .htaccess exists in public/
@@ -1348,6 +1455,7 @@ Solution:
 #### WhiteScreen / 500 Error
 
 **Problem:** Application shows blank page
+
 ```
 Solution:
 1. Enable debug: Set APP_DEBUG=true in .env (temporarily)
@@ -1360,6 +1468,7 @@ Solution:
 #### Slow Performance
 
 **Problem:** Application loading slowly
+
 ```
 Solution:
 1. Enable caching: php artisan config:cache && php artisan route:cache && php artisan view:cache
@@ -1373,6 +1482,7 @@ Solution:
 ### Debug Mode
 
 **Enable Detailed Errors (Development Only):**
+
 ```env
 APP_DEBUG=true
 APP_ENV=local
@@ -1380,6 +1490,7 @@ LOG_LEVEL=debug
 ```
 
 **Disable in Production:**
+
 ```env
 APP_DEBUG=false
 APP_ENV=production
@@ -1389,22 +1500,24 @@ LOG_LEVEL=error
 ### Getting Help
 
 1. **Check Logs:**
-   ```bash
-   tail -f storage/logs/laravel.log
-   php artisan pail
-   ```
+
+    ```bash
+    tail -f storage/logs/laravel.log
+    php artisan pail
+    ```
 
 2. **Clear All Caches:**
-   ```bash
-   php artisan optimize:clear
-   ```
+
+    ```bash
+    php artisan optimize:clear
+    ```
 
 3. **Run Diagnostics:**
-   ```bash
-   php artisan about
-   php artisan config:show database
-   php artisan route:list
-   ```
+    ```bash
+    php artisan about
+    php artisan config:show database
+    php artisan route:list
+    ```
 
 ---
 
@@ -1415,47 +1528,54 @@ We welcome contributions! Please follow these guidelines:
 ### Getting Started
 
 1. **Fork the Repository**
-   ```bash
-   git clone https://github.com/yourusername/cca-student-onboarding.git
-   cd cca-student-onboarding
-   git remote add upstream https://github.com/original/cca-student-onboarding.git
-   ```
+
+    ```bash
+    git clone https://github.com/yourusername/cca-student-onboarding.git
+    cd cca-student-onboarding
+    git remote add upstream https://github.com/original/cca-student-onboarding.git
+    ```
 
 2. **Create Feature Branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
+
+    ```bash
+    git checkout -b feature/amazing-feature
+    ```
 
 3. **Make Changes**
-   - Follow PSR-12 coding standards
-   - Write tests for new features
-   - Update documentation
-   - Commit with clear messages
+
+    - Follow PSR-12 coding standards
+    - Write tests for new features
+    - Update documentation
+    - Commit with clear messages
 
 4. **Test Your Changes**
-   ```bash
-   composer test
-   php artisan test
-   ```
+
+    ```bash
+    composer test
+    php artisan test
+    ```
 
 5. **Submit Pull Request**
-   - Push to your fork
-   - Create PR with clear description
-   - Reference any related issues
+    - Push to your fork
+    - Create PR with clear description
+    - Reference any related issues
 
 ### Coding Standards
 
 **PHP (PSR-12):**
+
 ```bash
 composer pint
 ```
 
 **JavaScript (Prettier):**
+
 ```bash
 npm run format
 ```
 
 **Commit Messages:**
+
 ```
 feat: Add payment tracking feature
 fix: Resolve file upload issue on Safari
@@ -1475,10 +1595,10 @@ chore: Update dependencies
 
 ### Code of Conduct
 
-- Be respectful and inclusive
-- Accept constructive criticism gracefully
-- Focus on what's best for the community
-- Show empathy towards others
+-   Be respectful and inclusive
+-   Accept constructive criticism gracefully
+-   Focus on what's best for the community
+-   Show empathy towards others
 
 ---
 
@@ -1516,23 +1636,24 @@ SOFTWARE.
 
 ### Documentation
 
-- **Official Laravel Docs:** https://laravel.com/docs
-- **Tailwind CSS Docs:** https://tailwindcss.com/docs
-- **Alpine.js Docs:** https://alpinejs.dev/start-here
+-   **Official Laravel Docs:** https://laravel.com/docs
+-   **Tailwind CSS Docs:** https://tailwindcss.com/docs
+-   **Alpine.js Docs:** https://alpinejs.dev/start-here
 
 ### Community
 
-- **GitHub Issues:** Report bugs and request features
-- **Email Support:** support@cca.it
-- **Discord Community:** [Join our server](#)
-- **Stack Overflow:** Tag questions with `cca-portal`
+-   **GitHub Issues:** Report bugs and request features
+-   **Email Support:** support@cca.it
+-   **Discord Community:** [Join our server](#)
+-   **Stack Overflow:** Tag questions with `cca-portal`
 
 ### Commercial Support
 
 For enterprise support, custom development, and training:
-- **Email:** enterprise@cca.it
-- **Website:** https://cca.it/enterprise
-- **Phone:** +94 XX XXX XXXX
+
+-   **Email:** enterprise@cca.it
+-   **Website:** https://cca.it/enterprise
+-   **Phone:** +94 XX XXX XXXX
 
 ### FAQ
 
@@ -1565,55 +1686,37 @@ A: Yes! Use local filesystem instead of R2, and remove reCAPTCHA if needed.
 ## 🌟 Acknowledgments
 
 ### Built With
-- [Laravel](https://laravel.com/) - The PHP Framework For Web Artisans
-- [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework
-- [Alpine.js](https://alpinejs.dev/) - Your new, lightweight, JavaScript framework
-- [Three.js](https://threejs.org/) - JavaScript 3D Library
-- [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission/) - Associate users with roles and permissions
+
+-   [Laravel](https://laravel.com/) - The PHP Framework For Web Artisans
+-   [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework
+-   [Alpine.js](https://alpinejs.dev/) - Your new, lightweight, JavaScript framework
+-   [Three.js](https://threejs.org/) - JavaScript 3D Library
+-   [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission/) - Associate users with roles and permissions
 
 ### Inspiration
-- Laravel Breeze - Authentication scaffolding
-- Modern web design trends
-- Educational institution portals
 
-### Contributors
-- **Lead Developer:** Your Name
-- **UI/UX Design:** Designer Name
-- **QA Testing:** Tester Name
+-   Laravel Breeze - Authentication scaffolding
+-   Modern web design trends
+-   Educational institution portals
 
 ---
 
 ## 📊 Project Stats
 
-![GitHub Stars](https://img.shields.io/github/stars/yourusername/cca-student-onboarding?style=social)
-![GitHub Forks](https://img.shields.io/github/forks/yourusername/cca-student-onboarding?style=social)
-![GitHub Issues](https://img.shields.io/github/issues/yourusername/cca-student-onboarding)
-![GitHub License](https://img.shields.io/github/license/yourusername/cca-student-onboarding)
+![GitHub Stars](https://img.shields.io/github/stars/codezelat/cca-student-onboarding?style=social)
+![GitHub Forks](https://img.shields.io/github/forks/codezelat/cca-student-onboarding?style=social)
+![GitHub Issues](https://img.shields.io/github/issues/codezelat/cca-student-onboarding)
+![GitHub License](https://img.shields.io/github/license/codezelat/cca-student-onboarding)
 
 ---
 
 ## 🗺 Roadmap
 
 ### Version 2.0 (Planned)
-- [ ] Email notifications (registration confirmation, admin alerts)
-- [ ] SMS notifications (Twilio integration)
-- [ ] Payment gateway integration (Stripe, PayPal)
-- [ ] Student portal (login, track application status)
-- [ ] Batch management (assign students to batches)
-- [ ] Certificate generation
-- [ ] Multi-language support (Sinhala, Tamil)
-- [ ] Advanced reporting (PDF exports, charts)
-- [ ] API for mobile app
-- [ ] Automated backup system
 
-### Version 2.5 (Future)
-- [ ] WhatsApp Business API integration
-- [ ] Live chat support
-- [ ] Video interview scheduling
-- [ ] Learning Management System (LMS) integration
-- [ ] Alumni network
-- [ ] Job placement tracking
-- [ ] Career counseling module
+-   [ ] Email notifications (registration confirmation, admin alerts)
+-   [ ] SMS notifications (SMS gateway integration)
+-   [ ] Payment gateway integration
 
 ---
 
