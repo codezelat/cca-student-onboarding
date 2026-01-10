@@ -1643,17 +1643,16 @@ SOFTWARE.
 ### Community
 
 -   **GitHub Issues:** Report bugs and request features
--   **Email Support:** support@cca.it
--   **Discord Community:** [Join our server](#)
+-   **Email Support:** info@codezela.com
 -   **Stack Overflow:** Tag questions with `cca-portal`
 
 ### Commercial Support
 
 For enterprise support, custom development, and training:
 
--   **Email:** enterprise@cca.it
--   **Website:** https://cca.it/enterprise
--   **Phone:** +94 XX XXX XXXX
+-   **Email:** info@codezela.com
+-   **Website:** https://codezela.com
+-   **Phone:** +94 72 733 3577
 
 ### FAQ
 
