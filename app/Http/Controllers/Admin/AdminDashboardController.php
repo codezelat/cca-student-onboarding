@@ -36,6 +36,11 @@ class AdminDashboardController extends Controller
             $query->where('program_id', $request->program_filter);
         }
 
+        // Filter by Tag (General Rate or Special Offer)
+        if ($request->filled('tag_filter')) {
+            $query->whereJsonContains('tags', $request->tag_filter);
+        }
+
         // Get all unique program IDs for filter dropdown
         $programs = CCARegistration::select('program_id', 'program_name')
             ->distinct()
@@ -176,6 +181,11 @@ class AdminDashboardController extends Controller
             $query->where('program_id', $request->program_filter);
         }
 
+        // Filter by Tag (General Rate or Special Offer)
+        if ($request->filled('tag_filter')) {
+            $query->whereJsonContains('tags', $request->tag_filter);
+        }
+
         $registrations = $query->orderBy('created_at', 'desc')->get();
 
         // Generate CSV
@@ -193,19 +203,34 @@ class AdminDashboardController extends Controller
                 'Register ID',
                 'Program ID',
                 'Program Name',
+                'Program Year',
+                'Program Duration',
                 'Full Name',
+                'Name with Initials',
+                'Gender',
+                'Date of Birth',
                 'NIC',
                 'Passport Number',
-                'Date of Birth',
+                'Nationality',
+                'Country of Birth',
+                'Country of Residence',
                 'Email',
                 'WhatsApp Number',
-                'Gender',
-                'Nationality',
+                'Home Contact',
+                'Permanent Address',
+                'Postal Code',
                 'Country',
-                'Address',
+                'District',
+                'Province',
                 'Guardian Name',
                 'Guardian Contact',
                 'Highest Qualification',
+                'Qualification Other Details',
+                'Qualification Status',
+                'Qualification Completed Date',
+                'Qualification Expected Completion Date',
+                'Tags',
+                'Current Paid Amount',
                 'Registration Date',
                 'Academic Qualification Documents',
                 'NIC Documents',
@@ -220,19 +245,34 @@ class AdminDashboardController extends Controller
                     $reg->register_id ?? 'cca-A' . str_pad($reg->id, 5, '0', STR_PAD_LEFT),
                     $reg->program_id,
                     $reg->program_name,
+                    $reg->program_year ?? 'N/A',
+                    $reg->program_duration ?? 'N/A',
                     $reg->full_name,
-                    $reg->nic_number,
-                    $reg->passport_number,
+                    $reg->name_with_initials ?? 'N/A',
+                    ucfirst($reg->gender),
                     $reg->date_of_birth->format('Y-m-d'),
+                    $reg->nic_number ?? 'N/A',
+                    $reg->passport_number ?? 'N/A',
+                    $reg->nationality,
+                    $reg->country_of_birth ?? 'N/A',
+                    $reg->country_of_residence ?? $reg->country,
                     $reg->email_address,
                     $reg->whatsapp_number,
-                    $reg->gender,
-                    $reg->nationality,
-                    $reg->country,
+                    $reg->home_contact_number ?? 'N/A',
                     $reg->permanent_address,
+                    $reg->postal_code ?? 'N/A',
+                    $reg->country,
+                    $reg->district ?? 'N/A',
+                    $reg->province ?? 'N/A',
                     $reg->guardian_contact_name,
                     $reg->guardian_contact_number,
-                    $reg->highest_qualification,
+                    ucfirst(str_replace('_', ' ', $reg->highest_qualification)),
+                    $reg->qualification_other_details ?? 'N/A',
+                    ucfirst($reg->qualification_status ?? 'N/A'),
+                    $reg->qualification_completed_date ? $reg->qualification_completed_date->format('Y-m-d') : 'N/A',
+                    $reg->qualification_expected_completion_date ? $reg->qualification_expected_completion_date->format('Y-m-d') : 'N/A',
+                    !empty($reg->tags) ? implode(', ', $reg->tags) : 'N/A',
+                    $reg->current_paid_amount ? number_format($reg->current_paid_amount, 2) : 'N/A',
                     $reg->created_at->format('Y-m-d H:i:s'),
                     $this->getFileUrls($reg->academic_qualification_documents),
                     $this->getFileUrls($reg->nic_documents),

@@ -44,7 +44,8 @@
             <!-- Filters & Actions -->
             <div class="mb-6 p-6 bg-white/60 backdrop-blur-xl border border-white/60 rounded-2xl shadow-lg">
                 <form method="GET" action="{{ route('admin.dashboard') }}" class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Search and Program Filter Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Search Box -->
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
@@ -78,41 +79,43 @@
                                 @endforeach
                             </select>
                         </div>
+                    </div>
 
-                        <!-- Action Buttons -->
-                        <div class="flex items-end space-x-3">
-                            <button 
-                                type="submit"
-                                class="flex-1 px-5 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-xl hover:from-primary-700 hover:to-secondary-700 focus:outline-none focus:ring-4 focus:ring-primary-300 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center"
-                            >
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
-                                </svg>
-                                Apply Filters
-                            </button>
+                    <!-- Action Buttons Row -->
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button 
+                            type="submit"
+                            class="px-5 py-2.5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-xl hover:from-primary-700 hover:to-secondary-700 focus:outline-none focus:ring-4 focus:ring-primary-300 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center"
+                        >
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                            </svg>
+                            Apply Filters
+                        </button>
+                        
+                        <a 
+                            href="{{ route('admin.export', request()->query()) }}"
+                            class="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center space-x-2"
+                            title="Export to Excel"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span>Excel</span>
+                        </a>
+                        
+                        @if(request('search') || request('program_filter') || request('tag_filter'))
                             <a 
-                                href="{{ route('admin.export', request()->query()) }}"
-                                class="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center space-x-2"
-                                title="Export to Excel"
+                                href="{{ route('admin.dashboard') }}"
+                                class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl focus:outline-none focus:ring-4 focus:ring-red-300 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center space-x-2"
+                                title="Clear Filters"
                             >
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
-                                <span>Excel</span>
+                                <span>Clear</span>
                             </a>
-                            @if(request('search') || request('program_filter'))
-                                <a 
-                                    href="{{ route('admin.dashboard') }}"
-                                    class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl focus:outline-none focus:ring-4 focus:ring-red-300 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center space-x-2"
-                                    title="Clear Filters"
-                                >
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                                    <span>Clear</span>
-                                </a>
-                            @endif
-                        </div>
+                        @endif
                     </div>
                 </form>
             </div>
@@ -135,11 +138,13 @@
                 </div>
 
                 <!-- General Rate Registrations -->
-                <div class="p-6 bg-white/60 backdrop-blur-xl border border-white/60 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                <a href="{{ route('admin.dashboard', array_merge(request()->except('tag_filter'), request('tag_filter') === 'General Rate' ? [] : ['tag_filter' => 'General Rate'])) }}" 
+                   class="block p-6 backdrop-blur-xl border rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 {{ request('tag_filter') === 'General Rate' ? 'bg-green-100/80 border-green-400 ring-2 ring-green-500' : 'bg-white/60 border-white/60' }} cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-gray-600 mb-1">General Rate</p>
+                            <p class="text-sm font-medium text-gray-600 mb-1">General Rate {{ request('tag_filter') === 'General Rate' ? '(Active Filter)' : '' }}</p>
                             <p class="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">{{ $generalRateCount }}</p>
+                            <p class="text-xs text-gray-500 mt-2">{{ request('tag_filter') === 'General Rate' ? '✓ Click to clear filter' : 'Click to filter' }}</p>
                         </div>
                         <div class="p-3 bg-gradient-to-br from-green-100 to-green-200 rounded-xl">
                             <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,14 +152,16 @@
                             </svg>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Special Offer Registrations -->
-                <div class="p-6 bg-white/60 backdrop-blur-xl border border-white/60 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                <a href="{{ route('admin.dashboard', array_merge(request()->except('tag_filter'), request('tag_filter') === 'Special 50% Offer' ? [] : ['tag_filter' => 'Special 50% Offer'])) }}" 
+                   class="block p-6 backdrop-blur-xl border rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 {{ request('tag_filter') === 'Special 50% Offer' ? 'bg-purple-100/80 border-purple-400 ring-2 ring-purple-500' : 'bg-white/60 border-white/60' }} cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-gray-600 mb-1">Special Offer</p>
+                            <p class="text-sm font-medium text-gray-600 mb-1">Special Offer {{ request('tag_filter') === 'Special 50% Offer' ? '(Active Filter)' : '' }}</p>
                             <p class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">{{ $specialOfferCount }}</p>
+                            <p class="text-xs text-gray-500 mt-2">{{ request('tag_filter') === 'Special 50% Offer' ? '✓ Click to clear filter' : 'Click to filter' }}</p>
                         </div>
                         <div class="p-3 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl">
                             <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -162,7 +169,7 @@
                             </svg>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Most Registered Program -->
                 <div class="p-6 bg-white/60 backdrop-blur-xl border border-white/60 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
