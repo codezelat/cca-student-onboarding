@@ -290,14 +290,11 @@
                                     <div id="tags-dropdown" class="hidden absolute z-10 mt-2 w-full bg-white border-2 border-indigo-200 rounded-xl shadow-xl max-h-64 overflow-y-auto">
                                         @php
                                             $availableTags = [
-                                                'Full Payment',
+                                                'General Rate',
                                                 'Special 50% Offer',
+                                                'Full Payment',
                                                 'Registration Fee',
                                                 'Partial Registration Fee',
-                                                'General Rate',
-                                                '125000',
-                                                '105000',
-                                                '62500'
                                             ];
                                         @endphp
                                         @foreach($availableTags as $tag)
@@ -314,6 +311,40 @@
                                 </div>
                                 <p class="mt-2 text-xs text-gray-500">Select applicable payment status and amount tags for this registration.</p>
                                 @error('tags')
+                                    <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            <!-- Full Amount -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Full Amount (LKR)
+                                    <span class="text-xs text-gray-500 font-normal ml-2">(Enter the total course fee)</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <input 
+                                        type="number" 
+                                        name="full_amount" 
+                                        id="full_amount"
+                                        value="{{ old('full_amount', $registration->full_amount) }}" 
+                                        step="0.01"
+                                        min="0"
+                                        placeholder="0.00"
+                                        class="w-full pl-12 pr-4 py-3 bg-white border-2 border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-lg font-semibold"
+                                    >
+                                </div>
+                                <p class="mt-2 text-xs text-gray-500">Enter the total program fee amount.</p>
+                                @error('full_amount')
                                     <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
@@ -418,14 +449,11 @@
             
             // Tag color mapping
             const tagColors = {
-                'Full Payment': 'from-green-500 to-green-600',
+                'General Rate': 'from-indigo-500 to-indigo-600',
                 'Special 50% Offer': 'from-purple-500 to-purple-600',
+                'Full Payment': 'from-green-500 to-green-600',
                 'Registration Fee': 'from-blue-500 to-blue-600',
                 'Partial Registration Fee': 'from-yellow-500 to-yellow-600',
-                'General Rate': 'from-indigo-500 to-indigo-600',
-                '125000': 'from-red-500 to-red-600',
-                '105000': 'from-orange-500 to-orange-600',
-                '62500': 'from-pink-500 to-pink-600'
             };
             
             function renderSelectedTags() {

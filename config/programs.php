@@ -88,7 +88,7 @@ return [
             'name' => 'SEO AEO Specialist Career Accelerator',
             'year' => '2025',
             'duration' => '6 Months',
-            'active' => true,
+            'active' => false, // Batch Full
         ],
         'CCA-DO25' => [
             'name' => 'DevOps Engineer Career Accelerator',

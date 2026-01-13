@@ -45,6 +45,7 @@ class CCARegistration extends Model
         'payment_slip',
         'terms_accepted',
         'tags',
+        'full_amount',
         'current_paid_amount',
     ];
 

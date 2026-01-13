@@ -127,6 +127,7 @@ class AdminDashboardController extends Controller
             'guardian_contact_number' => 'required|string|max:20',
             'tags' => 'nullable|array',
             'tags.*' => 'string',
+            'full_amount' => 'nullable|numeric|min:0',
             'current_paid_amount' => 'nullable|numeric|min:0',
         ]);
 

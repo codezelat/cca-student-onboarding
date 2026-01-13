@@ -66,14 +66,11 @@
                                         @foreach($registration->tags as $tag)
                                             @php
                                                 $tagColors = [
-                                                    'Full Payment' => 'bg-gradient-to-r from-green-500 to-green-600 text-white',
+                                                    'General Rate' => 'bg-gradient-to-r from-indigo-500 to-indigo-600 text-white',
                                                     'Special 50% Offer' => 'bg-gradient-to-r from-purple-500 to-purple-600 text-white',
+                                                    'Full Payment' => 'bg-gradient-to-r from-green-500 to-green-600 text-white',
                                                     'Registration Fee' => 'bg-gradient-to-r from-blue-500 to-blue-600 text-white',
                                                     'Partial Registration Fee' => 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white',
-                                                    'General Rate' => 'bg-gradient-to-r from-indigo-500 to-indigo-600 text-white',
-                                                    '125000' => 'bg-gradient-to-r from-red-500 to-red-600 text-white',
-                                                    '105000' => 'bg-gradient-to-r from-orange-500 to-orange-600 text-white',
-                                                    '62500' => 'bg-gradient-to-r from-pink-500 to-pink-600 text-white',
                                                 ];
                                                 $colorClass = $tagColors[$tag] ?? 'bg-gradient-to-r from-gray-500 to-gray-600 text-white';
                                             @endphp
@@ -95,6 +92,24 @@
                                 @endif
                             </div>
 
+                            <!-- Full Amount -->
+                            <div>
+                                <p class="text-sm font-medium text-gray-700 mb-2">Full Amount</p>
+                                <div class="flex items-center p-4 bg-white/70 border-2 border-green-200 rounded-xl">
+                                    <svg class="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Total Course Fee</p>
+                                        @if($registration->full_amount)
+                                            <p class="text-2xl font-bold text-green-600">LKR {{ number_format($registration->full_amount, 2) }}</p>
+                                        @else
+                                            <p class="text-lg font-semibold text-gray-400">Not specified</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Current Paid Amount -->
                             <div>
                                 <p class="text-sm font-medium text-gray-700 mb-2">Current Paid Amount</p>
@@ -112,6 +127,34 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Remaining Amount -->
+                            @if($registration->full_amount && $registration->current_paid_amount)
+                                @php
+                                    $remainingAmount = $registration->full_amount - $registration->current_paid_amount;
+                                @endphp
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700 mb-2">Remaining Amount</p>
+                                    <div class="flex items-center p-4 bg-white/70 border-2 border-{{ $remainingAmount > 0 ? 'orange' : 'green' }}-200 rounded-xl">
+                                        <svg class="w-6 h-6 text-{{ $remainingAmount > 0 ? 'orange' : 'green' }}-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            @if($remainingAmount > 0)
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            @else
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            @endif
+                                        </svg>
+                                        <div>
+                                            <p class="text-xs text-gray-500">Balance</p>
+                                            <p class="text-2xl font-bold text-{{ $remainingAmount > 0 ? 'orange' : 'green' }}-600">
+                                                LKR {{ number_format(abs($remainingAmount), 2) }}
+                                            </p>
+                                            @if($remainingAmount <= 0)
+                                                <p class="text-xs text-green-600 font-medium mt-1">✓ Fully Paid</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
 

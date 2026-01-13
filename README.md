@@ -632,14 +632,11 @@ Password: password
 
 #### Available Tags
 
--   **Full Payment** (Green)
+-   **General Rate** (Indigo)
 -   **Special 50% Offer** (Purple)
+-   **Full Payment** (Green)
 -   **Registration Fee** (Blue)
 -   **Partial Registration Fee** (Yellow)
--   **General Rate** (Indigo)
--   **125000** (Red)
--   **105000** (Orange)
--   **62500** (Pink)
 
 #### Tag Management
 
