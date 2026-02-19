@@ -16,11 +16,18 @@ return new class extends Migration
             $table->string('register_id', 20)->unique()->nullable()->after('id');
         });
 
-        // Generate register IDs for existing records using PHP/Eloquent approach
-        $registrations = \App\Models\CCARegistration::whereNull('register_id')->get();
+        // Generate register IDs for existing records without model scopes.
+        $registrations = DB::table('cca_registrations')
+            ->select('id')
+            ->whereNull('register_id')
+            ->get();
+
         foreach ($registrations as $registration) {
-            $registration->register_id = 'cca-A' . str_pad($registration->id, 5, '0', STR_PAD_LEFT);
-            $registration->save();
+            DB::table('cca_registrations')
+                ->where('id', $registration->id)
+                ->update([
+                    'register_id' => 'cca-A' . str_pad((string) $registration->id, 5, '0', STR_PAD_LEFT),
+                ]);
         }
 
         // Make register_id not nullable after generating IDs

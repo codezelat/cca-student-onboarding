@@ -5,6 +5,8 @@ use App\Http\Controllers\CCARegistrationController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminPaymentController;
+use App\Http\Controllers\Admin\AdminAccountController;
+use App\Http\Controllers\Admin\AdminProgramController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -62,7 +64,27 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/registrations/{id}/edit', [AdminDashboardController::class, 'edit'])->name('registrations.edit');
         Route::put('/registrations/{id}', [AdminDashboardController::class, 'update'])->name('registrations.update');
         Route::delete('/registrations/{id}', [AdminDashboardController::class, 'destroy'])->name('registrations.destroy');
+        Route::patch('/registrations/{id}/restore', [AdminDashboardController::class, 'restore'])->name('registrations.restore');
+        Route::delete('/registrations/{id}/force', [AdminDashboardController::class, 'forceDelete'])->name('registrations.force-delete');
         Route::get('/export', [AdminDashboardController::class, 'export'])->name('export');
+
+        // Program Management
+        Route::get('/programs', [AdminProgramController::class, 'index'])->name('programs.index');
+        Route::get('/programs/create', [AdminProgramController::class, 'create'])->name('programs.create');
+        Route::post('/programs', [AdminProgramController::class, 'store'])->name('programs.store');
+        Route::get('/programs/{id}/edit', [AdminProgramController::class, 'edit'])->name('programs.edit');
+        Route::put('/programs/{id}', [AdminProgramController::class, 'update'])->name('programs.update');
+        Route::patch('/programs/{id}/toggle', [AdminProgramController::class, 'toggle'])->name('programs.toggle');
+        Route::post('/programs/{id}/intakes', [AdminProgramController::class, 'storeIntake'])->name('programs.intakes.store');
+        Route::get('/programs/{id}/intakes/{intake}/edit', [AdminProgramController::class, 'editIntake'])->name('programs.intakes.edit');
+        Route::put('/programs/{id}/intakes/{intake}', [AdminProgramController::class, 'updateIntake'])->name('programs.intakes.update');
+        Route::patch('/programs/{id}/intakes/{intake}/toggle', [AdminProgramController::class, 'toggleIntake'])->name('programs.intakes.toggle');
+
+        // Admin Account Management
+        Route::get('/accounts', [AdminAccountController::class, 'index'])->name('accounts.index');
+        Route::post('/accounts', [AdminAccountController::class, 'store'])->name('accounts.store');
+        Route::delete('/accounts/{id}', [AdminAccountController::class, 'destroy'])->name('accounts.destroy');
+        Route::patch('/accounts/{id}/restore', [AdminAccountController::class, 'restore'])->name('accounts.restore');
 
         // Payment Ledger Management
         Route::get('/registrations/{id}/payments', [AdminPaymentController::class, 'index'])->name('registrations.payments.index');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -50,6 +51,17 @@ class ProfileController extends Controller
         ]);
 
         $user = Auth::guard('admin')->user();
+
+        $activeAdminsCount = User::query()
+            ->whereHas('roles', fn ($query) => $query->where('name', 'admin'))
+            ->count();
+
+        if ($user && $user->hasRole('admin') && $activeAdminsCount <= 1) {
+            return Redirect::route('admin.profile.edit')
+                ->withErrors([
+                    'password' => 'You cannot delete the last admin account. Create another admin account first.',
+                ], 'userDeletion');
+        }
 
         Auth::guard('admin')->logout();
 

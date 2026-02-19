@@ -65,6 +65,7 @@ class ProfileTest extends TestCase
     public function test_user_can_delete_their_account(): void
     {
         $user = $this->createAdminUser();
+        $this->createAdminUser();
 
         $response = $this
             ->actingAs($user, 'admin')
@@ -77,7 +78,26 @@ class ProfileTest extends TestCase
             ->assertRedirect('/');
 
         $this->assertGuest('admin');
-        $this->assertNull($user->fresh());
+        $this->assertSoftDeleted('users', ['id' => $user->id]);
+    }
+
+    public function test_last_admin_cannot_delete_their_account(): void
+    {
+        $user = $this->createAdminUser();
+
+        $response = $this
+            ->actingAs($user, 'admin')
+            ->from('/admin/profile')
+            ->delete('/admin/profile', [
+                'password' => 'password',
+            ]);
+
+        $response
+            ->assertSessionHasErrorsIn('userDeletion', 'password')
+            ->assertRedirect('/admin/profile');
+
+        $this->assertNotNull($user->fresh());
+        $this->assertAuthenticated('admin');
     }
 
     public function test_correct_password_must_be_provided_to_delete_account(): void

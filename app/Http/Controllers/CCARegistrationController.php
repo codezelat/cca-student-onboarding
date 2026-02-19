@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CCARegistration;
 use App\Services\FileUploadService;
+use App\Services\ProgramCatalogService;
 use App\Services\RecaptchaService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -15,13 +16,16 @@ class CCARegistrationController extends Controller
 {
     protected FileUploadService $fileUploadService;
     protected RecaptchaService $recaptchaService;
+    protected ProgramCatalogService $programCatalogService;
     
     public function __construct(
         FileUploadService $fileUploadService,
-        RecaptchaService $recaptchaService
+        RecaptchaService $recaptchaService,
+        ProgramCatalogService $programCatalogService
     ) {
         $this->fileUploadService = $fileUploadService;
         $this->recaptchaService = $recaptchaService;
+        $this->programCatalogService = $programCatalogService;
     }
     
     /**
@@ -29,7 +33,7 @@ class CCARegistrationController extends Controller
      */
     public function create()
     {
-        $programs = config('programs.programs');
+        $programs = $this->programCatalogService->formCatalog();
         $countries = config('programs.countries');
         $sriLankaDistricts = config('programs.sri_lanka_districts');
 
@@ -41,21 +45,24 @@ class CCARegistrationController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate program ID exists
-        $programs = config('programs.programs');
-        $programId = strtoupper($request->program_id);
-        
-        if (!isset($programs[$programId])) {
+        $programId = strtoupper(trim((string) $request->program_id));
+
+        if (! $this->programCatalogService->validateProgramCodeFormat($programId)) {
+            throw ValidationException::withMessages([
+                'program_id' => 'Program ID format is invalid. Please use the ID given by our team (e.g., CCA-PM25).',
+            ]);
+        }
+
+        $program = $this->programCatalogService->findProgramByCode($programId);
+        if (! $program) {
             throw ValidationException::withMessages([
                 'program_id' => 'This Program ID is not recognized. Please contact our support team to verify your Program ID.',
             ]);
         }
 
-        // Check if program is active and accepting registrations
-        $programInfo = $programs[$programId];
-        if (isset($programInfo['active']) && $programInfo['active'] === false) {
+        if (! $this->programCatalogService->isOpenForRegistration($program)) {
             throw ValidationException::withMessages([
-                'program_id' => "Registration for {$programInfo['name']} is currently closed. This batch has reached full capacity and is no longer accepting new students. Please check back later for the next intake or contact our admissions team for alternative program options.",
+                'program_id' => "Registration for {$program->name} is currently closed. This intake is not open right now. Please contact our admissions team for next intake options.",
             ]);
         }
 
@@ -78,7 +85,7 @@ class CCARegistrationController extends Controller
             ->first();
 
         if ($existingRegistration) {
-            $programName = $programs[$programId]['name'];
+            $programName = $program->name;
             throw ValidationException::withMessages([
                 $identificationField => "You have already registered for {$programName}. If you believe this is an error, please contact our support team.",
             ]);
@@ -111,9 +118,6 @@ class CCARegistrationController extends Controller
 
         try {
             DB::beginTransaction();
-
-            // Get program details
-            $programInfo = $programs[$programId];
 
             // Handle file uploads to R2
             $academicDocs = [];
@@ -200,9 +204,9 @@ class CCARegistrationController extends Controller
             // Create registration with file URLs
             $registration = CCARegistration::create([
                 'program_id' => $programId,
-                'program_name' => $programInfo['name'],
-                'program_year' => $programInfo['year'],
-                'program_duration' => $programInfo['duration'],
+                'program_name' => $program->name,
+                'program_year' => $program->year_label,
+                'program_duration' => $program->duration_label,
                 'full_name' => $validated['full_name'],
                 'name_with_initials' => $validated['name_with_initials'],
                 'gender' => $validated['gender'],
@@ -241,14 +245,14 @@ class CCARegistrationController extends Controller
             if ($request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
                 return response()->json([
                     'success' => true,
-                    'message' => "Registration successful! Your application for {$programInfo['name']} has been submitted. We'll contact you at {$validated['email_address']} soon.",
+                    'message' => "Registration successful! Your application for {$program->name} has been submitted. We'll contact you at {$validated['email_address']} soon.",
                     'redirect' => route('cca.register')
                 ]);
             }
 
             return redirect()
                 ->route('cca.register')
-                ->with('success', "Registration successful! Your application for {$programInfo['name']} has been submitted. We'll contact you at {$validated['email_address']} soon.");
+                ->with('success', "Registration successful! Your application for {$program->name} has been submitted. We'll contact you at {$validated['email_address']} soon.");
 
         } catch (QueryException $e) {
             DB::rollBack();
@@ -264,7 +268,7 @@ class CCARegistrationController extends Controller
 
             if ($this->isDuplicateConstraintViolation($e)) {
                 throw ValidationException::withMessages([
-                    'nic_number' => "You have already registered for {$programInfo['name']}. If you believe this is an error, please contact our support team.",
+                    'nic_number' => "You have already registered for {$program->name}. If you believe this is an error, please contact our support team.",
                 ]);
             }
 

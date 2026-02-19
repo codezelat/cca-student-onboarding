@@ -3,11 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class CCARegistration extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'cca_registrations';
 
     protected $fillable = [
@@ -152,6 +156,11 @@ class CCARegistration extends Model
     {
         return $this->hasMany(RegistrationPayment::class, 'cca_registration_id')
             ->orderBy('payment_no');
+    }
+
+    public function program(): BelongsTo
+    {
+        return $this->belongsTo(Program::class, 'program_id', 'code');
     }
 
     /**

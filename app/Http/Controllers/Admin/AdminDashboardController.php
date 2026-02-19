@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CCARegistration;
+use App\Models\Program;
+use App\Services\ProgramCatalogService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,12 +15,22 @@ use Illuminate\Validation\Rule;
 
 class AdminDashboardController extends Controller
 {
+    public function __construct(private readonly ProgramCatalogService $programCatalogService)
+    {
+    }
+
     /**
      * Display the admin dashboard with registrations.
      */
     public function index(Request $request)
     {
         $query = CCARegistration::query();
+
+        if ($request->input('scope') === 'trashed') {
+            $query->onlyTrashed();
+        } elseif ($request->input('scope') === 'all') {
+            $query->withTrashed();
+        }
 
         // Search by Register ID, Full Name, Email, NIC, or WhatsApp Number
         if ($request->filled('search')) {
@@ -43,13 +55,16 @@ class AdminDashboardController extends Controller
         }
 
         // Get all unique program IDs for filter dropdown
-        $programs = CCARegistration::select('program_id', 'program_name')
+        $programs = CCARegistration::withTrashed()
+            ->select('program_id', 'program_name')
             ->distinct()
             ->orderBy('program_name')
             ->get();
 
         // Calculate statistics
-        $totalRegistrations = CCARegistration::count();
+        $activeRegistrationsCount = CCARegistration::count();
+        $trashedRegistrationsCount = CCARegistration::onlyTrashed()->count();
+        $totalRegistrations = CCARegistration::withTrashed()->count();
         $generalRateCount = CCARegistration::whereJsonContains('tags', 'General Rate')->count();
         $specialOfferCount = CCARegistration::whereJsonContains('tags', 'Special 50% Offer')->count();
         $mostRegisteredProgram = CCARegistration::select('program_id', 'program_name', DB::raw('count(*) as total'))
@@ -75,6 +90,8 @@ class AdminDashboardController extends Controller
             'registrations',
             'programs',
             'totalRegistrations',
+            'activeRegistrationsCount',
+            'trashedRegistrationsCount',
             'generalRateCount',
             'specialOfferCount',
             'mostRegisteredProgram'
@@ -103,7 +120,7 @@ class AdminDashboardController extends Controller
     public function edit($id)
     {
         $registration = CCARegistration::with('payments')->findOrFail($id);
-        $programs = config('programs.programs');
+        $programs = $this->programCatalogService->adminProgramOptions();
         $countries = config('programs.countries');
         $sriLankaDistricts = config('programs.sri_lanka_districts');
 
@@ -118,10 +135,10 @@ class AdminDashboardController extends Controller
     public function update(Request $request, $id)
     {
         $registration = CCARegistration::findOrFail($id);
-        $programs = config('programs.programs', []);
+        $programCodes = Program::orderBy('code')->pluck('code')->all();
 
         $validated = $request->validate([
-            'program_id' => ['required', 'string', 'max:20', Rule::in(array_keys($programs))],
+            'program_id' => ['required', 'string', 'max:20', Rule::in($programCodes)],
             'full_name' => 'required|string|max:255',
             'name_with_initials' => 'required|string|max:255',
             'email_address' => 'required|email|max:255',
@@ -158,11 +175,12 @@ class AdminDashboardController extends Controller
             'full_amount' => 'nullable|numeric|min:0',
         ]);
 
-        // Keep program fields in sync with configured program ID.
-        if (isset($programs[$validated['program_id']])) {
-            $validated['program_name'] = $programs[$validated['program_id']]['name'];
-            $validated['program_year'] = $programs[$validated['program_id']]['year'];
-            $validated['program_duration'] = $programs[$validated['program_id']]['duration'];
+        $program = Program::where('code', $validated['program_id'])->first();
+
+        if ($program) {
+            $validated['program_name'] = $program->name;
+            $validated['program_year'] = $program->year_label;
+            $validated['program_duration'] = $program->duration_label;
         }
 
         try {
@@ -189,14 +207,36 @@ class AdminDashboardController extends Controller
     public function destroy($id)
     {
         $registration = CCARegistration::findOrFail($id);
-
-        // Delete associated files from Cloudflare R2 storage
-        $this->deleteRegistrationFiles($registration);
-
         $registration->delete();
 
-        return redirect()->route('admin.dashboard')
-            ->with('success', 'Registration and all associated files deleted successfully!');
+        return redirect()->route('admin.dashboard', request()->query())
+            ->with('success', 'Registration moved to trash. You can restore it from the Trash view.');
+    }
+
+    /**
+     * Restore a soft-deleted registration.
+     */
+    public function restore($id)
+    {
+        $registration = CCARegistration::onlyTrashed()->findOrFail($id);
+        $registration->restore();
+
+        return redirect()->route('admin.dashboard', array_merge(request()->query(), ['scope' => 'trashed']))
+            ->with('success', 'Registration restored successfully.');
+    }
+
+    /**
+     * Permanently delete a soft-deleted registration and its files.
+     */
+    public function forceDelete($id)
+    {
+        $registration = CCARegistration::onlyTrashed()->findOrFail($id);
+
+        $this->deleteRegistrationFiles($registration);
+        $registration->forceDelete();
+
+        return redirect()->route('admin.dashboard', array_merge(request()->query(), ['scope' => 'trashed']))
+            ->with('success', 'Registration permanently deleted.');
     }
 
     /**
@@ -205,6 +245,12 @@ class AdminDashboardController extends Controller
     public function export(Request $request)
     {
         $query = CCARegistration::query();
+
+        if ($request->input('scope') === 'trashed') {
+            $query->onlyTrashed();
+        } elseif ($request->input('scope') === 'all') {
+            $query->withTrashed();
+        }
 
         // Apply same filters as index
         if ($request->filled('search')) {

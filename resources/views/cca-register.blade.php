@@ -185,13 +185,13 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                                         </svg>
                                         <div>
-                                            <p class="text-sm font-bold text-red-800 mb-1">⚠️ Registration Closed - Batch Full</p>
-                                            <p class="text-xs text-red-700">This program is currently not accepting new registrations. The batch has reached full capacity. Please contact our admissions team for information about the next intake or explore alternative programs.</p>
+                                            <p class="text-sm font-bold text-red-800 mb-1">⚠️ Registration Closed</p>
+                                            <p class="text-xs text-red-700">This program is currently not accepting new registrations. The intake window is not open right now. Please contact our admissions team for next intake options.</p>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
                                     <div>
                                         <span class="text-gray-600 font-medium">Program:</span>
                                         <p class="text-gray-800 font-semibold" x-text="programInfo?.name"></p>
@@ -203,6 +203,13 @@
                                     <div>
                                         <span class="text-gray-600 font-medium">Duration:</span>
                                         <p class="text-gray-800 font-semibold" x-text="programInfo?.duration"></p>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-600 font-medium">Current Fee:</span>
+                                        <p class="text-gray-800 font-semibold">
+                                            <span x-text="programInfo?.currency || 'LKR'"></span>
+                                            <span x-text="Number(programInfo?.price || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })"></span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -1654,7 +1661,7 @@
                     // Check if program is inactive before submission
                     const programId = this.formData.program_id.toUpperCase();
                     if (this.programs[programId] && this.programs[programId].active === false) {
-                        alert('❌ Registration Not Available\\n\\nThe program you selected is currently closed and not accepting new registrations. The batch has reached full capacity.\\n\\nPlease contact our admissions team for information about:\\n• Next intake dates\\n• Alternative program options\\n• Waitlist availability');
+                        alert('❌ Registration Not Available\\n\\nThe program you selected is currently closed and not accepting new registrations. The intake window is not open right now.\\n\\nPlease contact our admissions team for information about:\\n• Next intake dates\\n• Alternative program options\\n• Waitlist availability');
                         return false;
                     }
 

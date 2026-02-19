@@ -61,7 +61,7 @@
                                 @foreach($programs as $programId => $programDetails)
                                     <option value="{{ $programId }}" 
                                             {{ old('program_id', $registration->program_id) == $programId ? 'selected' : '' }}>
-                                        {{ $programDetails['name'] }} ({{ $programDetails['year'] }} - {{ $programDetails['duration'] }})
+                                        {{ $programDetails['name'] }} ({{ $programDetails['year'] }} - {{ $programDetails['duration'] }}){{ !($programDetails['active'] ?? true) ? ' [Inactive]' : '' }}
                                     </option>
                                 @endforeach
                             </select>
