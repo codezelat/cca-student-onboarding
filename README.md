@@ -52,15 +52,24 @@ The **Codezela Career Accelerator (CCA) Student Onboarding Portal** is a full-fe
 
 ### Key Highlights
 
--   🎯 **18 Career Programs** - Full Stack, Frontend, Backend, Mobile App, Data Science, AI/ML, and more
+-   🎯 **DB-Driven Program Catalog** - Program codes, activation, intake windows, and pricing managed from admin
 -   🌍 **Multi-country Support** - Sri Lanka districts + 195 countries
 -   📁 **Cloud Storage** - Cloudflare R2 integration for secure document storage
 -   🔒 **Enterprise Security** - reCAPTCHA v3, CSRF protection, XSS prevention
 -   📊 **Advanced Admin Dashboard** - Real-time statistics, filtering, Excel export
--   💰 **Payment Management** - Tags system, payment tracking, special offers
+-   💰 **Payment Ledger** - Multi-payment history with date, method, reference, void trail, and totals sync
 -   🎨 **Modern UI/UX** - Responsive design, animations, dark/light themes
 -   ♿ **Accessibility** - WCAG 2.1 compliant, keyboard navigation, ARIA labels
 -   📱 **Mobile-First** - Fully responsive across all devices
+
+### Recent Platform Updates (February 19, 2026)
+
+-   ✅ Payment ledger introduced with multi-payment rows and backward-compatible legacy backfill
+-   ✅ Program management moved from static config to database + admin UI
+-   ✅ Intake window-based registration opening/closing added
+-   ✅ Soft delete + restore for registrations and admin users
+-   ✅ Last-admin safety checks added to prevent lockout
+-   ✅ Admin activity timeline and CSV audit export implemented
 
 ---
 
@@ -110,12 +119,20 @@ The **Codezela Career Accelerator (CCA) Student Onboarding Portal** is a full-fe
 
 -   **Detailed View** - Complete student information with all documents
 -   **Edit Capabilities** - Update student information and program assignments
--   **Payment Management**
-    -   Multi-tag system (Full Payment, Partial, Special Offers, etc.)
-    -   Current paid amount tracking
-    -   Visual tag display with color coding
--   **Delete Functionality** - Safe deletion with file cleanup
--   **Bulk Actions** - Process multiple registrations efficiently
+-   **Payment Ledger Management**
+    -   Add unlimited payment rows per registration
+    -   Edit/void payment rows with reason tracking
+    -   Auto-sync of `current_paid_amount` from active ledger rows
+-   **Recovery & Safety**
+    -   Soft delete / restore registrations
+    -   Permanent delete only from trash scope
+    -   Last-admin deactivation/deletion protection
+
+#### Admin Operations
+
+-   **Program Management UI** - Activate/deactivate programs, maintain intake windows, and manage pricing
+-   **Admin Account Management** - Create/deactivate/restore admin users with safeguards
+-   **Activity Timeline** - Filterable admin audit log with detail view and CSV export
 
 #### Document Viewer
 
@@ -151,7 +168,7 @@ The **Codezela Career Accelerator (CCA) Student Onboarding Portal** is a full-fe
 -   **Secure URLs** - Pre-signed URLs with expiration for document access
 -   **HTTPS Enforcement** - Force HTTPS in production
 -   **No Index for Admin** - Admin pages excluded from search engines
--   **Audit Logging Ready** - Database structure supports activity logging
+-   **Audit Logging Active** - Admin actions are logged to timeline with request context and before/after snapshots
 
 ---
 
@@ -324,9 +341,8 @@ MAIL_FROM_NAME="${APP_NAME}"
 # Run migrations
 php artisan migrate
 
-# Seed admin user and roles
-php artisan db:seed --class=RoleSeeder
-php artisan db:seed --class=AdminUserSeeder
+# Seed roles, admin user, and program catalog
+php artisan db:seed
 ```
 
 #### 7. Storage Setup
@@ -376,26 +392,16 @@ composer dev
 
 ### Programs Configuration
 
-Edit `config/programs.php` to manage available programs:
+Program catalog is now **database-driven**.
 
-```php
-'programs' => [
-    'CCA-FS25' => [
-        'name' => 'Full Stack Developer Career Accelerator',
-        'year' => '2025',
-        'duration' => '6 Months',
-        'active' => true,  // Set to false to close registrations
-    ],
-    // Add more programs...
-],
-```
+-   Manage programs at `Admin → Program Management` (`/admin/programs`)
+-   Manage intake windows per program (`opens_at`, `closes_at`, `is_active`)
+-   Manage pricing via `base_price` and optional intake `price_override`
+-   Student registration is open only when both conditions are true:
+    -   program is active
+    -   at least one active intake window is open for current time
 
-**Program Status Management:**
-
--   Set `'active' => false` to close registrations for a program
--   System automatically prevents new registrations for inactive programs
--   Visual indicators appear on registration form
--   Backend validation ensures no bypass
+`config/programs.php` now contains only geographic lists (`countries`, `sri_lanka_districts`), not program catalog entries.
 
 ### Cloudflare R2 Setup
 
@@ -490,7 +496,7 @@ MAIL_FROM_NAME="CCA Portal"
 
 #### 1. Access Registration Form
 
-Navigate to `https://your-domain.com/register`
+Navigate to `https://your-domain.com/cca-register`
 
 #### 2. Complete Form Sections
 
@@ -568,7 +574,7 @@ Password: password
 -   Click "View" button on any registration
 -   See complete student information
 -   View all uploaded documents
--   Check payment status and tags
+-   Check payment ledger summary and current paid total
 
 #### 4. Document Viewing
 
@@ -582,17 +588,35 @@ Password: password
 -   Click "Edit" button on registration detail page
 -   Update program assignment
 -   Modify contact information
--   Add payment tags (Full Payment, Special Offer, etc.)
--   Set current paid amount
 -   Save changes
 
-#### 6. Delete Registration
+#### 6. Manage Payments
+
+-   Open registration payment ledger
+-   Add payment rows with date, method, amount, and receipt reference
+-   Edit existing rows and void incorrect rows with reason
+-   System auto-syncs `current_paid_amount` from active rows
+
+#### 7. Delete / Restore Registration
 
 -   Click "Delete" button
--   Confirm deletion
--   System automatically removes all associated files
+-   Registration moves to trash scope (soft delete)
+-   Restore from trash when needed
+-   Permanent purge is available from trash scope only
 
-#### 7. Manage Profile
+#### 8. Manage Programs / Intakes
+
+-   Use `Programs` to activate/deactivate program catalog items
+-   Add/edit intake windows and active windows
+-   Set base price and optional intake price override
+
+#### 9. Manage Activity Timeline
+
+-   Use `Activity` to review admin action history
+-   Filter by date, actor, action, status, subject type, and search
+-   Export filtered audit entries to CSV
+
+#### 10. Manage Profile
 
 -   Click profile dropdown in navigation
 -   Select "Profile Settings"
@@ -630,26 +654,17 @@ Password: password
 
 ### Payment Management
 
-#### Available Tags
+#### Payment Ledger
 
--   **General Rate** (Indigo)
--   **Special 50% Offer** (Purple)
--   **Full Payment** (Green)
--   **Registration Fee** (Blue)
--   **Partial Registration Fee** (Yellow)
+-   **Multiple Payments** - Unlimited installments per registration
+-   **Ledger Fields** - Payment no, date, amount, method, receipt reference, note
+-   **Void Trail** - Keep history with `void_reason` and `voided_at`
+-   **Totals Sync** - `current_paid_amount` auto-calculated from active payment rows
 
-#### Tag Management
+#### Backward Compatibility
 
--   Add multiple tags per registration
--   Visual color-coded badges
--   Easy removal with click
--   Saved automatically
-
-#### Payment Tracking
-
--   **Current Paid Amount** - Input field for amount paid
--   **Payment Slip Viewer** - Quick link to view payment proof
--   **Payment History Ready** - Database supports payment logging
+-   Existing registrations continue to work
+-   Legacy `current_paid_amount` can be backfilled as Payment #1 (`payment_method=legacy`)
 
 ### Document Management
 
@@ -682,6 +697,7 @@ Password: password
 - email_verified_at: timestamp (nullable)
 - password: varchar(255)
 - remember_token: varchar(100) (nullable)
+- deleted_at: timestamp (nullable, soft delete)
 - created_at: timestamp
 - updated_at: timestamp
 ```
@@ -719,6 +735,7 @@ Password: password
 - tags: json (nullable, payment tags array)
 - current_paid_amount: decimal(10,2) (nullable)
 - terms_accepted: boolean
+- deleted_at: timestamp (nullable, soft delete)
 - created_at: timestamp
 - updated_at: timestamp
 
@@ -729,6 +746,37 @@ Indexes:
 - passport_number
 - register_id (unique)
 ```
+
+### Additional Tables (2026-02-19 Updates)
+
+```sql
+registration_payments
+- id, cca_registration_id, payment_no, payment_date, amount
+- payment_method, receipt_reference, note
+- status (active|void), void_reason, voided_at
+- created_by, updated_by, created_at, updated_at
+
+programs
+- id, code (unique), name, year_label, duration_label
+- base_price, currency, is_active, display_order
+- created_by, updated_by, created_at, updated_at
+
+program_intake_windows
+- id, program_id, window_name
+- opens_at, closes_at, price_override
+- is_active, created_by, updated_by, created_at, updated_at
+
+admin_activity_logs
+- actor_user_id, actor snapshots, category, action, status
+- subject_type, subject_id, subject_label
+- request metadata (route/method/ip/user-agent/request_id)
+- before_data, after_data, meta
+```
+
+### Data Migration Notes (Backward Compatibility)
+
+- Legacy `current_paid_amount` can be backfilled to `registration_payments` as Payment #1.
+- Program catalog can be seeded via `ProgramSeeder` and safely merged with legacy registration program IDs.
 
 ### `roles` & `permissions` Tables
 
@@ -771,7 +819,12 @@ cca-student-onboarding/
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── Admin/
-│   │   │   │   └── AdminDashboardController.php  # Admin CRUD operations
+│   │   │   │   ├── AdminDashboardController.php   # Registrations + export/recovery
+│   │   │   │   ├── AdminPaymentController.php     # Payment ledger CRUD
+│   │   │   │   ├── AdminProgramController.php     # Program + intake management
+│   │   │   │   ├── AdminAccountController.php     # Admin account lifecycle
+│   │   │   │   ├── AdminActivityController.php    # Activity timeline + export
+│   │   │   │   └── AdminAuthController.php        # Admin auth flow
 │   │   │   ├── Auth/                             # Authentication controllers
 │   │   │   ├── CCARegistrationController.php     # Public registration
 │   │   │   └── ProfileController.php             # User profile
@@ -780,12 +833,19 @@ cca-student-onboarding/
 │   │   └── Requests/                             # Form requests
 │   ├── Models/
 │   │   ├── CCARegistration.php                   # Registration model
+│   │   ├── RegistrationPayment.php               # Payment ledger model
+│   │   ├── Program.php                           # Program catalog model
+│   │   ├── ProgramIntakeWindow.php               # Intake window model
+│   │   ├── AdminActivityLog.php                  # Admin audit log model
 │   │   └── User.php                              # User model
 │   ├── Providers/
 │   │   └── AppServiceProvider.php                # Service providers
 │   ├── Services/
 │   │   ├── FileUploadService.php                 # R2 upload service
-│   │   └── RecaptchaService.php                  # reCAPTCHA verification
+│   │   ├── RecaptchaService.php                  # reCAPTCHA verification
+│   │   ├── ProgramCatalogService.php             # Program/intake resolution
+│   │   ├── PaymentLedgerService.php              # Paid total sync logic
+│   │   └── ActivityLogger.php                    # Admin action logging
 │   └── View/
 │       └── Components/                           # Blade components
 ├── bootstrap/
@@ -795,7 +855,7 @@ cca-student-onboarding/
 │   ├── app.php                                   # App configuration
 │   ├── database.php                              # Database config
 │   ├── filesystems.php                           # R2 configuration
-│   ├── programs.php                              # Programs & countries
+│   ├── programs.php                              # Geographic lists (countries/districts)
 │   ├── services.php                              # reCAPTCHA config
 │   └── permission.php                            # Spatie permissions
 ├── database/
@@ -803,9 +863,14 @@ cca-student-onboarding/
 │   │   └── UserFactory.php                       # Model factories
 │   ├── migrations/                               # Database migrations
 │   │   ├── 2025_11_09_213023_create_cca_registrations_table.php
-│   │   └── 2026_01_11_005325_add_tags_and_paid_amount_to_cca_registrations_table.php
+│   │   ├── 2026_02_19_000002_create_registration_payments_table.php
+│   │   ├── 2026_02_19_000003_create_programs_table.php
+│   │   ├── 2026_02_19_000004_create_program_intake_windows_table.php
+│   │   ├── 2026_02_19_000005_add_soft_deletes_to_users_and_cca_registrations.php
+│   │   └── 2026_02_19_000006_create_admin_activity_logs_table.php
 │   └── seeders/
 │       ├── AdminUserSeeder.php                   # Default admin
+│       ├── ProgramSeeder.php                     # Program catalog seed
 │       ├── RoleSeeder.php                        # Admin role
 │       └── DatabaseSeeder.php                    # Master seeder
 ├── public/
@@ -830,6 +895,10 @@ cca-student-onboarding/
 │       │   ├── edit.blade.php                    # Edit registration
 │       │   ├── login.blade.php                   # Admin login
 │       │   ├── profile.blade.php                 # Admin profile
+│       │   ├── payments/                         # Payment ledger views
+│       │   ├── programs/                         # Program/intake views
+│       │   ├── accounts/                         # Admin account management views
+│       │   ├── activity/                         # Activity timeline views
 │       │   ├── layouts/
 │       │   │   └── app.blade.php                 # Admin layout
 │       │   └── partials/
@@ -929,7 +998,7 @@ Strict-Transport-Security: max-age=31536000
 #### Register Student
 
 ```http
-POST /register
+POST /cca-register
 Content-Type: multipart/form-data
 ```
 
@@ -1142,7 +1211,7 @@ Query Parameters:
 ✅ **Eloquent ORM** - Query builder with relationships
 ✅ **Indexes** - Optimized queries
 ✅ **JSON Columns** - Flexible data storage
-✅ **Soft Deletes Ready** - Recoverable deletions
+✅ **Soft Deletes Active** - Recoverable deletions for registrations and admin users
 
 ### Frontend
 
@@ -1160,7 +1229,7 @@ Query Parameters:
 ✅ **Input Validation** - Never trust user input
 ✅ **Output Encoding** - Prevent XSS
 ✅ **Error Handling** - No sensitive data in errors
-✅ **Audit Logging Ready** - Track admin actions
+✅ **Audit Logging Active** - Timeline of admin actions with before/after snapshots
 
 ### Performance
 
@@ -1208,7 +1277,6 @@ Query Parameters:
 ```bash
 # Optimize application
 php artisan config:cache
-php artisan route:cache
 php artisan view:cache
 
 # Build production assets
@@ -1217,6 +1285,19 @@ npm run build
 # Optimize Composer autoloader
 composer install --optimize-autoloader --no-dev
 ```
+
+> Note: Skip `php artisan route:cache` while closure routes exist in `routes/web.php`.
+
+#### cPanel Git Deployment (Shared Hosting)
+
+-   Ensure `.cpanel.yml` exists at repository root.
+-   Keep `.env` on server (do not commit to Git).
+-   Commit `public/build` assets for environments where server-side Node build is unreliable.
+-   Set domain document root to `/public`.
+-   Deploy flow:
+    1. Push branch to GitHub
+    2. `Update from Remote` in cPanel Git
+    3. `Deploy HEAD Commit`
 
 #### Server Configuration
 
@@ -1445,7 +1526,7 @@ Solution:
 Solution:
 1. Check .htaccess exists in public/
 2. Enable mod_rewrite: sudo a2enmod rewrite && sudo systemctl restart apache2
-3. Clear route cache: php artisan route:clear && php artisan route:cache
+3. Clear route cache: php artisan route:clear
 4. Check DocumentRoot points to public/ directory
 ```
 
@@ -1468,7 +1549,7 @@ Solution:
 
 ```
 Solution:
-1. Enable caching: php artisan config:cache && php artisan route:cache && php artisan view:cache
+1. Enable caching: php artisan config:cache && php artisan view:cache
 2. Optimize autoloader: composer dump-autoload -o
 3. Use queue for heavy tasks
 4. Enable OPcache in php.ini
@@ -1666,7 +1747,7 @@ A: Absolutely! We welcome contributions. See [Contributing](#-contributing) sect
 A: R2 is Cloudflare's S3-compatible storage with zero egress fees. The app works with both.
 
 **Q: How do I add more programs?**
-A: Edit `config/programs.php` and add new entries. No code changes needed!
+A: Use `Admin → Program Management` (`/admin/programs`) to create/update programs and intake windows. `config/programs.php` is only for countries/districts now.
 
 **Q: Can I use a different payment gateway?**
 A: Yes! The payment slip is currently manual upload. You can integrate any gateway.
