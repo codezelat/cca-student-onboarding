@@ -6,8 +6,7 @@ deployment:
     - /bin/mkdir -p /home/lbccompa/testportal.cca.it.com/storage/logs
     - /bin/mkdir -p /home/lbccompa/testportal.cca.it.com/bootstrap/cache
     - /usr/bin/env composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev --working-dir=/home/lbccompa/testportal.cca.it.com
-    - /usr/bin/env npm --prefix /home/lbccompa/testportal.cca.it.com ci --no-audit --no-fund
-    - /usr/bin/env npm --prefix /home/lbccompa/testportal.cca.it.com run build
+    - /bin/test -f /home/lbccompa/testportal.cca.it.com/public/build/manifest.json
     - /usr/bin/env php /home/lbccompa/testportal.cca.it.com/artisan optimize:clear
     - /usr/bin/env php /home/lbccompa/testportal.cca.it.com/artisan config:cache
     - /usr/bin/env php /home/lbccompa/testportal.cca.it.com/artisan view:cache

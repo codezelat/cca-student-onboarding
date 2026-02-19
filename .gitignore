@@ -44,7 +44,6 @@ Homestead.json
 #build output
 /public/hot
 /public/storage
-/public/build
 /storage/*.key
 
 ### Laravel Patch ###
