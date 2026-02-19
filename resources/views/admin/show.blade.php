@@ -51,12 +51,19 @@
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Payment & Tags Information -->
                     <div class="bg-gradient-to-br from-indigo-50/80 to-purple-50/80 backdrop-blur-xl border border-indigo-200 rounded-2xl shadow-lg p-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Payment Information
-                        </h2>
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Payment Information
+                            </h2>
+                            <a href="{{ route('admin.registrations.payments.index', $registration->id) }}"
+                               class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-md">
+                                Manage Ledger
+                            </a>
+                        </div>
+                        <p class="text-xs text-indigo-700 mb-4">Ledger entries: {{ $registration->payments->count() }}</p>
                         <div class="space-y-4">
                             <!-- Tags Display -->
                             <div>

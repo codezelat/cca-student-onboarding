@@ -86,7 +86,7 @@ class AdminDashboardController extends Controller
      */
     public function show($id)
     {
-        $registration = CCARegistration::findOrFail($id);
+        $registration = CCARegistration::with('payments')->findOrFail($id);
 
         $registration->setAttribute('academic_qualification_documents', $this->normalizeFilesForDisplay($registration->academic_qualification_documents));
         $registration->setAttribute('nic_documents', $this->normalizeFilesForDisplay($registration->nic_documents));
@@ -102,7 +102,7 @@ class AdminDashboardController extends Controller
      */
     public function edit($id)
     {
-        $registration = CCARegistration::findOrFail($id);
+        $registration = CCARegistration::with('payments')->findOrFail($id);
         $programs = config('programs.programs');
         $countries = config('programs.countries');
         $sriLankaDistricts = config('programs.sri_lanka_districts');
@@ -156,7 +156,6 @@ class AdminDashboardController extends Controller
             'tags' => 'nullable|array',
             'tags.*' => 'string',
             'full_amount' => 'nullable|numeric|min:0',
-            'current_paid_amount' => 'nullable|numeric|min:0',
         ]);
 
         // Keep program fields in sync with configured program ID.
@@ -227,7 +226,7 @@ class AdminDashboardController extends Controller
             $query->whereJsonContains('tags', $request->tag_filter);
         }
 
-        $registrations = $query->orderBy('created_at', 'desc')->get();
+        $registrations = $query->with('payments')->orderBy('created_at', 'desc')->get();
 
         $filename = 'cca_registrations_' . date('Y-m-d_His') . '.csv';
         $headers = [
@@ -277,6 +276,8 @@ class AdminDashboardController extends Controller
                 'Passport Documents',
                 'Passport Photo',
                 'Payment Slip',
+                'Payment Entry Count',
+                'Payment Ledger',
             ]));
 
             foreach ($registrations as $reg) {
@@ -319,6 +320,8 @@ class AdminDashboardController extends Controller
                     $this->getFileUrls($reg->passport_documents),
                     $this->getFileUrls($reg->passport_photo),
                     $this->getFileUrls($reg->payment_slip),
+                    (string) $reg->payments->count(),
+                    $this->formatPaymentLedgerForExport($reg),
                 ]));
             }
 
@@ -542,6 +545,30 @@ class AdminDashboardController extends Controller
         )));
 
         return ! empty($urls) ? implode("\n", $urls) : 'N/A';
+    }
+
+    /**
+     * Format payment rows in a single text cell for export.
+     */
+    private function formatPaymentLedgerForExport(CCARegistration $registration): string
+    {
+        $rows = $registration->payments->sortBy('payment_no');
+
+        if ($rows->isEmpty()) {
+            return 'N/A';
+        }
+
+        return $rows->map(function ($payment): string {
+            return sprintf(
+                '#%d | %s | %s | LKR %s | %s%s',
+                $payment->payment_no,
+                $payment->payment_date?->format('Y-m-d') ?? 'N/A',
+                ucwords(str_replace('_', ' ', (string) $payment->payment_method)),
+                number_format((float) $payment->amount, 2),
+                strtoupper((string) $payment->status),
+                $payment->receipt_reference ? ' | Ref: ' . $payment->receipt_reference : ''
+            );
+        })->implode("\n");
     }
 
     /**

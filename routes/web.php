@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CCARegistrationController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminPaymentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -62,6 +63,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/registrations/{id}', [AdminDashboardController::class, 'update'])->name('registrations.update');
         Route::delete('/registrations/{id}', [AdminDashboardController::class, 'destroy'])->name('registrations.destroy');
         Route::get('/export', [AdminDashboardController::class, 'export'])->name('export');
+
+        // Payment Ledger Management
+        Route::get('/registrations/{id}/payments', [AdminPaymentController::class, 'index'])->name('registrations.payments.index');
+        Route::post('/registrations/{id}/payments', [AdminPaymentController::class, 'store'])->name('registrations.payments.store');
+        Route::get('/registrations/{id}/payments/{payment}/edit', [AdminPaymentController::class, 'edit'])->name('registrations.payments.edit');
+        Route::put('/registrations/{id}/payments/{payment}', [AdminPaymentController::class, 'update'])->name('registrations.payments.update');
+        Route::patch('/registrations/{id}/payments/{payment}/void', [AdminPaymentController::class, 'void'])->name('registrations.payments.void');
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
         // Admin Profile Management

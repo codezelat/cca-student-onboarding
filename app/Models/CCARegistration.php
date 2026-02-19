@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class CCARegistration extends Model
@@ -61,6 +62,7 @@ class CCARegistration extends Model
         'payment_slip' => 'array',
         'terms_accepted' => 'boolean',
         'tags' => 'array',
+        'full_amount' => 'decimal:2',
         'current_paid_amount' => 'decimal:2',
     ];
 
@@ -144,6 +146,12 @@ class CCARegistration extends Model
     private static function generateTemporaryRegisterId(): string
     {
         return 'tmp-' . Str::lower(Str::random(16));
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(RegistrationPayment::class, 'cca_registration_id')
+            ->orderBy('payment_no');
     }
 
     /**

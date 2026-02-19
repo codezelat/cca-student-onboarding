@@ -269,6 +269,17 @@
                         <p class="text-sm text-gray-600 mb-6">Manage payment tags and track the amount paid by the student.</p>
                         
                         <div class="bg-gradient-to-br from-indigo-50/50 to-purple-50/50 border border-indigo-100 rounded-xl p-6 space-y-6">
+                            <div class="flex items-center justify-between p-4 bg-white/80 border border-indigo-200 rounded-xl">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800">Payment Ledger</p>
+                                    <p class="text-xs text-gray-600">Entries: {{ $registration->payments->count() }} | Paid total: LKR {{ number_format((float) ($registration->current_paid_amount ?? 0), 2) }}</p>
+                                </div>
+                                <a href="{{ route('admin.registrations.payments.index', $registration->id) }}"
+                                   class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-md">
+                                    Manage Ledger
+                                </a>
+                            </div>
+
                             <!-- Payment Tags Multi-Select -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-3">
@@ -358,7 +369,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
                                     Current Paid Amount (LKR)
-                                    <span class="text-xs text-gray-500 font-normal ml-2">(Enter the amount already paid)</span>
+                                    <span class="text-xs text-gray-500 font-normal ml-2">(Auto-calculated from ledger)</span>
                                 </label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -368,24 +379,15 @@
                                     </div>
                                     <input 
                                         type="number" 
-                                        name="current_paid_amount" 
                                         id="current_paid_amount"
-                                        value="{{ old('current_paid_amount', $registration->current_paid_amount) }}" 
+                                        value="{{ number_format((float) ($registration->current_paid_amount ?? 0), 2, '.', '') }}" 
                                         step="0.01"
-                                        min="0"
                                         placeholder="0.00"
-                                        class="w-full pl-12 pr-4 py-3 bg-white border-2 border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-lg font-semibold"
+                                        class="w-full pl-12 pr-4 py-3 bg-gray-100 border-2 border-indigo-200 rounded-xl text-lg font-semibold text-gray-700"
+                                        readonly
                                     >
                                 </div>
-                                <p class="mt-2 text-xs text-gray-500">Enter the total amount the student has paid so far.</p>
-                                @error('current_paid_amount')
-                                    <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                        </svg>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
+                                <p class="mt-2 text-xs text-gray-500">Add, edit, or void payment installments in the ledger. This value updates automatically.</p>
                             </div>
 
                             <!-- Current Status Display (if viewing payment slip) -->
