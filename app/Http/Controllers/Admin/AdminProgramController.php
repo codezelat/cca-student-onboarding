@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Program;
 use App\Models\ProgramIntakeWindow;
+use App\Services\ActivityLogger;
 use App\Services\ProgramCatalogService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -16,9 +17,10 @@ use Illuminate\View\View;
 
 class AdminProgramController extends Controller
 {
-    public function __construct(private readonly ProgramCatalogService $programCatalogService)
-    {
-    }
+    public function __construct(
+        private readonly ProgramCatalogService $programCatalogService,
+        private readonly ActivityLogger $activityLogger
+    ) {}
 
     /**
      * List programs with intake states.
@@ -62,6 +64,13 @@ class AdminProgramController extends Controller
             'updated_by' => $adminId,
         ]);
 
+        $this->activityLogger->log('program.created', [
+            'category' => 'program',
+            'subject' => $program,
+            'message' => 'Program created.',
+            'after' => $this->programSnapshot($program),
+        ]);
+
         return redirect()
             ->route('admin.programs.edit', $program->id)
             ->with('success', 'Program created successfully. Add at least one intake window to open registration.');
@@ -84,6 +93,7 @@ class AdminProgramController extends Controller
     public function update(Request $request, int $programId): RedirectResponse
     {
         $program = Program::findOrFail($programId);
+        $before = $this->programSnapshot($program);
         $validated = $this->validateProgramData($request, false);
 
         $program->update([
@@ -97,6 +107,14 @@ class AdminProgramController extends Controller
             'updated_by' => Auth::guard('admin')->id(),
         ]);
 
+        $this->activityLogger->log('program.updated', [
+            'category' => 'program',
+            'subject' => $program,
+            'message' => 'Program updated.',
+            'before' => $before,
+            'after' => $this->programSnapshot($program->refresh()),
+        ]);
+
         return redirect()
             ->route('admin.programs.edit', $program->id)
             ->with('success', 'Program updated successfully.');
@@ -108,10 +126,19 @@ class AdminProgramController extends Controller
     public function toggle(int $programId): RedirectResponse
     {
         $program = Program::findOrFail($programId);
+        $before = $this->programSnapshot($program);
 
         $program->update([
             'is_active' => ! $program->is_active,
             'updated_by' => Auth::guard('admin')->id(),
+        ]);
+
+        $this->activityLogger->log('program.toggled', [
+            'category' => 'program',
+            'subject' => $program,
+            'message' => 'Program active state toggled.',
+            'before' => $before,
+            'after' => $this->programSnapshot($program->refresh()),
         ]);
 
         return redirect()
@@ -132,7 +159,7 @@ class AdminProgramController extends Controller
             $this->ensureNoActiveOverlap($program, $validated['opens_at'], $validated['closes_at']);
         }
 
-        $program->intakeWindows()->create([
+        $intake = $program->intakeWindows()->create([
             'window_name' => $validated['window_name'],
             'opens_at' => $validated['opens_at'],
             'closes_at' => $validated['closes_at'],
@@ -140,6 +167,19 @@ class AdminProgramController extends Controller
             'is_active' => $isActive,
             'created_by' => Auth::guard('admin')->id(),
             'updated_by' => Auth::guard('admin')->id(),
+        ]);
+
+        $this->activityLogger->log('program.intake.created', [
+            'category' => 'program',
+            'subject' => $intake,
+            'subject_type' => 'program_intake_window',
+            'subject_label' => $program->code . ' - ' . $intake->window_name,
+            'message' => 'Program intake window created.',
+            'after' => $this->intakeSnapshot($intake),
+            'meta' => [
+                'program_id' => $program->id,
+                'program_code' => $program->code,
+            ],
         ]);
 
         return redirect()
@@ -165,6 +205,7 @@ class AdminProgramController extends Controller
     {
         $program = Program::findOrFail($programId);
         $intake = $this->findIntake($program, $intakeId);
+        $before = $this->intakeSnapshot($intake);
         $validated = $this->validateIntakeData($request);
         $isActive = (bool) ($validated['is_active'] ?? false);
 
@@ -181,6 +222,20 @@ class AdminProgramController extends Controller
             'updated_by' => Auth::guard('admin')->id(),
         ]);
 
+        $this->activityLogger->log('program.intake.updated', [
+            'category' => 'program',
+            'subject' => $intake,
+            'subject_type' => 'program_intake_window',
+            'subject_label' => $program->code . ' - ' . $intake->window_name,
+            'message' => 'Program intake window updated.',
+            'before' => $before,
+            'after' => $this->intakeSnapshot($intake->refresh()),
+            'meta' => [
+                'program_id' => $program->id,
+                'program_code' => $program->code,
+            ],
+        ]);
+
         return redirect()
             ->route('admin.programs.edit', $program->id)
             ->with('success', 'Intake window updated successfully.');
@@ -193,6 +248,7 @@ class AdminProgramController extends Controller
     {
         $program = Program::findOrFail($programId);
         $intake = $this->findIntake($program, $intakeId);
+        $before = $this->intakeSnapshot($intake);
         $nextActive = ! $intake->is_active;
 
         if ($nextActive) {
@@ -207,6 +263,20 @@ class AdminProgramController extends Controller
         $intake->update([
             'is_active' => $nextActive,
             'updated_by' => Auth::guard('admin')->id(),
+        ]);
+
+        $this->activityLogger->log('program.intake.toggled', [
+            'category' => 'program',
+            'subject' => $intake,
+            'subject_type' => 'program_intake_window',
+            'subject_label' => $program->code . ' - ' . $intake->window_name,
+            'message' => 'Program intake active state toggled.',
+            'before' => $before,
+            'after' => $this->intakeSnapshot($intake->refresh()),
+            'meta' => [
+                'program_id' => $program->id,
+                'program_code' => $program->code,
+            ],
         ]);
 
         return redirect()
@@ -280,9 +350,56 @@ class AdminProgramController extends Controller
         );
 
         if ($overlaps->isNotEmpty()) {
+            $this->activityLogger->log('program.intake.overlap_blocked', [
+                'category' => 'program',
+                'status' => 'failed',
+                'subject' => $program,
+                'message' => 'Program intake action blocked due to active overlap.',
+                'meta' => [
+                    'requested_opens_at' => $start->toDateTimeString(),
+                    'requested_closes_at' => $end->toDateTimeString(),
+                    'ignore_window_id' => $ignoreWindowId,
+                    'overlap_window_ids' => $overlaps->pluck('id')->values()->all(),
+                ],
+            ]);
+
             throw ValidationException::withMessages([
                 'opens_at' => 'This intake window overlaps with another active intake window for the same program.',
             ]);
         }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function programSnapshot(Program $program): array
+    {
+        return [
+            'id' => $program->id,
+            'code' => $program->code,
+            'name' => $program->name,
+            'year_label' => $program->year_label,
+            'duration_label' => $program->duration_label,
+            'base_price' => $program->base_price,
+            'currency' => $program->currency,
+            'display_order' => $program->display_order,
+            'is_active' => $program->is_active,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function intakeSnapshot(ProgramIntakeWindow $intake): array
+    {
+        return [
+            'id' => $intake->id,
+            'program_id' => $intake->program_id,
+            'window_name' => $intake->window_name,
+            'opens_at' => $intake->opens_at?->toDateTimeString(),
+            'closes_at' => $intake->closes_at?->toDateTimeString(),
+            'price_override' => $intake->price_override,
+            'is_active' => $intake->is_active,
+        ];
     }
 }

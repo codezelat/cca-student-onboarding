@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
@@ -14,6 +16,10 @@ use Illuminate\View\View;
 
 class AdminAuthController extends Controller
 {
+    public function __construct(private readonly ActivityLogger $activityLogger)
+    {
+    }
+
     /**
      * Show the admin login form
      */
@@ -32,6 +38,18 @@ class AdminAuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password) || ! $user->hasRole('admin')) {
+            $this->activityLogger->log('admin.login.failed', [
+                'category' => 'auth',
+                'status' => 'failed',
+                'subject_type' => 'auth_session',
+                'subject_label' => (string) $request->email,
+                'message' => 'Failed admin login attempt.',
+                'meta' => [
+                    'email' => (string) $request->email,
+                    'reason' => 'invalid_credentials_or_role',
+                ],
+            ]);
+
             RateLimiter::hit($request->throttleKey());
 
             throw ValidationException::withMessages([
@@ -46,14 +64,34 @@ class AdminAuthController extends Controller
 
         $request->session()->regenerate();
 
+        $this->activityLogger->log('admin.login.success', [
+            'category' => 'auth',
+            'subject' => $user,
+            'subject_type' => 'user',
+            'message' => 'Admin logged in successfully.',
+            'meta' => [
+                'remember' => $request->boolean('remember'),
+            ],
+        ]);
+
         return redirect()->intended(route('admin.dashboard'));
     }
 
     /**
      * Handle admin logout
      */
-    public function logout(\Illuminate\Http\Request $request): RedirectResponse
+    public function logout(Request $request): RedirectResponse
     {
+        $actor = Auth::guard('admin')->user();
+
+        $this->activityLogger->log('admin.logout', [
+            'category' => 'auth',
+            'actor' => $actor,
+            'subject' => $actor,
+            'subject_type' => 'user',
+            'message' => 'Admin logged out.',
+        ]);
+
         Auth::guard('admin')->logout();
 
         $request->session()->invalidate();

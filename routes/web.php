@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\AdminAccountController;
 use App\Http\Controllers\Admin\AdminProgramController;
+use App\Http\Controllers\Admin\AdminActivityController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -79,6 +80,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/programs/{id}/intakes/{intake}/edit', [AdminProgramController::class, 'editIntake'])->name('programs.intakes.edit');
         Route::put('/programs/{id}/intakes/{intake}', [AdminProgramController::class, 'updateIntake'])->name('programs.intakes.update');
         Route::patch('/programs/{id}/intakes/{intake}/toggle', [AdminProgramController::class, 'toggleIntake'])->name('programs.intakes.toggle');
+
+        // Admin Activity Timeline
+        Route::get('/activity', [AdminActivityController::class, 'index'])->name('activity.index');
+        Route::get('/activity/export', [AdminActivityController::class, 'export'])->name('activity.export');
+        Route::get('/activity/{id}', [AdminActivityController::class, 'show'])->name('activity.show');
 
         // Admin Account Management
         Route::get('/accounts', [AdminAccountController::class, 'index'])->name('accounts.index');

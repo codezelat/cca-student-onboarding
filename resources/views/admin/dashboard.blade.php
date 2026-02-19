@@ -131,6 +131,16 @@
                             </svg>
                             <span>Programs</span>
                         </a>
+
+                        <a
+                            href="{{ route('admin.activity.index') }}"
+                            class="px-5 py-2.5 bg-slate-700 hover:bg-slate-800 text-white font-semibold rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-300 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center space-x-2"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Activity</span>
+                        </a>
                         
                         @if(request('search') || request('program_filter') || request('tag_filter') || request('scope', 'active') !== 'active')
                             <a 

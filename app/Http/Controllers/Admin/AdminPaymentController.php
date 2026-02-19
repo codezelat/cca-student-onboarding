@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CCARegistration;
 use App\Models\RegistrationPayment;
+use App\Services\ActivityLogger;
 use App\Services\PaymentLedgerService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
@@ -16,9 +17,10 @@ use Illuminate\View\View;
 
 class AdminPaymentController extends Controller
 {
-    public function __construct(private readonly PaymentLedgerService $paymentLedgerService)
-    {
-    }
+    public function __construct(
+        private readonly PaymentLedgerService $paymentLedgerService,
+        private readonly ActivityLogger $activityLogger
+    ) {}
 
     /**
      * Display payment ledger for a registration.
@@ -61,16 +63,17 @@ class AdminPaymentController extends Controller
         $registration = CCARegistration::findOrFail($registrationId);
         $validated = $this->validatePaymentData($request, $this->paymentMethods());
         $adminId = Auth::guard('admin')->id();
+        $createdPayment = null;
 
         try {
-            DB::transaction(function () use ($registration, $validated, $adminId): void {
+            DB::transaction(function () use ($registration, $validated, $adminId, &$createdPayment): void {
                 // Serialize numbering per registration.
                 CCARegistration::whereKey($registration->id)->lockForUpdate()->first();
 
                 $nextNo = ((int) RegistrationPayment::where('cca_registration_id', $registration->id)
                     ->max('payment_no')) + 1;
 
-                RegistrationPayment::create([
+                $createdPayment = RegistrationPayment::create([
                     'cca_registration_id' => $registration->id,
                     'payment_no' => $nextNo,
                     'payment_date' => $validated['payment_date'],
@@ -84,12 +87,41 @@ class AdminPaymentController extends Controller
                 ]);
             });
         } catch (QueryException $e) {
+            $this->activityLogger->log('payment.create.failed', [
+                'category' => 'payment',
+                'status' => 'failed',
+                'subject' => $registration,
+                'message' => 'Failed to add payment entry.',
+                'after' => $validated,
+            ]);
+
             return back()
                 ->withErrors(['amount' => 'Could not add the payment entry. Please try again.'])
                 ->withInput();
         }
 
-        $this->paymentLedgerService->syncCurrentPaidAmount($registration->fresh());
+        $updatedRegistration = $registration->fresh();
+        $this->paymentLedgerService->syncCurrentPaidAmount($updatedRegistration);
+
+        if ($createdPayment instanceof RegistrationPayment) {
+            $this->activityLogger->log('payment.created', [
+                'category' => 'payment',
+                'subject' => $createdPayment,
+                'subject_type' => 'registration_payment',
+                'subject_label' => sprintf(
+                    '%s - Payment #%d',
+                    $updatedRegistration?->register_id ?? ('Registration #' . $registration->id),
+                    $createdPayment->payment_no
+                ),
+                'message' => 'Payment added to ledger.',
+                'after' => $this->paymentSnapshot($createdPayment),
+                'meta' => [
+                    'registration_id' => $registration->id,
+                    'registration_register_id' => $updatedRegistration?->register_id,
+                    'current_paid_amount' => $updatedRegistration?->current_paid_amount,
+                ],
+            ]);
+        }
 
         return redirect()
             ->route('admin.registrations.payments.index', $registration->id)
@@ -103,9 +135,19 @@ class AdminPaymentController extends Controller
     {
         $registration = CCARegistration::findOrFail($registrationId);
         $payment = $this->findPayment($registration, $paymentId);
+        $before = $this->paymentSnapshot($payment);
         $validated = $this->validatePaymentData($request, $this->paymentMethodsForEdit($payment));
 
         if ($payment->status === RegistrationPayment::STATUS_VOID) {
+            $this->activityLogger->log('payment.update.blocked', [
+                'category' => 'payment',
+                'status' => 'failed',
+                'subject' => $payment,
+                'subject_type' => 'registration_payment',
+                'message' => 'Attempted to edit a void payment.',
+                'before' => $before,
+            ]);
+
             return back()->withErrors(['amount' => 'Void payments cannot be edited.']);
         }
 
@@ -118,7 +160,27 @@ class AdminPaymentController extends Controller
             'updated_by' => Auth::guard('admin')->id(),
         ]);
 
-        $this->paymentLedgerService->syncCurrentPaidAmount($registration->fresh());
+        $updatedRegistration = $registration->fresh();
+        $this->paymentLedgerService->syncCurrentPaidAmount($updatedRegistration);
+        $after = $this->paymentSnapshot($payment->refresh());
+
+        $this->activityLogger->log('payment.updated', [
+            'category' => 'payment',
+            'subject' => $payment,
+            'subject_type' => 'registration_payment',
+            'subject_label' => sprintf(
+                '%s - Payment #%d',
+                $updatedRegistration?->register_id ?? ('Registration #' . $registration->id),
+                $payment->payment_no
+            ),
+            'message' => 'Payment updated.',
+            'before' => $before,
+            'after' => $after,
+            'meta' => [
+                'registration_id' => $registration->id,
+                'current_paid_amount' => $updatedRegistration?->current_paid_amount,
+            ],
+        ]);
 
         return redirect()
             ->route('admin.registrations.payments.index', $registration->id)
@@ -132,12 +194,21 @@ class AdminPaymentController extends Controller
     {
         $registration = CCARegistration::findOrFail($registrationId);
         $payment = $this->findPayment($registration, $paymentId);
+        $before = $this->paymentSnapshot($payment);
 
         $validated = $request->validate([
             'void_reason' => 'required|string|max:500',
         ]);
 
         if ($payment->status === RegistrationPayment::STATUS_VOID) {
+            $this->activityLogger->log('payment.void.skipped', [
+                'category' => 'payment',
+                'subject' => $payment,
+                'subject_type' => 'registration_payment',
+                'message' => 'Void skipped because payment was already void.',
+                'before' => $before,
+            ]);
+
             return back()->with('success', 'Payment is already void.');
         }
 
@@ -148,11 +219,51 @@ class AdminPaymentController extends Controller
             'updated_by' => Auth::guard('admin')->id(),
         ]);
 
-        $this->paymentLedgerService->syncCurrentPaidAmount($registration->fresh());
+        $updatedRegistration = $registration->fresh();
+        $this->paymentLedgerService->syncCurrentPaidAmount($updatedRegistration);
+        $after = $this->paymentSnapshot($payment->refresh());
+
+        $this->activityLogger->log('payment.voided', [
+            'category' => 'payment',
+            'subject' => $payment,
+            'subject_type' => 'registration_payment',
+            'subject_label' => sprintf(
+                '%s - Payment #%d',
+                $updatedRegistration?->register_id ?? ('Registration #' . $registration->id),
+                $payment->payment_no
+            ),
+            'message' => 'Payment marked as void.',
+            'before' => $before,
+            'after' => $after,
+            'meta' => [
+                'registration_id' => $registration->id,
+                'current_paid_amount' => $updatedRegistration?->current_paid_amount,
+            ],
+        ]);
 
         return redirect()
             ->route('admin.registrations.payments.index', $registration->id)
             ->with('success', 'Payment voided successfully.');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function paymentSnapshot(RegistrationPayment $payment): array
+    {
+        return [
+            'id' => $payment->id,
+            'cca_registration_id' => $payment->cca_registration_id,
+            'payment_no' => $payment->payment_no,
+            'payment_date' => $payment->payment_date?->format('Y-m-d'),
+            'amount' => $payment->amount,
+            'payment_method' => $payment->payment_method,
+            'receipt_reference' => $payment->receipt_reference,
+            'note' => $payment->note,
+            'status' => $payment->status,
+            'void_reason' => $payment->void_reason,
+            'voided_at' => $payment->voided_at?->toDateTimeString(),
+        ];
     }
 
     /**

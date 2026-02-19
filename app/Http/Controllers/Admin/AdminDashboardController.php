@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CCARegistration;
 use App\Models\Program;
+use App\Services\ActivityLogger;
 use App\Services\ProgramCatalogService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -15,9 +16,10 @@ use Illuminate\Validation\Rule;
 
 class AdminDashboardController extends Controller
 {
-    public function __construct(private readonly ProgramCatalogService $programCatalogService)
-    {
-    }
+    public function __construct(
+        private readonly ProgramCatalogService $programCatalogService,
+        private readonly ActivityLogger $activityLogger
+    ) {}
 
     /**
      * Display the admin dashboard with registrations.
@@ -135,6 +137,7 @@ class AdminDashboardController extends Controller
     public function update(Request $request, $id)
     {
         $registration = CCARegistration::findOrFail($id);
+        $before = $this->registrationAuditData($registration);
         $programCodes = Program::orderBy('code')->pluck('code')->all();
 
         $validated = $request->validate([
@@ -187,6 +190,18 @@ class AdminDashboardController extends Controller
             $registration->update($validated);
         } catch (QueryException $e) {
             if ($this->isDuplicateConstraintViolation($e)) {
+                $this->activityLogger->log('registration.update.failed', [
+                    'category' => 'registration',
+                    'status' => 'failed',
+                    'subject' => $registration,
+                    'message' => 'Registration update blocked due to duplicate NIC/passport for selected program.',
+                    'before' => $before,
+                    'after' => $request->except(['_token', '_method']),
+                    'meta' => [
+                        'reason' => 'duplicate_identity_per_program',
+                    ],
+                ]);
+
                 return back()
                     ->withErrors([
                         'nic_number' => 'Another registration with this NIC or passport number already exists for the selected program.',
@@ -196,6 +211,19 @@ class AdminDashboardController extends Controller
 
             throw $e;
         }
+
+        $after = $this->registrationAuditData($registration->refresh());
+
+        $this->activityLogger->log('registration.updated', [
+            'category' => 'registration',
+            'subject' => $registration,
+            'message' => 'Registration updated successfully.',
+            'before' => $before,
+            'after' => $after,
+            'meta' => [
+                'changed_fields' => $this->changedKeys($before, $after),
+            ],
+        ]);
 
         return redirect()->route('admin.dashboard')
             ->with('success', 'Registration updated successfully!');
@@ -207,7 +235,17 @@ class AdminDashboardController extends Controller
     public function destroy($id)
     {
         $registration = CCARegistration::findOrFail($id);
+        $before = $this->registrationAuditData($registration);
         $registration->delete();
+        $afterModel = CCARegistration::withTrashed()->find($registration->id);
+
+        $this->activityLogger->log('registration.soft_deleted', [
+            'category' => 'registration',
+            'subject' => $registration,
+            'message' => 'Registration moved to trash.',
+            'before' => $before,
+            'after' => $afterModel ? $this->registrationAuditData($afterModel) : null,
+        ]);
 
         return redirect()->route('admin.dashboard', request()->query())
             ->with('success', 'Registration moved to trash. You can restore it from the Trash view.');
@@ -219,7 +257,17 @@ class AdminDashboardController extends Controller
     public function restore($id)
     {
         $registration = CCARegistration::onlyTrashed()->findOrFail($id);
+        $before = $this->registrationAuditData($registration);
         $registration->restore();
+        $afterModel = CCARegistration::find($registration->id);
+
+        $this->activityLogger->log('registration.restored', [
+            'category' => 'registration',
+            'subject' => $registration,
+            'message' => 'Registration restored from trash.',
+            'before' => $before,
+            'after' => $afterModel ? $this->registrationAuditData($afterModel) : null,
+        ]);
 
         return redirect()->route('admin.dashboard', array_merge(request()->query(), ['scope' => 'trashed']))
             ->with('success', 'Registration restored successfully.');
@@ -231,9 +279,29 @@ class AdminDashboardController extends Controller
     public function forceDelete($id)
     {
         $registration = CCARegistration::onlyTrashed()->findOrFail($id);
+        $before = $this->registrationAuditData($registration);
+        $filePaths = array_merge(
+            $this->extractFilePaths($registration->academic_qualification_documents),
+            $this->extractFilePaths($registration->nic_documents),
+            $this->extractFilePaths($registration->passport_documents),
+            $this->extractFilePaths($registration->passport_photo),
+            $this->extractFilePaths($registration->payment_slip),
+        );
 
         $this->deleteRegistrationFiles($registration);
         $registration->forceDelete();
+
+        $this->activityLogger->log('registration.force_deleted', [
+            'category' => 'registration',
+            'subject_type' => 'cca_registration',
+            'subject_id' => $before['id'],
+            'subject_label' => $before['register_id'] . ' - ' . $before['full_name'],
+            'message' => 'Registration permanently deleted.',
+            'before' => $before,
+            'meta' => [
+                'deleted_file_count' => count($filePaths),
+            ],
+        ]);
 
         return redirect()->route('admin.dashboard', array_merge(request()->query(), ['scope' => 'trashed']))
             ->with('success', 'Registration permanently deleted.');
@@ -273,6 +341,17 @@ class AdminDashboardController extends Controller
         }
 
         $registrations = $query->with('payments')->orderBy('created_at', 'desc')->get();
+
+        $this->activityLogger->log('registration.exported', [
+            'category' => 'registration',
+            'subject_type' => 'registration_export',
+            'subject_label' => 'CSV Export',
+            'message' => 'Registration list exported.',
+            'meta' => [
+                'record_count' => $registrations->count(),
+                'filters' => $request->only(['scope', 'search', 'program_filter', 'tag_filter']),
+            ],
+        ]);
 
         $filename = 'cca_registrations_' . date('Y-m-d_His') . '.csv';
         $headers = [
@@ -667,5 +746,45 @@ class AdminDashboardController extends Controller
         $driverCode = $e->errorInfo[1] ?? null;
 
         return $sqlState === '23000' || $driverCode === 1062 || $driverCode === 19;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function registrationAuditData(CCARegistration $registration): array
+    {
+        return [
+            'id' => $registration->id,
+            'register_id' => $registration->register_id,
+            'program_id' => $registration->program_id,
+            'program_name' => $registration->program_name,
+            'full_name' => $registration->full_name,
+            'email_address' => $registration->email_address,
+            'whatsapp_number' => $registration->whatsapp_number,
+            'nic_number' => $registration->nic_number,
+            'passport_number' => $registration->passport_number,
+            'full_amount' => $registration->full_amount,
+            'current_paid_amount' => $registration->current_paid_amount,
+            'tags' => $registration->tags,
+            'deleted_at' => $registration->deleted_at?->toDateTimeString(),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $before
+     * @param  array<string, mixed>  $after
+     * @return array<int, string>
+     */
+    private function changedKeys(array $before, array $after): array
+    {
+        $changed = [];
+
+        foreach ($after as $key => $value) {
+            if (($before[$key] ?? null) !== $value) {
+                $changed[] = (string) $key;
+            }
+        }
+
+        return $changed;
     }
 }
