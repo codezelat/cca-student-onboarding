@@ -1,0 +1,18 @@
+---
+deployment:
+  tasks:
+    - export APPPATH=/home/lbccompa/testportal.cca.it.com
+    - /bin/cd $APPPATH
+    - /bin/mkdir -p $APPPATH/storage/framework/cache/data
+    - /bin/mkdir -p $APPPATH/storage/framework/sessions
+    - /bin/mkdir -p $APPPATH/storage/framework/views
+    - /bin/mkdir -p $APPPATH/storage/logs
+    - /bin/mkdir -p $APPPATH/bootstrap/cache
+    - /usr/bin/env composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+    - /usr/bin/env npm ci --no-audit --no-fund
+    - /usr/bin/env npm run build
+    - /usr/bin/env php artisan optimize:clear
+    - /usr/bin/env php artisan config:cache
+    - /usr/bin/env php artisan view:cache
+    - /bin/chmod -R 775 $APPPATH/storage
+    - /bin/chmod -R 775 $APPPATH/bootstrap/cache
