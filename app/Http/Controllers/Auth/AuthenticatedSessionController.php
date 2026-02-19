@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -26,37 +27,36 @@ class AuthenticatedSessionController extends Controller
      * Handle an incoming authentication request.
      * Supports both regular users and admin authentication.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        $request->ensureIsNotRateLimited();
 
         // Try to authenticate the user
         $user = User::where('email', $request->email)->first();
         
-        if ($user && Hash::check($request->password, $user->password)) {
-            // Check if user has admin role
-            if ($user->hasRole('admin')) {
-                // Log in the user using the admin guard
-                Auth::guard('admin')->login($user, $request->boolean('remember'));
-                $request->session()->regenerateToken();
-                
-                return redirect()->route('admin.dashboard');
-            }
-            
-            // Regular user login (if needed in the future)
-            Auth::guard('web')->login($user, $request->boolean('remember'));
-            $request->session()->regenerateToken();
-            
-            return redirect()->intended(route('admin.dashboard'));
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            RateLimiter::hit($request->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
         }
 
-        // If authentication failed, throw validation error
-        throw ValidationException::withMessages([
-            'email' => ['The provided credentials are incorrect.'],
-        ]);
+        RateLimiter::clear($request->throttleKey());
+
+        if ($user->hasRole('admin')) {
+            // Check if user has admin role
+            Auth::guard('admin')->login($user, $request->boolean('remember'));
+            $request->session()->regenerate();
+
+            return redirect()->route('admin.dashboard');
+        }
+
+        // Regular user login
+        Auth::guard('web')->login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
+
+        return redirect()->intended(route('dashboard'));
     }
 
     /**
@@ -65,10 +65,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        // Check which guard is authenticated and logout accordingly
+        // Logout both guards to ensure complete sign-out.
         if (Auth::guard('admin')->check()) {
             Auth::guard('admin')->logout();
-        } else {
+        }
+
+        if (Auth::guard('web')->check()) {
             Auth::guard('web')->logout();
         }
 

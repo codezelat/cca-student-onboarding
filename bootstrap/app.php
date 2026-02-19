@@ -23,5 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
                     'email' => 'Your session has expired. Please try logging in again.'
                 ]);
             }
+
+            if ($request->is('admin/login')) {
+                return redirect()->route('admin.login')->withErrors([
+                    'email' => 'Your session has expired. Please try logging in again.'
+                ]);
+            }
         });
     })->create();

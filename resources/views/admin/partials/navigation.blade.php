@@ -85,7 +85,7 @@
 
                             <div class="border-t border-gray-100 my-2"></div>
 
-                            <form method="POST" action="{{ route('logout') }}">
+                            <form method="POST" action="{{ route('admin.logout') }}">
                                 @csrf
                                 <button type="submit" 
                                     class="w-full flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors group text-left">

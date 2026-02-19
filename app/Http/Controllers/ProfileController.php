@@ -6,7 +6,9 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -44,7 +46,7 @@ class ProfileController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+            'password' => ['required', 'current_password:admin'],
         ]);
 
         $user = Auth::guard('admin')->user();
@@ -57,5 +59,23 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    /**
+     * Update the authenticated admin's password.
+     */
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('updatePassword', [
+            'current_password' => ['required', 'current_password:admin'],
+            'password' => ['required', Password::defaults(), 'confirmed'],
+        ]);
+
+        $user = Auth::guard('admin')->user();
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return Redirect::route('admin.profile.edit')->with('status', 'password-updated');
     }
 }

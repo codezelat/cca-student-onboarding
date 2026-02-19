@@ -4,16 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CCARegistration;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Filesystem\FilesystemAdapter;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class AdminDashboardController extends Controller
 {
     /**
-     * Display the admin dashboard with registrations
+     * Display the admin dashboard with registrations.
      */
     public function index(Request $request)
     {
@@ -22,12 +23,12 @@ class AdminDashboardController extends Controller
         // Search by Register ID, Full Name, Email, NIC, or WhatsApp Number
         if ($request->filled('search')) {
             $searchTerm = $request->search;
-            $query->where(function($q) use ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
                 $q->where('register_id', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('full_name', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('email_address', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('nic_number', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('whatsapp_number', 'like', '%' . $searchTerm . '%');
+                    ->orWhere('full_name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('email_address', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('nic_number', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('whatsapp_number', 'like', '%' . $searchTerm . '%');
             });
         }
 
@@ -49,14 +50,8 @@ class AdminDashboardController extends Controller
 
         // Calculate statistics
         $totalRegistrations = CCARegistration::count();
-        
-        // Count General Rate registrations (those with "General Rate" tag)
         $generalRateCount = CCARegistration::whereJsonContains('tags', 'General Rate')->count();
-        
-        // Count Special Offer registrations (those with "Special 50% Offer" tag)
         $specialOfferCount = CCARegistration::whereJsonContains('tags', 'Special 50% Offer')->count();
-        
-        // Get most registered program
         $mostRegisteredProgram = CCARegistration::select('program_id', 'program_name', DB::raw('count(*) as total'))
             ->groupBy('program_id', 'program_name')
             ->orderByDesc('total')
@@ -67,8 +62,17 @@ class AdminDashboardController extends Controller
             ->paginate(25)
             ->appends($request->query());
 
+        $registrations->getCollection()->transform(function (CCARegistration $registration) {
+            $registration->setAttribute(
+                'payment_slip',
+                $this->normalizeFilesForDisplay($registration->payment_slip)
+            );
+
+            return $registration;
+        });
+
         return view('admin.dashboard', compact(
-            'registrations', 
+            'registrations',
             'programs',
             'totalRegistrations',
             'generalRateCount',
@@ -78,16 +82,23 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Show details of a specific registration
+     * Show details of a specific registration.
      */
     public function show($id)
     {
         $registration = CCARegistration::findOrFail($id);
+
+        $registration->setAttribute('academic_qualification_documents', $this->normalizeFilesForDisplay($registration->academic_qualification_documents));
+        $registration->setAttribute('nic_documents', $this->normalizeFilesForDisplay($registration->nic_documents));
+        $registration->setAttribute('passport_documents', $this->normalizeFilesForDisplay($registration->passport_documents));
+        $registration->setAttribute('passport_photo', $this->normalizeFilesForDisplay($registration->passport_photo));
+        $registration->setAttribute('payment_slip', $this->normalizeFilesForDisplay($registration->payment_slip));
+
         return view('admin.show', compact('registration'));
     }
 
     /**
-     * Show edit form for a registration
+     * Show edit form for a registration.
      */
     public function edit($id)
     {
@@ -95,26 +106,43 @@ class AdminDashboardController extends Controller
         $programs = config('programs.programs');
         $countries = config('programs.countries');
         $sriLankaDistricts = config('programs.sri_lanka_districts');
-        
+
+        $registration->setAttribute('payment_slip', $this->normalizeFilesForDisplay($registration->payment_slip));
+
         return view('admin.edit', compact('registration', 'programs', 'countries', 'sriLankaDistricts'));
     }
 
     /**
-     * Update a registration
+     * Update a registration.
      */
     public function update(Request $request, $id)
     {
         $registration = CCARegistration::findOrFail($id);
-        
+        $programs = config('programs.programs', []);
+
         $validated = $request->validate([
-            'program_id' => 'required|string|max:20',
+            'program_id' => ['required', 'string', 'max:20', Rule::in(array_keys($programs))],
             'full_name' => 'required|string|max:255',
             'name_with_initials' => 'required|string|max:255',
             'email_address' => 'required|email|max:255',
             'whatsapp_number' => 'required|string|max:20',
             'date_of_birth' => 'required|date',
-            'nic_number' => 'nullable|string|max:255',
-            'passport_number' => 'nullable|string|max:255',
+            'nic_number' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('cca_registrations', 'nic_number')
+                    ->where(fn ($query) => $query->where('program_id', $request->input('program_id')))
+                    ->ignore($registration->id),
+            ],
+            'passport_number' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('cca_registrations', 'passport_number')
+                    ->where(fn ($query) => $query->where('program_id', $request->input('program_id')))
+                    ->ignore($registration->id),
+            ],
             'gender' => 'required|in:male,female',
             'nationality' => 'required|string|max:255',
             'permanent_address' => 'required|string',
@@ -131,28 +159,41 @@ class AdminDashboardController extends Controller
             'current_paid_amount' => 'nullable|numeric|min:0',
         ]);
 
-        // Update program_name if program_id changed
-        $programs = config('programs.programs');
+        // Keep program fields in sync with configured program ID.
         if (isset($programs[$validated['program_id']])) {
             $validated['program_name'] = $programs[$validated['program_id']]['name'];
+            $validated['program_year'] = $programs[$validated['program_id']]['year'];
+            $validated['program_duration'] = $programs[$validated['program_id']]['duration'];
         }
 
-        $registration->update($validated);
+        try {
+            $registration->update($validated);
+        } catch (QueryException $e) {
+            if ($this->isDuplicateConstraintViolation($e)) {
+                return back()
+                    ->withErrors([
+                        'nic_number' => 'Another registration with this NIC or passport number already exists for the selected program.',
+                    ])
+                    ->withInput();
+            }
+
+            throw $e;
+        }
 
         return redirect()->route('admin.dashboard')
             ->with('success', 'Registration updated successfully!');
     }
 
     /**
-     * Delete a registration
+     * Delete a registration.
      */
     public function destroy($id)
     {
         $registration = CCARegistration::findOrFail($id);
-        
+
         // Delete associated files from Cloudflare R2 storage
         $this->deleteRegistrationFiles($registration);
-        
+
         $registration->delete();
 
         return redirect()->route('admin.dashboard')
@@ -160,7 +201,7 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Export registrations to Excel
+     * Export registrations to CSV.
      */
     public function export(Request $request)
     {
@@ -169,12 +210,12 @@ class AdminDashboardController extends Controller
         // Apply same filters as index
         if ($request->filled('search')) {
             $searchTerm = $request->search;
-            $query->where(function($q) use ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
                 $q->where('register_id', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('full_name', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('email_address', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('nic_number', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('whatsapp_number', 'like', '%' . $searchTerm . '%');
+                    ->orWhere('full_name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('email_address', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('nic_number', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('whatsapp_number', 'like', '%' . $searchTerm . '%');
             });
         }
 
@@ -182,25 +223,22 @@ class AdminDashboardController extends Controller
             $query->where('program_id', $request->program_filter);
         }
 
-        // Filter by Tag (General Rate or Special Offer)
         if ($request->filled('tag_filter')) {
             $query->whereJsonContains('tags', $request->tag_filter);
         }
 
         $registrations = $query->orderBy('created_at', 'desc')->get();
 
-        // Generate CSV
         $filename = 'cca_registrations_' . date('Y-m-d_His') . '.csv';
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
 
-        $callback = function() use ($registrations) {
+        $callback = function () use ($registrations) {
             $file = fopen('php://output', 'w');
-            
-            // Add CSV headers
-            fputcsv($file, [
+
+            fputcsv($file, $this->sanitizeCsvRow([
                 'Register ID',
                 'Program ID',
                 'Program Name',
@@ -231,6 +269,7 @@ class AdminDashboardController extends Controller
                 'Qualification Completed Date',
                 'Qualification Expected Completion Date',
                 'Tags',
+                'Full Amount',
                 'Current Paid Amount',
                 'Registration Date',
                 'Academic Qualification Documents',
@@ -238,12 +277,11 @@ class AdminDashboardController extends Controller
                 'Passport Documents',
                 'Passport Photo',
                 'Payment Slip',
-            ]);
+            ]));
 
-            // Add data rows
             foreach ($registrations as $reg) {
-                fputcsv($file, [
-                    $reg->register_id ?? 'cca-A' . str_pad($reg->id, 5, '0', STR_PAD_LEFT),
+                fputcsv($file, $this->sanitizeCsvRow([
+                    $reg->register_id ?? 'cca-A' . str_pad((string) $reg->id, 5, '0', STR_PAD_LEFT),
                     $reg->program_id,
                     $reg->program_name,
                     $reg->program_year ?? 'N/A',
@@ -251,7 +289,7 @@ class AdminDashboardController extends Controller
                     $reg->full_name,
                     $reg->name_with_initials ?? 'N/A',
                     ucfirst($reg->gender),
-                    $reg->date_of_birth->format('Y-m-d'),
+                    $reg->date_of_birth?->format('Y-m-d') ?? 'N/A',
                     $reg->nic_number ?? 'N/A',
                     $reg->passport_number ?? 'N/A',
                     $reg->nationality,
@@ -267,20 +305,21 @@ class AdminDashboardController extends Controller
                     $reg->province ?? 'N/A',
                     $reg->guardian_contact_name,
                     $reg->guardian_contact_number,
-                    ucfirst(str_replace('_', ' ', $reg->highest_qualification)),
+                    ucfirst(str_replace('_', ' ', (string) $reg->highest_qualification)),
                     $reg->qualification_other_details ?? 'N/A',
-                    ucfirst($reg->qualification_status ?? 'N/A'),
-                    $reg->qualification_completed_date ? $reg->qualification_completed_date->format('Y-m-d') : 'N/A',
-                    $reg->qualification_expected_completion_date ? $reg->qualification_expected_completion_date->format('Y-m-d') : 'N/A',
-                    !empty($reg->tags) ? implode(', ', $reg->tags) : 'N/A',
-                    $reg->current_paid_amount ? number_format($reg->current_paid_amount, 2) : 'N/A',
-                    $reg->created_at->format('Y-m-d H:i:s'),
+                    ucfirst((string) ($reg->qualification_status ?? 'N/A')),
+                    $reg->qualification_completed_date?->format('Y-m-d') ?? 'N/A',
+                    $reg->qualification_expected_completion_date?->format('Y-m-d') ?? 'N/A',
+                    ! empty($reg->tags) ? implode(', ', $reg->tags) : 'N/A',
+                    $reg->full_amount ? number_format((float) $reg->full_amount, 2) : 'N/A',
+                    $reg->current_paid_amount ? number_format((float) $reg->current_paid_amount, 2) : 'N/A',
+                    $reg->created_at?->format('Y-m-d H:i:s') ?? 'N/A',
                     $this->getFileUrls($reg->academic_qualification_documents),
                     $this->getFileUrls($reg->nic_documents),
                     $this->getFileUrls($reg->passport_documents),
                     $this->getFileUrls($reg->passport_photo),
                     $this->getFileUrls($reg->payment_slip),
-                ]);
+                ]));
             }
 
             fclose($file);
@@ -290,13 +329,13 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Delete all files associated with a registration from Cloudflare R2 storage
+     * Delete all files associated with a registration from Cloudflare R2 storage.
      */
-    private function deleteRegistrationFiles(CCARegistration $registration)
+    private function deleteRegistrationFiles(CCARegistration $registration): void
     {
         $fileFields = [
             'academic_qualification_documents',
-            'nic_documents', 
+            'nic_documents',
             'passport_documents',
             'passport_photo',
             'payment_slip',
@@ -306,44 +345,18 @@ class AdminDashboardController extends Controller
         $totalFiles = 0;
 
         foreach ($fileFields as $field) {
-            $files = $registration->$field;
-            
-            if (is_array($files)) {
-                foreach ($files as $file) {
-                    $totalFiles++;
-                    if (isset($file['path'])) {
-                        try {
-                            if (Storage::disk('r2')->exists($file['path'])) {
-                                Storage::disk('r2')->delete($file['path']);
-                                $deletedFiles++;
-                            }
-                        } catch (\Exception $e) {
-                            Log::warning("Failed to delete file from R2: {$file['path']}", [
-                                'error' => $e->getMessage(),
-                                'registration_id' => $registration->id
-                            ]);
-                        }
-                    }
-                }
-            } elseif (is_string($files) && !empty($files)) { 
-                // Handle old format where files might be stored as strings
+            foreach ($this->extractFilePaths($registration->$field) as $path) {
                 $totalFiles++;
+
                 try {
-                    // Extract path from URL if it's a full URL
-                    $path = $files;
-                    if (str_contains($files, 'r2.dev/')) {
-                        $urlParts = parse_url($files);
-                        $path = ltrim($urlParts['path'], '/');
-                    }
-                    
                     if (Storage::disk('r2')->exists($path)) {
                         Storage::disk('r2')->delete($path);
                         $deletedFiles++;
                     }
                 } catch (\Exception $e) {
-                    Log::warning("Failed to delete file from R2: {$files}", [
+                    Log::warning("Failed to delete file from R2: {$path}", [
                         'error' => $e->getMessage(),
-                        'registration_id' => $registration->id
+                        'registration_id' => $registration->id,
                     ]);
                 }
             }
@@ -353,39 +366,233 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Extract file URLs from array and format them for Excel export
-     * 
-     * @param array|null $files
-     * @return string
+     * Normalize file data to a consistent array shape with secure temporary URLs.
+     *
+     * @return array<int, array<string, mixed>>
      */
-    private function getFileUrls($files): string
+    private function normalizeFilesForDisplay(mixed $files): array
+    {
+        $normalized = [];
+
+        foreach ($this->asFileItems($files) as $item) {
+            $normalizedItem = $this->normalizeFileItem($item);
+            if ($normalizedItem !== null) {
+                $normalized[] = $normalizedItem;
+            }
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Normalize a single file item for display.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function normalizeFileItem(mixed $item): ?array
+    {
+        if (is_array($item)) {
+            $path = $this->extractStoragePath($item['path'] ?? $item['url'] ?? null);
+            $url = $path ? $this->generateTemporaryFileUrl($path) : null;
+
+            if (! $url && isset($item['url']) && is_string($item['url'])) {
+                $url = $item['url'];
+            }
+
+            return array_merge($item, [
+                'path' => $path,
+                'url' => $url,
+            ]);
+        }
+
+        if (is_string($item)) {
+            $path = $this->extractStoragePath($item);
+            $url = $path ? $this->generateTemporaryFileUrl($path) : null;
+
+            if (! $url && filter_var($item, FILTER_VALIDATE_URL)) {
+                $url = $item;
+            }
+
+            if (! $path && ! $url) {
+                return null;
+            }
+
+            return [
+                'path' => $path,
+                'url' => $url,
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * Convert stored file value to iterable file items.
+     *
+     * @return array<int, mixed>
+     */
+    private function asFileItems(mixed $files): array
     {
         if (empty($files)) {
+            return [];
+        }
+
+        if (is_string($files)) {
+            return [$files];
+        }
+
+        if (! is_array($files)) {
+            return [];
+        }
+
+        if (array_is_list($files)) {
+            return $files;
+        }
+
+        // Associative array = single file object.
+        return [$files];
+    }
+
+    /**
+     * Extract storage paths from a file field value.
+     *
+     * @return array<int, string>
+     */
+    private function extractFilePaths(mixed $files): array
+    {
+        $paths = [];
+
+        foreach ($this->asFileItems($files) as $item) {
+            if (is_array($item)) {
+                $path = $this->extractStoragePath($item['path'] ?? $item['url'] ?? null);
+            } elseif (is_string($item)) {
+                $path = $this->extractStoragePath($item);
+            } else {
+                $path = null;
+            }
+
+            if ($path) {
+                $paths[] = $path;
+            }
+        }
+
+        return $paths;
+    }
+
+    /**
+     * Extract R2 object path from stored path/URL value.
+     */
+    private function extractStoragePath(?string $value): ?string
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $path = parse_url($value, PHP_URL_PATH);
+            if (! is_string($path) || $path === '') {
+                return null;
+            }
+
+            $path = ltrim($path, '/');
+            $bucket = trim((string) config('filesystems.disks.r2.bucket'), '/');
+            if ($bucket !== '' && str_starts_with($path, $bucket . '/')) {
+                $path = substr($path, strlen($bucket) + 1);
+            }
+
+            return $path !== '' ? $path : null;
+        }
+
+        $path = ltrim($value, '/');
+        return $path !== '' ? $path : null;
+    }
+
+    /**
+     * Generate a temporary URL for secure file access.
+     */
+    private function generateTemporaryFileUrl(string $path): ?string
+    {
+        try {
+            return Storage::disk('r2')->temporaryUrl(
+                $path,
+                now()->addMinutes((int) config('filesystems.temporary_url_ttl', 20))
+            );
+        } catch (\Exception $e) {
+            try {
+                return Storage::disk('r2')->url($path);
+            } catch (\Exception $fallbackException) {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Extract secure file URLs and format them for export.
+     */
+    private function getFileUrls(mixed $files): string
+    {
+        $normalized = $this->normalizeFilesForDisplay($files);
+        if (empty($normalized)) {
             return 'N/A';
         }
 
-        /** @var FilesystemAdapter $r2Disk */
-        $r2Disk = Storage::disk('r2');
+        $urls = array_values(array_filter(array_map(
+            fn (array $file) => $file['url'] ?? null,
+            $normalized
+        )));
 
-        // If files is an array of file objects
-        if (is_array($files)) {
-            $urls = [];
-            foreach ($files as $file) {
-                if (isset($file['url'])) {
-                    $urls[] = $file['url'];
-                } elseif (isset($file['path'])) {
-                    // Generate URL from path if URL is not stored
-                    try {
-                        $urls[] = $r2Disk->url($file['path']);
-                    } catch (\Exception $e) {
-                        $urls[] = 'Error generating URL';
-                    }
-                }
-            }
-            // Join multiple URLs with newline for better readability in Excel
-            return !empty($urls) ? implode("\n", $urls) : 'N/A';
+        return ! empty($urls) ? implode("\n", $urls) : 'N/A';
+    }
+
+    /**
+     * Escape CSV cells to prevent spreadsheet formula injection.
+     *
+     * @param  array<int, mixed>  $row
+     * @return array<int, string>
+     */
+    private function sanitizeCsvRow(array $row): array
+    {
+        return array_map(fn ($value) => $this->sanitizeCsvValue($value), $row);
+    }
+
+    /**
+     * Escape potentially dangerous CSV values.
+     */
+    private function sanitizeCsvValue(mixed $value): string
+    {
+        if ($value === null) {
+            return '';
         }
 
-        return 'N/A';
+        if (is_bool($value)) {
+            return $value ? '1' : '0';
+        }
+
+        if (is_array($value) || is_object($value)) {
+            $value = json_encode($value, JSON_UNESCAPED_UNICODE);
+        }
+
+        $string = (string) $value;
+
+        if (
+            preg_match('/^[=\+\-@]/', $string) === 1
+            || str_starts_with($string, "\t")
+            || str_starts_with($string, "\r")
+        ) {
+            return "'" . $string;
+        }
+
+        return $string;
+    }
+
+    /**
+     * Determine if exception came from a duplicate key violation.
+     */
+    private function isDuplicateConstraintViolation(QueryException $e): bool
+    {
+        $sqlState = $e->errorInfo[0] ?? null;
+        $driverCode = $e->errorInfo[1] ?? null;
+
+        return $sqlState === '23000' || $driverCode === 1062 || $driverCode === 19;
     }
 }

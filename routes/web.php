@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CCARegistrationController;
-use App\Http\Controllers\Api\FileUploadController;
+use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -39,25 +40,36 @@ Route::get('/csrf-token', function () {
     return response()->json(['token' => csrf_token()]);
 });
 
-// File Upload API Routes (Public for registration form)
-Route::prefix('api')->group(function () {
-    Route::post('/upload-file', [FileUploadController::class, 'upload'])->name('api.upload.file');
-    Route::post('/delete-file', [FileUploadController::class, 'delete'])->name('api.delete.file');
-});
+// Backward-compatible dashboard route used by auth flows/tests
+Route::middleware('auth')->get('/dashboard', function () {
+    return Auth::guard('admin')->check()
+        ? redirect()->route('admin.dashboard')
+        : redirect('/');
+})->name('dashboard');
 
-// Admin Routes (Protected by admin.auth middleware)
-Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function () {
-    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/registrations/{id}', [AdminDashboardController::class, 'show'])->name('registrations.show');
-    Route::get('/registrations/{id}/edit', [AdminDashboardController::class, 'edit'])->name('registrations.edit');
-    Route::put('/registrations/{id}', [AdminDashboardController::class, 'update'])->name('registrations.update');
-    Route::delete('/registrations/{id}', [AdminDashboardController::class, 'destroy'])->name('registrations.destroy');
-    Route::get('/export', [AdminDashboardController::class, 'export'])->name('export');
-    
-    // Admin Profile Management
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Admin Authentication
+    Route::middleware('guest:admin')->group(function () {
+        Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
+        Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
+    });
+
+    // Admin Routes (Protected by admin.auth middleware)
+    Route::middleware('admin.auth')->group(function () {
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/registrations/{id}', [AdminDashboardController::class, 'show'])->name('registrations.show');
+        Route::get('/registrations/{id}/edit', [AdminDashboardController::class, 'edit'])->name('registrations.edit');
+        Route::put('/registrations/{id}', [AdminDashboardController::class, 'update'])->name('registrations.update');
+        Route::delete('/registrations/{id}', [AdminDashboardController::class, 'destroy'])->name('registrations.destroy');
+        Route::get('/export', [AdminDashboardController::class, 'export'])->name('export');
+        Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+
+        // Admin Profile Management
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
 });
 
 require __DIR__.'/auth.php';

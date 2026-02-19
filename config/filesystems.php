@@ -4,6 +4,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Temporary URL TTL (Minutes)
+    |--------------------------------------------------------------------------
+    */
+    'temporary_url_ttl' => (int) env('R2_TEMP_URL_TTL', 20),
+
+    /*
+    |--------------------------------------------------------------------------
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
     |
@@ -70,11 +77,11 @@ return [
             'endpoint' => env('R2_ENDPOINT'),
             'url' => env('R2_PUBLIC_URL'), // Your R2 custom domain or public bucket URL
             'use_path_style_endpoint' => false,
-            'visibility' => 'public',
+            'visibility' => 'private',
             'throw' => true,
             'report' => true,
             'options' => [
-                'CacheControl' => 'max-age=31536000, public', // Cache for 1 year (cost optimization)
+                'CacheControl' => 'private, max-age=0, no-cache',
             ],
         ],
 

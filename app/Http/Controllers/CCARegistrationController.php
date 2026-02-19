@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CCARegistration;
 use App\Services\FileUploadService;
 use App\Services\RecaptchaService;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -249,6 +250,29 @@ class CCARegistrationController extends Controller
                 ->route('cca.register')
                 ->with('success', "Registration successful! Your application for {$programInfo['name']} has been submitted. We'll contact you at {$validated['email_address']} soon.");
 
+        } catch (QueryException $e) {
+            DB::rollBack();
+
+            // Clean up uploaded files on DB failures
+            $this->cleanupUploadedFiles(
+                $academicDocs ?? [],
+                $nicDocs ?? [],
+                $passportDocs ?? [],
+                $passportPhoto ?? null,
+                $paymentSlip ?? null
+            );
+
+            if ($this->isDuplicateConstraintViolation($e)) {
+                throw ValidationException::withMessages([
+                    'nic_number' => "You have already registered for {$programInfo['name']}. If you believe this is an error, please contact our support team.",
+                ]);
+            }
+
+            Log::error('Registration failed due to database error', [
+                'error' => $e->getMessage(),
+            ]);
+
+            throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
             
@@ -268,6 +292,17 @@ class CCARegistrationController extends Controller
 
             throw $e;
         }
+    }
+
+    /**
+     * Determine if exception came from a duplicate key violation.
+     */
+    private function isDuplicateConstraintViolation(QueryException $e): bool
+    {
+        $sqlState = $e->errorInfo[0] ?? null;
+        $driverCode = $e->errorInfo[1] ?? null;
+
+        return $sqlState === '23000' || $driverCode === 1062 || $driverCode === 19;
     }
 
     /**

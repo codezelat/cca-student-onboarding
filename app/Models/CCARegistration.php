@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class CCARegistration extends Model
 {
@@ -114,20 +115,35 @@ class CCARegistration extends Model
 
         static::creating(function ($registration) {
             if (empty($registration->register_id)) {
-                $registration->register_id = self::generateRegisterId();
+                $registration->register_id = self::generateTemporaryRegisterId();
+            }
+        });
+
+        static::created(function ($registration) {
+            $finalRegisterId = self::generateRegisterIdFromId($registration->id);
+
+            if ($registration->register_id !== $finalRegisterId) {
+                $registration->forceFill([
+                    'register_id' => $finalRegisterId,
+                ])->saveQuietly();
             }
         });
     }
 
     /**
-     * Generate the next available register ID
+     * Generate register ID from record ID.
      */
-    public static function generateRegisterId(): string
+    public static function generateRegisterIdFromId(int $id): string
     {
-        $lastRegistration = self::orderBy('id', 'desc')->first();
-        $nextNumber = $lastRegistration ? $lastRegistration->id + 1 : 1;
-        
-        return 'cca-A' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+        return 'cca-A' . str_pad((string) $id, 5, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Generate a temporary unique register ID for insert-time safety.
+     */
+    private static function generateTemporaryRegisterId(): string
+    {
+        return 'tmp-' . Str::lower(Str::random(16));
     }
 
     /**

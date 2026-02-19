@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class ProfileUpdateRequest extends FormRequest
@@ -15,6 +16,8 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $adminId = Auth::guard('admin')->id() ?? $this->user()?->id;
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
@@ -23,7 +26,7 @@ class ProfileUpdateRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
+                Rule::unique(User::class)->ignore($adminId),
             ],
         ];
     }

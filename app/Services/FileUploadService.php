@@ -5,7 +5,6 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
 
 class FileUploadService
 {
@@ -33,8 +32,8 @@ class FileUploadService
             $path,
             file_get_contents($optimizedFile->getRealPath()),
             [
-                'visibility' => 'public',
-                'CacheControl' => 'max-age=31536000, public', // 1 year cache
+                'visibility' => 'private',
+                'CacheControl' => 'private, max-age=0, no-cache',
                 'ContentType' => $file->getMimeType(),
             ]
         );
